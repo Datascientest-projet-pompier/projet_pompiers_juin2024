@@ -4,6 +4,7 @@ import pandas as pd
 from folium.plugins import MarkerCluster
 from streamlit_folium import st_folium
 
+@st.cache_data
 def chargement_csv(url, separateur):
     try:
         df = pd.read_csv(url, sep=separateur, low_memory=False)
