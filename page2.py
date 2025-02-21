@@ -24,7 +24,7 @@ def recup_df_2024():
 def page2():
     df_2024 = recup_df_2024()
 
-    caserne = df_2024['IncGeo_BoroughName'].unique()
+    caserne = df_2024['IncidentStationGround'].unique()
     caserne = [c.lower() for c in caserne]
     caserne = sorted(caserne)
     
