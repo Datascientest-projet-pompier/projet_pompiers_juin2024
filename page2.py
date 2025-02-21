@@ -15,8 +15,6 @@ def recup_df_2024():
     # Chargement du DataFrame df_2024
     try:
         df_2024 = pd.read_csv("Donnees/df_2024.csv")  # Remplacez "df_2024.csv" par le chemin correct
-        st.write("DataFrame df_2024 chargé avec succès!")
-        st.dataframe(df_2024.head())  # Affiche les premières lignes du DataFrame
         return df_2024
     except FileNotFoundError:
         st.error("Le fichier df_2024.csv n'a pas été trouvé.")
@@ -24,18 +22,31 @@ def recup_df_2024():
     
     
 def page2():
-    st.title("Lecture des donnees")
     df_2024 = recup_df_2024()
 
     caserne = df_2024['IncGeo_BoroughName'].unique()
     caserne = [c.lower() for c in caserne]
-    st.write(caserne[0])
-    #st.title("Affichage de Cartes HTML")
+    
+    st.title("Affichage de Cartes HTML")
+
+    # Case à cocher pour le choix des incidents
+    choix_incidents = st.radio(
+        "Sélectionnez les incidents à afficher :",
+        ["Tous les incidents", "Incidents avec temps supérieur à 6 min"]
+    )
 
     # Sélection de la carte à afficher
-    #carte_choisie = st.selectbox("Choisissez une carte :", ["BARKING AND DAGENHAM", "BEXLEY"])
-
+    carte_choisie = st.selectbox("Choisissez une carte :", caserne)
+    
+    if choix_incidents == "Tous les incidents":
+        chemin_fichier = f"Donnees/{carte_choisie}.html"
+    else :
+        chemin_fichier = f"Donnees/{carte_choisie}.1html"
+    
     # Lire et afficher la carte HTML choisie
+    html_carte = lire_html(chemin_fichier)
+    components.html(html_carte, height=600)  # Ajustez la hauteur selon vos besoins
+    
     #if carte_choisie == "BARKING AND DAGENHAM":
     #    html_carte = lire_html("BARKING AND DAGENHAM.html")
     #elif carte_choisie == "BEXLEY":
