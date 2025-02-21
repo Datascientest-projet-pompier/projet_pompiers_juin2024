@@ -42,7 +42,7 @@ def page2():
     if choix_incidents == "Tous les incidents":
         chemin_fichier = f"Donnees/{carte_choisie}.html"
     else :
-        chemin_fichier = f"Donnees/{carte_choisie}.1html"
+        chemin_fichier = f"Donnees/{carte_choisie}1.html"
     
     # Lire et afficher la carte HTML choisie
     html_carte = lire_html(chemin_fichier)
