@@ -26,6 +26,7 @@ def page2():
 
     caserne = df_2024['IncGeo_BoroughName'].unique()
     caserne = [c.lower() for c in caserne]
+    caserne = sorted(caserne)
     
     st.title("Affichage de Cartes HTML")
 
