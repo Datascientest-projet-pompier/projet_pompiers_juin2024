@@ -14,7 +14,3 @@ def page_intro():
     st.write("Pour ce faire nous avons travaillé pendant 4 mois un projet. L’objectif de ce projet est d’estimer **les temps de réponse et de mobilisation** de la Brigade des Pompiers de Londres. La brigade des pompiers de Londres est le service d'incendie et de sauvetage le plus actif du Royaume-Uni  et l'une des plus grandes organisations de lutte contre l'incendie et de sauvetage au monde.")
 
     st.write("Pour  présenter ce projet nous avons créer une application streamlit qui présente les différentes étapes de notre travail.")
-
-    col1, col2, col3 = st.columns([1, 6, 1])
-    with col2:
-        image = st.image("https://s3-eu-west-1.amazonaws.com/tpd/logos/5defb89bc1213200011e72d5/0x0.png")

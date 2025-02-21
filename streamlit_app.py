@@ -32,5 +32,29 @@ def main():
     * Hao LA
     """)
 
+    image_url = "https://s3-eu-west-1.amazonaws.com/tpd/logos/5defb89bc1213200011e72d5/0x0.png"
+    #st.image(image_url, width=None) # Affiche l'image à sa taille originale pour obtenir les dimensions.
+
+    # Obtenir les dimensions de l'image (nécessite une requête HTTP)
+    import requests
+    from PIL import Image
+    from io import BytesIO
+
+    response = requests.get(image_url)
+    img = Image.open(BytesIO(response.content))
+    original_width, original_height = img.size
+
+    # Calculer la nouvelle largeur (20% de la largeur originale)
+    new_width = int(original_width * 0.20)
+
+    st.sidebar.markdown(
+        f"""
+        <div style="display: flex; justify-content: center;">
+            <img src="{image_url}" width="{new_width}">
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 if __name__ == "__main__":
     main()
