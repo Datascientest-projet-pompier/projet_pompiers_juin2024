@@ -1,32 +1,36 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import pandas as pd
 
-def lire_html(chemin_fichier):
-    try:
-        with open(chemin_fichier, "r", encoding="utf-8") as f:
-            return f.read()
-    except Exception as e:
-        st.error(f"Erreur lors de la lecture du fichier HTML : {e}")
-        return None
+
+from page_intro import page_intro
+from page1 import page1
+from page2 import page2
 
 def main():
-    st.title("Affichage de Cartes HTML")
+    # Sidebar
+    pages = {
+        "Presentation":page_intro,
+        "Presentation des données": page1,
+        "Visualisation géographique des données": page2,
+        "Visualisation des données": page1,
+        "Prétraitement des données": page1,
+        "Modélisation 1 - prédiction variable continue": page1,
+        "Modélisation 2 - prédiction variable discrète": page1,
+        "Conclusion et prespective": page1
+    }
 
-    # Sélection de la carte à afficher
-    carte_choisie = st.selectbox("Choisissez une carte :", ["BARKING AND DAGENHAM", "BEXLEY"])
+    # Barre latérale avec des boutons radio pour chaque page
+    selected_page = st.sidebar.radio("Choisis une page", list(pages.keys()))
 
-    # Lire et afficher la carte HTML choisie
-    if carte_choisie == "BARKING AND DAGENHAM":
-        html_carte = lire_html("BARKING AND DAGENHAM.html")
-    elif carte_choisie == "BEXLEY":
-        html_carte = lire_html("BEXLEY.html")
-    else:
-        html_carte = None
+    # Appeler la fonction correspondant à la page sélectionnée
+    pages[selected_page]()
 
-    if html_carte:
-        components.html(html_carte, height=600)  # Ajustez la hauteur selon vos besoins
-    else:
-        st.error("Carte HTML non trouvée.")
+    st.sidebar.write("""Auteurs : \n
+    * Anne DUBOIS \n
+    * Christelle TESSIER \n
+    * Hao LA
+    """)
 
 if __name__ == "__main__":
     main()
