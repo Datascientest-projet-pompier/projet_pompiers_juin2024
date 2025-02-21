@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
+import numpy as np
 
 def lire_html(chemin_fichier):
     try:
@@ -25,6 +26,10 @@ def recup_df_2024():
 def page2():
     st.title("Lecture des donnees")
     df_2024 = recup_df_2024()
+
+    caserne = df_2024['IncGeo_BoroughName'].unique()
+    caserne = [c.lower() for c in caserne]
+    st.write(caserne[0])
     #st.title("Affichage de Cartes HTML")
 
     # Sélection de la carte à afficher
