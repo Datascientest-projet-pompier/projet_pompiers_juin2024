@@ -1,7 +1,8 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
-import numpy as np
+
+from fonctions import recup_df
 
 def lire_html(chemin_fichier):
     try:
@@ -11,18 +12,9 @@ def lire_html(chemin_fichier):
         st.error(f"Erreur lors de la lecture du fichier HTML : {e}")
         return None
     
-def recup_df_2024():
-    # Chargement du DataFrame df_2024
-    try:
-        df_2024 = pd.read_csv("Donnees/df_2024.csv") 
-        return df_2024
-    except FileNotFoundError:
-        st.error("Le fichier df_2024.csv n'a pas été trouvé.")
-        return
-    
     
 def localisation():
-    df_2024 = recup_df_2024()
+    df_2024 = recup_df("df_2024.csv")
 
     caserne = df_2024['IncidentStationGround'].unique()
     caserne = [c.lower() for c in caserne]
