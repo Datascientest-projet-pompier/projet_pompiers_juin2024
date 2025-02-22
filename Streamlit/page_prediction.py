@@ -54,7 +54,7 @@ def calcul_dist(lat1, lon1, lat2, lon2):
     _, _, distance = geod.inv(lon1, lat1, lon2, lat2)
     return np.round(distance, 3)
 
-def trouver_station_proche(lat, lng):
+def trouver_station_proche(lat, lng, station_df):
     """
     Trouve la station la plus proche d'un point donné.
 
@@ -66,7 +66,6 @@ def trouver_station_proche(lat, lng):
     Returns:
         tuple: (nom de la station la plus proche, distance en mètres)
     """
-    station_df = recup_df("FireStationInfo_2.csv",";")
 
     # Calcul de la distance pour chaque station
     station_df["Distance"] = station_df.apply(
@@ -79,6 +78,7 @@ def trouver_station_proche(lat, lng):
     return station_proche
 
 def prediction():
+    station_df = recup_df("FireStationInfo_2.csv",";")
     st.title("Prédiction avec le Gradient Boosting")
 
     # Heure de l'incident
@@ -102,49 +102,49 @@ def prediction():
     # Choix de la position
     st.subheader("Choix de la position")
     lat, lng = choix_lat_long()
-    #if lat is not None and lng is not None:
-        # Sauvegarde des résultats dans la session
-        #st.session_state.lat = lat
-        #st.session_state.lng = lng
     
     # Bouton pour choisir une caserne
     st.subheader("Choix de la caserne")
-    st.session_state.show_stat = False
+    
+    if "show_stat" not in st.session_state:
+        st.session_state.show_stat = False  # Initialiser show_stat à True
+
     if st.button("Choix de la caserne"):
 
         if lat is None or lng is None:
             st.write("Choisir le lieu de l'incident d'abord")
 
         else :
-            station_proche = trouver_station_proche(lat, lng)
+            station_proche = trouver_station_proche(lat, lng, station_df)
 
             # Sauvegarde des résultats dans la session
             st.session_state.station_proche = station_proche
 
+
             st.session_state.show_stat = True  # Indique qu'il faut afficher le slider
     
-    # Liste déroulante pour le choix de la station
     if "station_proche" in st.session_state and st.session_state.show_stat:
         station_resp = st.session_state.station_proche.iloc[0]["Station name"]
         st.session_state.station_resp = station_resp
+        arrondissement = station_df[station_df["Station name"] == station_resp]["BoroughName"].values(0)
+        st.write(arrondissement)
         st.write(f"Caserne responsable : {station_resp}.")
-        choix_station = ""
+
         station_names = st.session_state.station_proche["Station name"].tolist()
         choix_station = st.selectbox("Choisir une station", station_names)
 
         # Affichage de la station choisie
         st.write(f"Station choisie : {choix_station}")
 
-        #enregistrement de la distance
-            
-        if choix_station != "":
-            df_info = st.session_state.station_proche[st.session_state.station_proche["Station name"]== choix_station]
+        # Enregistrement de la distance
+        if choix_station:  # Vérifier si une station a été sélectionnée
+            df_info = st.session_state.station_proche[st.session_state.station_proche["Station name"] == choix_station]
             distance = df_info["Distance"].values[0]
             st.session_state.distance = distance
             st.session_state.station_dep = df_info["Station name"].values[0]
 
-            if st.button("Valider"):
-                st.session_state.show_stat = False  # Cache le slider
+        if "distance" in st.session_state and st.button("Valider"):
+            st.session_state.show_stat = False  # Cache le slider
 
 
 
