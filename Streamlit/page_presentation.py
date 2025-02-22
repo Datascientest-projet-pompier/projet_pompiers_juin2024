@@ -1,6 +1,6 @@
 import streamlit as st
 
-def page1():
+def presentation():
     st.title("Présentation des données")
     st.write(
         "L'ensemble des données est divisé en deux sous-dossiers. Le premier sous-dossier permet d'obtenir "

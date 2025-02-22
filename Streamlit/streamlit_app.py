@@ -4,20 +4,22 @@ import pandas as pd
 
 
 from page_intro import page_intro
-from page1 import page1
-from page2 import page2
+from page_presentation import presentation
+from page_localisation import localisation
+from page_prediction import prediction
 
 def main():
     # Sidebar
     pages = {
         "Presentation":page_intro,
-        "Presentation des données": page1,
-        "Visualisation géographique des données": page2,
-        "Visualisation des données": page1,
-        "Prétraitement des données": page1,
-        "Modélisation 1 - prédiction variable continue": page1,
-        "Modélisation 2 - prédiction variable discrète": page1,
-        "Conclusion et prespective": page1
+        "Presentation des données": presentation,
+        "Visualisation géographique des données": localisation,
+        "Visualisation des données": presentation,
+        "Prétraitement des données": presentation,
+        "Modélisation 1 - prédiction variable continue": presentation,
+        "Modélisation 2 - prédiction variable discrète": presentation,
+        "Prédiction à l'aide du modèle " : prediction,
+        "Conclusion et prespective": presentation
     }
 
     # Barre latérale avec des boutons radio pour chaque page

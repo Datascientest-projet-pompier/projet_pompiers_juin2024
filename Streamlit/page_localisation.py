@@ -14,14 +14,14 @@ def lire_html(chemin_fichier):
 def recup_df_2024():
     # Chargement du DataFrame df_2024
     try:
-        df_2024 = pd.read_csv("Donnees/df_2024.csv")  # Remplacez "df_2024.csv" par le chemin correct
+        df_2024 = pd.read_csv("Donnees/df_2024.csv") 
         return df_2024
     except FileNotFoundError:
         st.error("Le fichier df_2024.csv n'a pas été trouvé.")
         return
     
     
-def page2():
+def localisation():
     df_2024 = recup_df_2024()
 
     caserne = df_2024['IncidentStationGround'].unique()
@@ -40,9 +40,9 @@ def page2():
     carte_choisie = st.selectbox("Choisissez une carte :", caserne)
     
     if choix_incidents == "Tous les incidents":
-        chemin_fichier = f"Donnees/{carte_choisie}.html"
+        chemin_fichier = f"Donnees/Cartes/{carte_choisie}.html"
     else :
-        chemin_fichier = f"Donnees/{carte_choisie}1.html"
+        chemin_fichier = f"Donnees/Cartes/{carte_choisie}1.html"
     
     # Lire et afficher la carte HTML choisie
     html_carte = lire_html(chemin_fichier)
