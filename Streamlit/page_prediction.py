@@ -81,17 +81,37 @@ def trouver_station_proche(lat, lng):
 def prediction():
     st.title("Prédiction avec le Gradient Boosting")
 
+    # Heure de l'incident
+    st.subheader("Choix de l'heure de l'incident")
+
+    if "show_heure" not in st.session_state:
+        st.session_state.show_heure = False
+
+    if st.button("Choix de l'heure de l'incident"):
+        st.session_state.show_heure = True  # Indique qu'il faut afficher le slider
+
+    if st.session_state.show_heure:
+        heure_choisie = st.slider("Choisir une heure", 0, 23, 12)  # 0-23 heures, valeur initiale 12
+        st.session_state.heure = heure_choisie
+
+    if "heure" in st.session_state and st.session_state.show_heure:
+        if st.button("Valider"):
+            st.session_state.show_heure = False  # Cache le slide
+
+
     # Choix de la position
     st.subheader("Choix de la position")
     lat, lng = choix_lat_long()
-    if lat is not None and lng is not None:
+    #if lat is not None and lng is not None:
         # Sauvegarde des résultats dans la session
-        st.session_state.lat = lat
-        st.session_state.lng = lng
+        #st.session_state.lat = lat
+        #st.session_state.lng = lng
     
     # Bouton pour choisir une caserne
     st.subheader("Choix de la caserne")
+    st.session_state.show_stat = False
     if st.button("Choix de la caserne"):
+
         if lat is None or lng is None:
             st.write("Choisir le lieu de l'incident d'abord")
 
@@ -101,28 +121,46 @@ def prediction():
             # Sauvegarde des résultats dans la session
             st.session_state.station_proche = station_proche
 
+            st.session_state.show_stat = True  # Indique qu'il faut afficher le slider
+    
     # Liste déroulante pour le choix de la station
-    if "station_proche" in st.session_state :
+    if "station_proche" in st.session_state and st.session_state.show_stat:
         station_resp = st.session_state.station_proche.iloc[0]["Station name"]
+        st.session_state.station_resp = station_resp
         st.write(f"Caserne responsable : {station_resp}.")
+        choix_station = ""
         station_names = st.session_state.station_proche["Station name"].tolist()
         choix_station = st.selectbox("Choisir une station", station_names)
-
-        # Sauvegarde du choix de la station
-        st.session_state.choix_station = choix_station
 
         # Affichage de la station choisie
         st.write(f"Station choisie : {choix_station}")
 
         #enregistrement de la distance
-        selected_row = st.session_state.station_proche[st.session_state.station_proche["Station name"] == choix_station]
-        if not selected_row.empty:
-            distance = selected_row["Distance"].values[0]
+            
+        if choix_station != "":
+            df_info = st.session_state.station_proche[st.session_state.station_proche["Station name"]== choix_station]
+            distance = df_info["Distance"].values[0]
             st.session_state.distance = distance
+            st.session_state.station_dep = df_info["Station name"].values[0]
+
+            if st.button("Valider"):
+                st.session_state.show_stat = False  # Cache le slider
+
+
 
     # Bouton choix du type d'incident
     st.subheader("Type d'incident")
     if st.button("Type d'incident"):
         st.write("test")
+
+
+    # Résumé
+    st.subheader("Resumer des informations de l'incident")
+    if "heure" in st.session_state:
+        st.write(f"Heure de l'incident : {st.session_state.heure}h")
+    if "station_resp" in st.session_state:
+        st.write(f"Station responsable : {st.session_state.station_resp}")
+    if "station_dep" in st.session_state:
+        st.write(f"Station déployée : {st.session_state.station_dep}")
 
     
