@@ -7,6 +7,21 @@ import numpy as np
 
 from fonctions import recup_df
 
+def choix_heure():
+    if st.session_state.show_heure_bouton:  # Afficher le bouton seulement si show_heure_bouton est True
+        if st.button("Choix de l'heure de l'incident") and st.session_state.show_all:
+            st.session_state.show_heure_choix = True
+
+    if st.session_state.show_heure_choix:
+        heure_choisie = st.slider("Choisir une heure", 0, 23, 12)  # 0-23 heures, valeur initiale 12
+        st.session_state.heure = heure_choisie
+
+    if "heure" in st.session_state and st.session_state.show_heure_choix:
+        if st.button("Valider"):
+            st.session_state.show_heure_choix = False  # Cache le slide
+            st.session_state.show_heure_bouton = False  # Cacher le bouton
+
+
 def choix_lat_long():
     if "map_visible" not in st.session_state:
         st.session_state.map_visible = False
@@ -18,9 +33,10 @@ def choix_lat_long():
         st.session_state.lng = None
 
     # Bouton pour afficher la carte
-    if st.button("Choix de la position"):
-        st.session_state.map_visible = True
-        st.session_state.coords_selected = False
+    if st.session_state.show_position_bouton:
+        if st.button("Choix de la position") and st.session_state.show_all:
+            st.session_state.map_visible = True
+            st.session_state.coords_selected = False
 
     # Affichage de la carte uniquement si l'utilisateur a cliqué sur "Choix de la position"
     if st.session_state.map_visible:
@@ -43,8 +59,7 @@ def choix_lat_long():
         if st.session_state.coords_selected:
             if st.button("Fermer la carte"):
                 st.session_state.map_visible = False
-
-    return st.session_state.lat, st.session_state.lng
+                st.session_state.show_position_bouton = False
 
 def calcul_dist(lat1, lon1, lat2, lon2):
     """
@@ -67,70 +82,36 @@ def trouver_station_proche(lat, lng, station_df):
         tuple: (nom de la station la plus proche, distance en mètres)
     """
 
-    # Calcul de la distance pour chaque station
-    station_df["Distance"] = station_df.apply(
-        lambda row: calcul_dist(lat, lng, row["Latitude"], row["Longitude"]), axis=1
-    )
+    distances = []
+    for index, row in station_df.iterrows():
+        distance = calcul_dist(lat, lng, row["Latitude"], row["Longitude"])
+        distances.append(distance)
+
+    station_df["Distance"] = distances
 
     # Trier et récupérer les 6 stations les plus proches
     station_proche = station_df.nsmallest(6, 'Distance')
 
     return station_proche
 
-def prediction():
-    station_df = recup_df("FireStationInfo_2.csv",";")
-    st.title("Prédiction avec le Gradient Boosting")
+def choix_station():
+    if st.session_state.show_station_bouton:  # Afficher le bouton seulement si show_heure_bouton est True
+        if st.button("Choix de la station intervenant pour l'incident") and st.session_state.show_all:
+            st.session_state.show_station_choix = True
+        
+        station_df = recup_df("FireStationInfo_2.csv",";")
 
-    # Heure de l'incident
-    st.subheader("Choix de l'heure de l'incident")
-
-    if "show_heure" not in st.session_state:
-        st.session_state.show_heure = False
-
-    if st.button("Choix de l'heure de l'incident"):
-        st.session_state.show_heure = True  # Indique qu'il faut afficher le slider
-
-    if st.session_state.show_heure:
-        heure_choisie = st.slider("Choisir une heure", 0, 23, 12)  # 0-23 heures, valeur initiale 12
-        st.session_state.heure = heure_choisie
-
-    if "heure" in st.session_state and st.session_state.show_heure:
-        if st.button("Valider"):
-            st.session_state.show_heure = False  # Cache le slide
-
-
-    # Choix de la position
-    st.subheader("Choix de la position")
-    lat, lng = choix_lat_long()
-    
-    # Bouton pour choisir une caserne
-    st.subheader("Choix de la caserne")
-    
-    if "show_stat" not in st.session_state:
-        st.session_state.show_stat = False  # Initialiser show_stat à True
-
-    if st.button("Choix de la caserne"):
-
-        if lat is None or lng is None:
-            st.write("Choisir le lieu de l'incident d'abord")
-
-        else :
-            station_proche = trouver_station_proche(lat, lng, station_df)
-
-            # Sauvegarde des résultats dans la session
-            st.session_state.station_proche = station_proche
-
-
-            st.session_state.show_stat = True  # Indique qu'il faut afficher le slider
-    
-    if "station_proche" in st.session_state and st.session_state.show_stat:
-        station_resp = st.session_state.station_proche.iloc[0]["Station name"]
+    if st.session_state.show_station_choix:
+        lat = st.session_state.lat
+        lng = st.session_state.lng
+        station_proche = trouver_station_proche(lat, lng, station_df)
+        station_resp = station_proche.iloc[0]["Station name"]
+        arrondissement = station_proche.iloc[0]["BoroughName"]
         st.session_state.station_resp = station_resp
-        arrondissement = station_df[station_df["Station name"] == station_resp]["BoroughName"].values(0)
-        st.write(arrondissement)
+        st.session_state.arrondissement = arrondissement
         st.write(f"Caserne responsable : {station_resp}.")
 
-        station_names = st.session_state.station_proche["Station name"].tolist()
+        station_names = station_proche["Station name"].tolist()
         choix_station = st.selectbox("Choisir une station", station_names)
 
         # Affichage de la station choisie
@@ -138,29 +119,76 @@ def prediction():
 
         # Enregistrement de la distance
         if choix_station:  # Vérifier si une station a été sélectionnée
-            df_info = st.session_state.station_proche[st.session_state.station_proche["Station name"] == choix_station]
+            df_info = station_proche[station_proche["Station name"] == choix_station]
             distance = df_info["Distance"].values[0]
+            station_dep = df_info["Station name"].values[0]
+            arrondissement_dep = df_info["BoroughName"].values[0]
             st.session_state.distance = distance
-            st.session_state.station_dep = df_info["Station name"].values[0]
+            st.session_state.station_dep = station_dep
+            st.session_state.arrondissement_dep = arrondissement_dep
 
-        if "distance" in st.session_state and st.button("Valider"):
-            st.session_state.show_stat = False  # Cache le slider
+        if st.button("Valider"):
+            st.session_state.show_station_bouton = False
+            st.session_state.show_station_choix = False
+
+def choix_type():
+    if st.session_state.show_type_bouton:  # Afficher le bouton seulement si show_type_bouton est True
+        if st.button("Choix du type d'incident") and st.session_state.show_all:
+            st.session_state.show_heure_choix = True
 
 
+def prediction():
+    
+    st.session_state.show_all = True
+    
+    
+    station_df = recup_df("FireStationInfo_2.csv",";")
+    st.title("Prédiction avec le Gradient Boosting")
+
+    st.subheader("Choix des paramètre de l'incident")
+
+    # Heure de l'incident
+    if "show_heure_bouton" not in st.session_state:
+        st.session_state.show_heure_bouton = True
+    if "show_heure_choix" not in st.session_state:
+        st.session_state.show_heure_choix = False
+    choix_heure()
+    
+    # Choix de la position
+    if "show_position_bouton" not in st.session_state:
+        st.session_state.show_position_bouton = True
+        st.session_state.show_station_bouton = False
+    choix_lat_long()
+    
+    # Bouton pour choisir une caserne
+    if "lat" in st.session_state:
+        st.session_state.show_station_bouton = True
+    if "show_station_choix" not in st.session_state:
+        st.session_state.show_station_choix = False
+
+    choix_station()
 
     # Bouton choix du type d'incident
-    st.subheader("Type d'incident")
-    if st.button("Type d'incident"):
-        st.write("test")
+    if "show_type_bouton" not in st.session_state:
+        st.session_state.show_type_bouton = True
+    choix_type()
+    
 
 
     # Résumé
     st.subheader("Resumer des informations de l'incident")
     if "heure" in st.session_state:
         st.write(f"Heure de l'incident : {st.session_state.heure}h")
+    if "arrondissement" in st.session_state:
+        st.write(f"Arrondissement de l'incident : {st.session_state.arrondissement}")
     if "station_resp" in st.session_state:
         st.write(f"Station responsable : {st.session_state.station_resp}")
+    if "arrondissement_dep" in st.session_state:
+        st.write(f"Arrondissement de la caserne deployée : {st.session_state.arrondissement_dep}")
     if "station_dep" in st.session_state:
         st.write(f"Station déployée : {st.session_state.station_dep}")
+
+    if st.button("Valider"):
+        st.session_state.show_all = False
 
     
