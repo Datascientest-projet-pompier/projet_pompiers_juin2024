@@ -5,7 +5,6 @@ from pyproj import Geod
 import pandas as pd
 import numpy as np
 import pickle
-from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
 
 from fonctions import recup_df
 
@@ -121,12 +120,15 @@ def choix_station():
         station_proche = trouver_station_proche(lat, lng, station_df)
         station_resp = station_proche.iloc[0]["Station name"]
         arrondissement = station_proche.iloc[0]["BoroughName"]
+        arrondissement_code = station_proche.iloc[0]["BoroughCode"]
         inner = station_proche.iloc[0]["inner london"]
         ratio = station_proche.iloc[0]["ratio"]
         st.session_state.station_resp = station_resp
         st.session_state.arrondissement = arrondissement
+        st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
         st.session_state.ratio = ratio
+        # Standardisation du ratio
 
         st.write(f"Caserne responsable : {station_resp}.")
 
@@ -136,7 +138,7 @@ def choix_station():
         # Affichage de la station choisie
         st.write(f"Station choisie : {choix_station}")
 
-        # Enregistrement de la distance
+        
         if choix_station:  # Vérifier si une station a été sélectionnée
             df_info = station_proche[station_proche["Station name"] == choix_station]
             distance = df_info["Distance"].values[0]
@@ -146,14 +148,15 @@ def choix_station():
             st.session_state.arrondissement_dep = arrondissement_dep
             # Standardisation de la distance
             scaler = charger_model('Donnees/tranfo_distance.pkl')
-            distance_standardisee = scaler.transform(distance)
+            distance_standardisee = np.array(distance).reshape(-1,1)
+            distance_standardisee = scaler.transform(distance_standardisee)
             st.session_state.distancestd = distance_standardisee
             # Construction stat_resp_rep
             if station_resp == station_dep :
                 st.session_state.stat_resp_rep = 1
             else : 
                 st.session_state.stat_resp_rep = 0
-            # COnstruction Bor_inc_rep
+            # Construction Bor_inc_rep
             if arrondissement == arrondissement_dep :
                 st.session_state.Bor_inc_rep = 1
             else :
