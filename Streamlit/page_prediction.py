@@ -204,7 +204,6 @@ def choix_type():
             elif "station_dep" not in st.session_state:
                 st.session_state.show_station_bouton = True
 
-
 def charger_model(chemin_fichier):
     try:
         with open(chemin_fichier, 'rb') as fichier_scaler:
@@ -278,20 +277,32 @@ def param_incident():
     if "type" in st.session_state:
         st.write(f"Type d'incidident : {st.session_state.type}")
 
+def validation(): 
+    if "boutons_visibles" not in st.session_state:
+        st.session_state.boutons_visibles = True
 
-    valide = "heure" in st.session_state and "arrondissement" in st.session_state and "station_dep" in st.session_state
-    valide = valide and "type" in st.session_state
-    if valide :
-        if st.button("Valider parametre incident"):
-            st.session_state.show_all = False
-            st.session_state.valid_pred = True
-        if st.button("Recommencer choix des paramètre"):
-            st.session_state.clear()
-            st.rerun()
+    if st.session_state.boutons_visibles:
+        valide = "heure" in st.session_state and "arrondissement" in st.session_state and "station_dep" in st.session_state
+        valide = valide and "type" in st.session_state
+
+        if valide:
+            col1, col2 = st.columns(2)  # Utilisation de colonnes pour une meilleure disposition
+
+            if col1.button("Valider paramètre incident"):
+                st.session_state.show_all = False
+                st.session_state.valid_pred = True
+                st.session_state.boutons_visibles = False  # Masquer les boutons
+            if col2.button("Recommencer choix des paramètres"):
+                st.session_state.clear()
+                st.session_state.boutons_visibles = False  # Masquer les boutons
+                st.rerun()
 
 def prediction():
     param_incident()
     st.subheader("Prédiction avec les données de l'incident")
+
+    validation()
+
     if "valid_pred" in st.session_state:
         if st.session_state.valid_pred:
             
@@ -308,8 +319,8 @@ def prediction():
             # Mise a jour dataframe
             df["inner"] = st.session_state.inner
             df["Bor_inc_rep"] = st.session_state.Bor_inc_rep
-            df["Bor_resp_rec"]= st.session_state.Bor_inc_rep
-            df["Stat_resp_rec"]= st.session_state.Bor_inc_rep
+            df["Bor_resp_rep"]= st.session_state.Bor_inc_rep
+            df["Stat_resp_rep"]= st.session_state.Bor_inc_rep
             if st.session_state.heure <= 6 and st.session_state.heure >= 2:
                 df["H26"] = 1
             elif st.session_state.heure <= 17 and st.session_state.heure >= 11:
@@ -318,9 +329,9 @@ def prediction():
             df[nom_col_type] = 1
             nom_col_arrondissement = "Borough_" + st.session_state.arrondissement_code
             df[nom_col_arrondissement] = 1
-            df["distanceStd"] = st.session_state.distancestd
+            df["distStd"] = st.session_state.distancestd
             df["ratioStd"] = st.session_state.ratioSC
-            #df.to_csv('Donnees/df_pred.csv', index=False)
+            df.to_csv('Donnees/df_pred.csv', index=False)
             
             st.write(df)
             
