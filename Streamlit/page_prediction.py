@@ -12,11 +12,10 @@ def choix_heure():
         if st.button("Choix de l'heure de l'incident"):
             st.session_state.show_heure_choix = True
             st.session_state.show_position_bouton = False
-            st.session_state.show_caserne_bouton = False
+            st.session_state.show_station_bouton = False
             st.session_state.show_type_bouton = False
 
     if st.session_state.show_heure_choix:
-        st.write(st.session_state.show_heure_choix)
         heure_choisie = st.number_input("Choisir une heure (0-23)", min_value=0, max_value=23, value=12, step=1)
 
         if st.button("Valider"):
@@ -25,11 +24,10 @@ def choix_heure():
             st.session_state.show_heure_bouton = False
             if "lat" not in st.session_state:
                 st.session_state.show_position_bouton = True
-            else :
-                st.session_state.show_caserne_bouton = True
+            elif "station_dep" not in st.session_state:
+                st.session_state.show_station_bouton = True
             if "type" not in st.session_state:
                 st.session_state.show_type_bouton = True
-
 
 def choix_lat_long():
     if "map_visible" not in st.session_state:
@@ -69,7 +67,7 @@ def choix_lat_long():
                     st.session_state.show_heure_bouton = True
                 if "type" not in st.session_state:
                     st.session_state.show_type_bouton = True
-                st.session_state.show_caserne_bouton = True
+                st.session_state.show_station_bouton = True
                 st.session_state.map_visible = False
                 st.session_state.show_position_bouton = False
 
@@ -121,8 +119,13 @@ def choix_station():
         station_proche = trouver_station_proche(lat, lng, station_df)
         station_resp = station_proche.iloc[0]["Station name"]
         arrondissement = station_proche.iloc[0]["BoroughName"]
+        inner = station_proche.iloc[0]["inner"]
+        ratio = station_proche.iloc[0]["ratio"]
         st.session_state.station_resp = station_resp
         st.session_state.arrondissement = arrondissement
+        st.session_state.inner = inner
+        st.session_state.ratio = ratio
+
         st.write(f"Caserne responsable : {station_resp}.")
 
         station_names = station_proche["Station name"].tolist()
@@ -152,14 +155,38 @@ def choix_station():
 def choix_type():
     if st.session_state.show_type_bouton:  # Afficher le bouton seulement si show_type_bouton est True
         if st.button("Choix du type d'incident") and st.session_state.show_all:
-            st.session_state.show_heure_choix = True
+            st.session_state.show_type_choix = True
+            st.session_state.show_heure_bouton = False
+            st.session_state.show_position_bouton = False
+            st.session_state.show_station_bouton = False
+
+    propriete = recup_df("PropertyCategory.csv")
+
+    if st.session_state.show_type_choix:
+        type_incident = propriete["PropertyCategory"].unique().tolist()
+        choix_type = st.selectbox("Choisir une station", type_incident)
+
+        # Affichage de la station choisie
+        st.write(f"Type incident : {choix_type}")
+
+        if st.button("Valider"):
+            st.session_state.type = choix_type
+            st.session_state.show_type_bouton = False
+            st.session_state.show_type_choix = False
+            if "heure" not in st.session_state:
+                st.session_state.show_heure_bouton = True
+            if "lat" not in st.session_state:
+                st.session_state.show_position_bouton = True
+            elif "station_dep" not in st.session_state:
+                st.session_state.show_station_bouton = True
+
+
 
 
 def prediction():
 
     st.title("Prédiction avec le Gradient Boosting")
     st.subheader("Choix des paramètre de l'incident")
-    station_df = recup_df("FireStationInfo_2.csv",";")
     
     # Paramétrisation de tous les bouton
     # Paramétrisation de tous les bouton
@@ -192,8 +219,8 @@ def prediction():
     
     # Bouton pour choisir une caserne
     if "lat" in st.session_state:
-        st.session_state.show_station_bouton = True
-        choix_station()
+        if st.session_state.show_station_bouton:
+            choix_station()
 
     # Bouton choix du type d'incident
     if "show_type_bouton" in st.session_state:
@@ -214,8 +241,17 @@ def prediction():
         st.write(f"Arrondissement de la caserne deployée : {st.session_state.arrondissement_dep}")
     if "station_dep" in st.session_state:
         st.write(f"Station déployée : {st.session_state.station_dep}")
+    if "type" in st.session_state:
+        st.write(f"Type d'incidident : {st.session_state.type}")
 
-    if st.button("Valider parametre incident"):
-        st.session_state.show_all = False
+
+    valide = "heure" in st.session_state and "arrondissement" in st.session_state and "station_dep" in st.session_state
+    valide = valide and "type" in st.session_state
+    if valide :
+        if st.button("Valider parametre incident"):
+            st.session_state.show_all = False
+        if st.button("Recommencer choix des paramètre"):
+            st.session_state.clear()
+            st.rerun()
 
     
