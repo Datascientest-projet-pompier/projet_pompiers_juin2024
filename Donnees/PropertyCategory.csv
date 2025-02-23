@@ -1,0 +1,293 @@
+PropertyCategory,PropertyType,count
+Aircraft,Passenger plane ,1130
+Aircraft,Other aircraft,37
+Aircraft,Light aircraft ,29
+Aircraft,Helicopter ,19
+Aircraft,Freight plane ,11
+Aircraft,Military helicopter ,2
+Aircraft,Military plane ,1
+Boat,Barge ,408
+Boat,Other vessel ,284
+Boat,Motor yacht ,129
+Boat,Large passenger vessel ,85
+Boat,Fishing boat ,15
+Boat,Other merchant vessel ,11
+Boat,Naval vessel ,8
+Boat,Boat - Tanker,7
+Dwelling,Purpose Built Flats/Maisonettes - 4 to 9 storeys ,220751
+Dwelling,House - single occupancy ,197872
+Dwelling,Purpose Built Flats/Maisonettes - Up to 3 storeys ,168412
+Dwelling,Self contained Sheltered Housing ,86905
+Dwelling,Purpose Built Flats/Maisonettes - 10 or more storeys ,64344
+Dwelling,Converted Flat/Maisonettes - 3 or more storeys,58515
+Dwelling,Converted Flat/Maisonette - Up to 2 storeys ,50080
+Dwelling,Licensed House in Multiple Occupation - Up to 2 storeys ,5191
+Dwelling,Licensed House in Multiple Occupation - 3 or more storeys ,4125
+Dwelling,Bungalow - single occupancy ,3662
+Dwelling,False Alarm - Property not found,2801
+Dwelling,House in Multiple Occupation - Up to 2 storeys (not known if licensed) ,1746
+Dwelling,House in Multiple Occupation - 3 or more storeys (not known if licensed),1343
+Dwelling,Other Dwelling ,1215
+Dwelling,Unlicensed House in Multiple Occupation - Up to 2 storeys ,1020
+Dwelling,Unlicensed House in Multiple Occupation - 3 or more storeys ,641
+Dwelling,Tenement Building ,392
+Dwelling,Caravan/Mobile home (permanent dwelling),225
+Dwelling,Houseboat (permanent dwelling) ,194
+Dwelling,Stately Home (part not open to public),147
+Dwelling,Royal Palace (part not open to public),72
+Dwelling,Castle (part not open to public),3
+Non Residential,Purpose built office ,61170
+Non Residential,Single shop ,41075
+Non Residential,Hospital ,33745
+Non Residential,Infant/Primary school,21522
+Non Residential,Restaurant/cafe,14403
+Non Residential,Secondary school,14393
+Non Residential,College/University ,12756
+Non Residential,Large supermarket ,12319
+Non Residential,Warehouse ,11488
+Non Residential,Converted office ,9565
+Non Residential,Pub/wine bar/bar ,9459
+Non Residential,Medical/health centre,6254
+Non Residential,Shopping Centre ,5718
+Non Residential,Leisure Centre ,5175
+Non Residential,Gym ,4595
+Non Residential,Pre School/nursery ,4552
+Non Residential,Takeaway/ fast food ,4192
+Non Residential,Fire station ,4104
+Non Residential,Community centre/Hall ,3968
+Non Residential,Airport - terminal ,3923
+Non Residential,Other medical establishment (including surgery) ,3882
+Non Residential,Private Garden Shed ,3480
+Non Residential,Factory ,3385
+Non Residential,Church/Chapel ,3294
+Non Residential,Department Store ,3134
+Non Residential,Library ,3099
+Non Residential,Private garage ,2999
+Non Residential,Police station ,2875
+Non Residential,Other education establishment,2645
+Non Residential,Club/night club ,2613
+Non Residential,Train station - platform (below ground) ,2605
+Non Residential,Bank/Building Society ,2602
+Non Residential,Other building/use not known ,2325
+Non Residential,Theatre ,2285
+Non Residential,Food and drink processing,2219
+Non Residential,Cinema ,2208
+Non Residential,Other retail warehouse ,2150
+Non Residential,DIY Warehouse ,2114
+Non Residential,Other retail  ,2013
+Non Residential,Sports/Social club ,1991
+Non Residential,Petrol station ,1964
+Non Residential,Multi-Storey car park,1848
+Non Residential,Museum ,1848
+Non Residential,Local Government Office,1703
+Non Residential,TV/film/music/art studio ,1703
+Non Residential,Doctors surgery,1659
+Non Residential,Prison ,1659
+Non Residential,Vehicle Repair Workshop,1642
+Non Residential,Train station - platform (at ground level or elevated) ,1580
+Non Residential,Other bulk storage,1518
+Non Residential,Underground car park,1471
+Non Residential,Telephone exchange,1389
+Non Residential,Art Gallery ,1281
+Non Residential,Train station - elsewhere ,1280
+Non Residential,Central Government Office,1250
+Non Residential,Sports pavilion/shower block/changing facility ,1241
+Non Residential,Other private non-residential building ,1223
+Non Residential,Town Hall ,1207
+Non Residential,Bus/coach station/garage ,1189
+Non Residential,Train station - concourse ,1187
+Non Residential,Other entertainment venue ,1172
+Non Residential,Other office/call centre type building,1165
+Non Residential,Airport building (not terminal or hangar) ,1163
+Non Residential,Law Courts ,1048
+Non Residential,Recycling plant,988
+Non Residential,Football stadium ,982
+Non Residential,Other industrial manufacturing facility,966
+Non Residential,Day care/Drop in centre,932
+Non Residential,Call Centre ,928
+Non Residential,Hairdresser ,921
+Non Residential,Other public building ,908
+Non Residential,Engineering manufacturing plant,858
+Non Residential,Laboratory/research Establishment ,836
+Non Residential,Other industrial processing plant,805
+Non Residential,Other car park structure,794
+Non Residential,Laundrette ,782
+Non Residential,Other public utility works,718
+Non Residential,Dental surgery,713
+Non Residential,Furniture warehouse ,712
+Non Residential,Health Centre ,704
+Non Residential,Sports Hall ,662
+Non Residential,Printing works,660
+Non Residential,Electrical warehouse ,630
+Non Residential,Public toilets ,625
+Non Residential,Swimming Pool ,611
+Non Residential,Electricity power station ,599
+Non Residential,Exhibition Centre ,599
+Non Residential,Other cultural venue ,558
+Non Residential,Other Religious Use Building,553
+Non Residential,Railway building - other,511
+Non Residential,Post office (purpose built) ,484
+Non Residential,Synagogue ,434
+Non Residential,Water works ,409
+Non Residential,Bingo Hall ,404
+Non Residential,Vehicle sales building,403
+Non Residential,Manufacturing assembly plant,380
+Non Residential,Other indoor sporting venue ,379
+Non Residential,Other outdoor sporting venue ,378
+Non Residential,Golf clubhouse,376
+Non Residential,Temporary office (eg portacabin) ,376
+Non Residential,Estate Agent ,375
+Non Residential,Bakery,372
+Non Residential,Other transport building ,368
+Non Residential,Indoor Market ,351
+Non Residential,Casino ,321
+Non Residential,Tennis Courts ,314
+Non Residential,Conference Centre ,307
+Non Residential,Mosque ,275
+Non Residential,Concert Hall ,253
+Non Residential,Chemical plant,252
+Non Residential,Young offenders unit ,249
+Non Residential,Airport - hangar ,240
+Non Residential,Veterinary surgery,235
+Non Residential,Health spa/farm,228
+Non Residential,Other animal boarding/breeding establishment,221
+Non Residential,Bulk waste storage,196
+Non Residential,Private Summer house ,196
+Non Residential,Mill ,178
+Non Residential,Distillery plant,176
+Non Residential,Animal products processing plant,174
+Non Residential,Sewage works ,166
+Non Residential,Post office (within other shop/premises) ,165
+Non Residential,Cathedral ,161
+Non Residential,Temple ,157
+Non Residential,Athletics Stadium ,152
+Non Residential,Greyhound stadium ,131
+Non Residential,Ministry of Defence office,127
+Non Residential,Ambulance station ,125
+Non Residential,Cricket ground ,122
+Non Residential,Rugby Stadium ,120
+Non Residential,Barn ,103
+Non Residential,Ice rink ,101
+Non Residential,Gas works ,92
+Non Residential,Bulk oil storage,90
+Non Residential,Travel Agent ,87
+Non Residential,Bulk hazardous materials storage,65
+Non Residential,Indoor stadium ,65
+Non Residential,Other agricultural building ,64
+Non Residential,Trains - engine shed ,63
+Non Residential,Theme Park ,61
+Non Residential,Animal boarding/breeding establishment - dogs,50
+Non Residential,Bulk gas storage,49
+Non Residential,Private greenhouse ,48
+Non Residential,Zoo ,36
+Non Residential,Intensive Farming Sheds (chickens/ pigs etc) ,33
+Non Residential,Oil refinery ,19
+Non Residential,Ferry terminal ,17
+Non Residential,Animal boarding/breeding establishment - cats,16
+Non Residential,Docks ,16
+Non Residential,Tractor Shed ,16
+Non Residential,Airport - fuel storage ,14
+Non Residential,Greenhouse (commercial) glass ,13
+Non Residential,Mine or quarry building above ground,12
+Non Residential,Motor racing circuit ,5
+Non Residential,Greenhouse (commercial) polytunnel ,3
+Non Residential,Milking Parlour ,3
+Non Residential,Racecourse ,2
+Non Residential,Silo ,1
+Other Residential,Retirement/Old Persons Home,31331
+Other Residential,Hostel (e.g. for homeless people) ,17573
+Other Residential,Nursing/Care Home/Hospice,16508
+Other Residential,Hotel/motel ,15299
+Other Residential,Student Hall of Residence ,11850
+Other Residential,Boarding House/B&B for homeless/asylum seekers ,2804
+Other Residential,Nurses'/Doctors' accommodation ,2776
+Other Residential,Other Residential Home ,1778
+Other Residential,Sheltered Housing : not self contained ,1741
+Other Residential,Youth hostel ,1499
+Other Residential,Children's Home,553
+Other Residential,Boarding House/B&B other ,433
+Other Residential,Boarding School accommodation ,333
+Other Residential,Monastery/convent ,124
+Other Residential,Military/barracks ,95
+Other Residential,Towing caravan/Camper van on site,60
+Other Residential,Other holiday residence (cottage/ flat/ chalet) ,38
+Outdoor,Road surface/pavement ,28130
+Outdoor,Loose refuse ,27528
+Outdoor,Domestic garden (vegetation not equipment) ,22969
+Outdoor,Tree scrub ,14845
+Outdoor,Park ,12280
+Outdoor,Grassland/ pasture/ grazing etc ,6095
+Outdoor,Scrub land ,4379
+Outdoor,Other outdoor location ,4251
+Outdoor,Hedge,4144
+Outdoor,Cycle path/public footpath/bridleway ,3496
+Outdoor,Wasteland ,3319
+Outdoor,Playground/Recreation area (not equipment),2555
+Outdoor,Roadside vegetation ,2427
+Outdoor,River/canal ,2426
+Outdoor,Heathland ,2401
+Outdoor,Railway ,1101
+Outdoor,Woodland/forest - broadleaf/hardwood ,1085
+Outdoor,Woodland/forest - conifers/softwood ,1068
+Outdoor,Railway trackside vegetation ,953
+Outdoor,Cemetery ,885
+Outdoor,Canal/riverbank vegetation ,812
+Outdoor,Straw/stubble burning ,717
+Outdoor,Human harm outdoors,687
+Outdoor,Lake/pond/reservoir ,551
+Outdoor,Animal harm outdoors,454
+Outdoor,Landfill site ,333
+Outdoor,Golf course (not building on course),262
+Outdoor,Nurseries/ market garden ,161
+Outdoor,Stacked/baled crop ,129
+Outdoor,Standing crop ,122
+Outdoor,Airfield/runway ,107
+Outdoor,Beach ,62
+Outdoor,Mine or quarry (not above ground building),14
+Outdoor,Sea ,5
+Outdoor Structure,Small refuse/rubbish container,45346
+Outdoor Structure,Large refuse/rubbish container (eg skip/ paladin),13637
+Outdoor Structure,Wheelie bin (domestic size),5925
+Outdoor Structure,Refuse/rubbish tip ,5298
+Outdoor Structure,Common external bin storage area,4614
+Outdoor Structure,Fence,3685
+Outdoor Structure,Other outdoor structures ,3331
+Outdoor Structure,Roadside furniture (eg lamp posts/ road signs/ telegraph poles/ speed cameras),2635
+Outdoor Structure,Outdoor storage ,2282
+Outdoor Structure,Other outdoor equipment/machinery ,1661
+Outdoor Structure,Barbecue,1625
+Outdoor Structure,Bridge,1566
+Outdoor Structure,Cables ,1479
+Outdoor Structure,Railings,1243
+Outdoor Structure,Pipe or drain ,1067
+Outdoor Structure,Garden equipment ,728
+Outdoor Structure,Post box ,491
+Outdoor Structure,Tunnel/ subway ,487
+Outdoor Structure,Telephone box ,414
+Outdoor Structure,Recycling collection point/ bottle bank,344
+Outdoor Structure,Shelter ,312
+Outdoor Structure,Other tent/marquee ,106
+Outdoor Structure,Camping tent ,94
+Outdoor Structure,Kiosk ,92
+Outdoor Structure,Railway goods yard ,85
+Outdoor Structure,Agricultural equipment ,40
+Rail Vehicle,Train on Tube network,687
+Rail Vehicle,Passenger Train (national rail network) ,478
+Rail Vehicle,Underground train : Other system ,247
+Rail Vehicle,Tram ,21
+Rail Vehicle,Freight Train ,20
+Road Vehicle,Car ,79566
+Road Vehicle,Multiple Vehicles ,19313
+Road Vehicle,Motorcycle ,10671
+Road Vehicle,Van ,7055
+Road Vehicle,Bus/coach ,4602
+Road Vehicle,Lorry/HGV ,3180
+Road Vehicle,Other road vehicle,1685
+Road Vehicle,Bicycle,963
+Road Vehicle,Motor Home ,190
+Road Vehicle,Towing caravan (not on tow or on site),185
+Road Vehicle,Minibus ,177
+Road Vehicle,Agricultural vehicle,155
+Road Vehicle,Caravan on tow ,119
+Road Vehicle,Trailer (not attached to tractor unit),113
+Road Vehicle,Road Tanker ,77
