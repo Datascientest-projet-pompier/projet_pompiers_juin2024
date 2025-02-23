@@ -59,4 +59,12 @@ def main():
     )
 
 if __name__ == "__main__":
+    import joblib
+
+    try:
+        filename = 'Donnees/gradient_boosting_model2.joblib'
+        gb_model2 = joblib.load(filename)
+        st.write("Modèle chargé avec succès.")
+    except Exception as e:
+        st.write(f"Erreur lors du chargement du modèle : {e}")
     main()

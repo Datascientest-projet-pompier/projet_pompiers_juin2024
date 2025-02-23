@@ -5,6 +5,9 @@ from pyproj import Geod
 import pandas as pd
 import numpy as np
 import pickle
+import joblib
+import sklearn
+import lime
 
 from fonctions import recup_df
 
@@ -127,8 +130,11 @@ def choix_station():
         st.session_state.arrondissement = arrondissement
         st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
-        st.session_state.ratio = ratio
         # Standardisation du ratio
+        scaler = charger_model('Donnees/tranfo_ratio.pkl')
+        ratio_standardisee = np.array(ratio).reshape(-1,1)
+        ratio_standardisee = scaler.transform(ratio_standardisee)
+        st.session_state.ratioSC = ratio_standardisee
 
         st.write(f"Caserne responsable : {station_resp}.")
 
@@ -288,15 +294,37 @@ def prediction():
     st.subheader("Prédiction avec les données de l'incident")
     if "valid_pred" in st.session_state:
         if st.session_state.valid_pred:
+            
+            # Charger les noms de colonnes
+            list_col = recup_df("list_col.csv")
+            noms_colonnes = list_col.columns.tolist()
 
-            #Creation de la liste incident
-            incident = [st.session_state.heure,
-                        st.session_state.arrondissement,
-                        st.session_state.inner,
-                        st.session_state.ratio,
-                        st.session_state.stat_resp_rep,
-                        st.session_state.Bor_inc_rep,
-                        st.session_state.Bor_inc_rep,
-                        st.session_state.type,
-                        st.session_state.distancestd]
-            st.write(incident)
+            # Créer un tableau NumPy de zéros
+            zeros = np.zeros((1, len(noms_colonnes)))
+
+            # Créer le DataFrame
+            df = pd.DataFrame(zeros, columns=noms_colonnes)
+
+            # Mise a jour dataframe
+            df["inner"] = st.session_state.inner
+            df["Bor_inc_rep"] = st.session_state.Bor_inc_rep
+            df["Bor_resp_rec"]= st.session_state.Bor_inc_rep
+            df["Stat_resp_rec"]= st.session_state.Bor_inc_rep
+            if st.session_state.heure <= 6 and st.session_state.heure >= 2:
+                df["H26"] = 1
+            elif st.session_state.heure <= 17 and st.session_state.heure >= 11:
+                df["H1117"] = 1
+            nom_col_type = "PropCat_" + st.session_state.type
+            df[nom_col_type] = 1
+            nom_col_arrondissement = "Borough_" + st.session_state.arrondissement_code
+            df[nom_col_arrondissement] = 1
+            df["distanceStd"] = st.session_state.distancestd
+            df["ratioStd"] = st.session_state.ratioSC
+            df.to_csv('Donnees/df_pred.csv', index=False)
+            
+            st.write(sklearn.__version__)
+            
+            filename = 'Donnees/gradient_boosting_model2.joblib'
+            gb_model2 = joblib.load(filename)
+            prediction = gb_model2.predict(df)
+            st.write(prediction)
