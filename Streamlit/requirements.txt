@@ -4,3 +4,4 @@ pandas
 streamlit-folium
 streamlit-modal
 scikit-learn
+pyproj
