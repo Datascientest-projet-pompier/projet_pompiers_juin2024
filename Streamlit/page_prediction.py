@@ -8,18 +8,27 @@ import numpy as np
 from fonctions import recup_df
 
 def choix_heure():
-    if st.session_state.show_heure_bouton:  # Afficher le bouton seulement si show_heure_bouton est True
-        if st.button("Choix de l'heure de l'incident") and st.session_state.show_all:
+    if st.session_state.show_heure_bouton:
+        if st.button("Choix de l'heure de l'incident"):
             st.session_state.show_heure_choix = True
+            st.session_state.show_position_bouton = False
+            st.session_state.show_caserne_bouton = False
+            st.session_state.show_type_bouton = False
 
     if st.session_state.show_heure_choix:
-        heure_choisie = st.slider("Choisir une heure", 0, 23, 12)  # 0-23 heures, valeur initiale 12
-        st.session_state.heure = heure_choisie
+        st.write(st.session_state.show_heure_choix)
+        heure_choisie = st.number_input("Choisir une heure (0-23)", min_value=0, max_value=23, value=12, step=1)
 
-    if "heure" in st.session_state and st.session_state.show_heure_choix:
         if st.button("Valider"):
-            st.session_state.show_heure_choix = False  # Cache le slide
-            st.session_state.show_heure_bouton = False  # Cacher le bouton
+            st.session_state.heure = heure_choisie
+            st.session_state.show_heure_choix  = False
+            st.session_state.show_heure_bouton = False
+            if "lat" not in st.session_state:
+                st.session_state.show_position_bouton = True
+            else :
+                st.session_state.show_caserne_bouton = True
+            if "type" not in st.session_state:
+                st.session_state.show_type_bouton = True
 
 
 def choix_lat_long():
@@ -27,14 +36,12 @@ def choix_lat_long():
         st.session_state.map_visible = False
     if "coords_selected" not in st.session_state:
         st.session_state.coords_selected = False
-    if "lat" not in st.session_state:
-        st.session_state.lat = None
-    if "lng" not in st.session_state:
-        st.session_state.lng = None
 
     # Bouton pour afficher la carte
     if st.session_state.show_position_bouton:
         if st.button("Choix de la position") and st.session_state.show_all:
+            st.session_state.show_heure_bouton = False
+            st.session_state.show_type_bouton = False
             st.session_state.map_visible = True
             st.session_state.coords_selected = False
 
@@ -58,6 +65,11 @@ def choix_lat_long():
         # Bouton pour fermer la carte après sélection
         if st.session_state.coords_selected:
             if st.button("Fermer la carte"):
+                if "heure" not in st.session_state:
+                    st.session_state.show_heure_bouton = True
+                if "type" not in st.session_state:
+                    st.session_state.show_type_bouton = True
+                st.session_state.show_caserne_bouton = True
                 st.session_state.map_visible = False
                 st.session_state.show_position_bouton = False
 
@@ -96,8 +108,10 @@ def trouver_station_proche(lat, lng, station_df):
 
 def choix_station():
     if st.session_state.show_station_bouton:  # Afficher le bouton seulement si show_heure_bouton est True
-        if st.button("Choix de la station intervenant pour l'incident") and st.session_state.show_all:
+        if st.button("Choix de la station intervenant pour l'incident"):
             st.session_state.show_station_choix = True
+            st.session_state.show_heure_bouton = False
+            st.session_state.show_type_bouton = False
         
         station_df = recup_df("FireStationInfo_2.csv",";")
 
@@ -130,6 +144,10 @@ def choix_station():
         if st.button("Valider"):
             st.session_state.show_station_bouton = False
             st.session_state.show_station_choix = False
+            if "heure" not in st.session_state:
+                st.session_state.show_heure_bouton = True
+            if "type" not in st.session_state:
+                st.session_state.show_type_bouton = True
 
 def choix_type():
     if st.session_state.show_type_bouton:  # Afficher le bouton seulement si show_type_bouton est True
@@ -138,40 +156,49 @@ def choix_type():
 
 
 def prediction():
-    
-    st.session_state.show_all = True
-    
-    
-    station_df = recup_df("FireStationInfo_2.csv",";")
-    st.title("Prédiction avec le Gradient Boosting")
 
+    st.title("Prédiction avec le Gradient Boosting")
     st.subheader("Choix des paramètre de l'incident")
+    station_df = recup_df("FireStationInfo_2.csv",";")
+    
+    # Paramétrisation de tous les bouton
+    # Paramétrisation de tous les bouton
+    if "show" not in st.session_state:
+        st.session_state.show = True
+
+    if st.session_state.show:
+        if st.button("Définir les paramètres de l'incident") and st.session_state.show:
+            #st.session_state.clear()
+            st.session_state.show_all = True
+            st.session_state.show_heure_bouton = True
+            st.session_state.show_heure_choix = False
+            st.session_state.show_position_bouton = True
+            st.session_state.show_position_choix = False
+            st.session_state.show_station_bouton = False
+            st.session_state.show_station_choix = False
+            st.session_state.show_type_bouton = True
+            st.session_state.show_type_choix = False
+            st.session_state.show = False
 
     # Heure de l'incident
-    if "show_heure_bouton" not in st.session_state:
-        st.session_state.show_heure_bouton = True
-    if "show_heure_choix" not in st.session_state:
-        st.session_state.show_heure_choix = False
-    choix_heure()
+    if "show_heure_bouton" in st.session_state:
+        if st.session_state.show_heure_bouton:
+            choix_heure()
     
     # Choix de la position
-    if "show_position_bouton" not in st.session_state:
-        st.session_state.show_position_bouton = True
-        st.session_state.show_station_bouton = False
-    choix_lat_long()
+    if "show_position_bouton" in st.session_state:
+        if st.session_state.show_position_bouton:
+            choix_lat_long()
     
     # Bouton pour choisir une caserne
     if "lat" in st.session_state:
         st.session_state.show_station_bouton = True
-    if "show_station_choix" not in st.session_state:
-        st.session_state.show_station_choix = False
-
-    choix_station()
+        choix_station()
 
     # Bouton choix du type d'incident
-    if "show_type_bouton" not in st.session_state:
-        st.session_state.show_type_bouton = True
-    choix_type()
+    if "show_type_bouton" in st.session_state:
+        if st.session_state.show_type_bouton:
+            choix_type()
     
 
 
@@ -188,7 +215,7 @@ def prediction():
     if "station_dep" in st.session_state:
         st.write(f"Station déployée : {st.session_state.station_dep}")
 
-    if st.button("Valider"):
+    if st.button("Valider parametre incident"):
         st.session_state.show_all = False
 
     
