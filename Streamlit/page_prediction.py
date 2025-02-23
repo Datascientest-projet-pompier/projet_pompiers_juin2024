@@ -4,6 +4,8 @@ from streamlit_folium import st_folium
 from pyproj import Geod
 import pandas as pd
 import numpy as np
+import pickle
+from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
 
 from fonctions import recup_df
 
@@ -119,7 +121,7 @@ def choix_station():
         station_proche = trouver_station_proche(lat, lng, station_df)
         station_resp = station_proche.iloc[0]["Station name"]
         arrondissement = station_proche.iloc[0]["BoroughName"]
-        inner = station_proche.iloc[0]["inner"]
+        inner = station_proche.iloc[0]["inner london"]
         ratio = station_proche.iloc[0]["ratio"]
         st.session_state.station_resp = station_resp
         st.session_state.arrondissement = arrondissement
@@ -140,9 +142,22 @@ def choix_station():
             distance = df_info["Distance"].values[0]
             station_dep = df_info["Station name"].values[0]
             arrondissement_dep = df_info["BoroughName"].values[0]
-            st.session_state.distance = distance
             st.session_state.station_dep = station_dep
             st.session_state.arrondissement_dep = arrondissement_dep
+            # Standardisation de la distance
+            scaler = charger_model('Donnees/tranfo_distance.pkl')
+            distance_standardisee = scaler.transform(distance)
+            st.session_state.distancestd = distance_standardisee
+            # Construction stat_resp_rep
+            if station_resp == station_dep :
+                st.session_state.stat_resp_rep = 1
+            else : 
+                st.session_state.stat_resp_rep = 0
+            # COnstruction Bor_inc_rep
+            if arrondissement == arrondissement_dep :
+                st.session_state.Bor_inc_rep = 1
+            else :
+                st.session_state.Bor_inc_rep = 0
 
         if st.button("Valider"):
             st.session_state.show_station_bouton = False
@@ -181,9 +196,19 @@ def choix_type():
                 st.session_state.show_station_bouton = True
 
 
+def charger_model(chemin_fichier):
+    try:
+        with open(chemin_fichier, 'rb') as fichier_scaler:
+            scaler_charge = pickle.load(fichier_scaler)
+        return scaler_charge
+    except FileNotFoundError:
+        st.error("Fichier scaler non trouvé.")
+        return None
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du scaler : {e}")
+        return None
 
-
-def prediction():
+def param_incident():
 
     st.title("Prédiction avec le Gradient Boosting")
     st.subheader("Choix des paramètre de l'incident")
@@ -250,8 +275,25 @@ def prediction():
     if valide :
         if st.button("Valider parametre incident"):
             st.session_state.show_all = False
+            st.session_state.valid_pred = True
         if st.button("Recommencer choix des paramètre"):
             st.session_state.clear()
             st.rerun()
 
-    
+def prediction():
+    param_incident()
+    st.subheader("Prédiction avec les données de l'incident")
+    if "valid_pred" in st.session_state:
+        if st.session_state.valid_pred:
+
+            #Creation de la liste incident
+            incident = [st.session_state.heure,
+                        st.session_state.arrondissement,
+                        st.session_state.inner,
+                        st.session_state.ratio,
+                        st.session_state.stat_resp_rep,
+                        st.session_state.Bor_inc_rep,
+                        st.session_state.Bor_inc_rep,
+                        st.session_state.type,
+                        st.session_state.distancestd]
+            st.write(incident)
