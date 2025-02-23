@@ -320,11 +320,11 @@ def prediction():
             df[nom_col_arrondissement] = 1
             df["distanceStd"] = st.session_state.distancestd
             df["ratioStd"] = st.session_state.ratioSC
-            df.to_csv('Donnees/df_pred.csv', index=False)
+            #df.to_csv('Donnees/df_pred.csv', index=False)
             
-            st.write(sklearn.__version__)
+            st.write(df)
             
-            filename = 'Donnees/gradient_boosting_model2.joblib'
-            gb_model2 = joblib.load(filename)
-            prediction = gb_model2.predict(df)
-            st.write(prediction)
+            #filename = 'Donnees/gradient_boosting_model2.joblib'
+            #gb_model2 = joblib.load(filename)
+            #prediction = gb_model2.predict(df)
+            #st.write(prediction)
