@@ -3,6 +3,9 @@ folium
 pandas
 streamlit-folium
 streamlit-modal
-scikit-learn
 pyproj
 lime
+sklearn
+cloudpickle
+numpy==1.17.3
+scikit-learn==1.6.1

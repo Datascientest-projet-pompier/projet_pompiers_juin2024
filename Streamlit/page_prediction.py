@@ -5,9 +5,10 @@ from pyproj import Geod
 import pandas as pd
 import numpy as np
 import pickle
-import joblib
-import sklearn
-import lime
+import cloudpickle
+#import joblib
+#import sklearn
+#import lime
 
 from fonctions import recup_df
 
@@ -130,10 +131,12 @@ def choix_station():
         st.session_state.arrondissement = arrondissement
         st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
+
+        
         # Standardisation du ratio
         scaler = charger_model('Donnees/tranfo_ratio.pkl')
-        ratio_standardisee = np.array(ratio).reshape(-1,1)
-        ratio_standardisee = scaler.transform(ratio_standardisee)
+        #ratio_standardisee = np.array(ratio).reshape(-1,1)
+        ratio_standardisee = scaler.transform(ratio)
         st.session_state.ratioSC = ratio_standardisee
 
         st.write(f"Caserne responsable : {station_resp}.")
@@ -204,16 +207,29 @@ def choix_type():
             elif "station_dep" not in st.session_state:
                 st.session_state.show_station_bouton = True
 
-def charger_model(chemin_fichier):
+def charger_model2(chemin_fichier):
     try:
         with open(chemin_fichier, 'rb') as fichier_scaler:
             scaler_charge = pickle.load(fichier_scaler)
+        st.write("chargement réussi")
         return scaler_charge
     except FileNotFoundError:
         st.error("Fichier scaler non trouvé.")
         return None
     except Exception as e:
         st.error(f"Erreur lors du chargement du scaler : {e}")
+        return None
+
+def charger_model(filename):
+    try:
+        with open(filename, 'rb') as f:
+            model = cloudpickle.load(f)
+        return model
+    except FileNotFoundError:
+        st.error(f"Fichier modèle non trouvé à : {filename}")
+        return None
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle : {e}")
         return None
 
 def param_incident():
@@ -335,7 +351,10 @@ def prediction():
             
             st.write(df)
             
-            #filename = 'Donnees/gradient_boosting_model2.joblib'
-            #gb_model2 = joblib.load(filename)
-            #prediction = gb_model2.predict(df)
-            #st.write(prediction)
+            filename = 'Donnees/gradient_boosting_model2v2.joblib'
+            gb_model2 = joblib.load(filename)
+            filename = 'Donnees/explainer_lime.pkl'
+            explainer_lime = charger_model(filename)
+            if explainer_lime:
+                explanation = explainer_lime.explain_instance(df.iloc[0], gb_model2.predict_proba)
+                st.write(explanation)
