@@ -86,32 +86,6 @@ def choix_lat_long():
                 st.session_state.map_visible = False
                 st.session_state.show_position_bouton = False
 
-def calcul_dist2(lat1, lon1, lat2, lon2):
-    """
-    Calcule la distance en mètres entre deux points géographiques.
-    """
-    geod = Geod(ellps='WGS84')
-    _, _, distance = geod.inv(lon1, lat1, lon2, lat2)
-    return np.round(distance, 3)
-
-def calcul_dist3(lat1, lon1, lat2, lon2):
-    """
-    Calcule la distance en mètres entre deux points géographiques en utilisant geopandas.
-    """
-    # Créer des GeoSeries à partir des coordonnées
-    point1 = gpd.GeoSeries([Point(lon1, lat1)], crs="EPSG:4326")
-    point2 = gpd.GeoSeries([Point(lon2, lat2)], crs="EPSG:4326")
-
-    # Transformer les GeoSeries en un système de coordonnées projetées (par exemple, UTM)
-    # Choisissez une zone UTM appropriée pour votre région
-    point1_utm = point1.to_crs(point1.estimate_utm_crs())
-    point2_utm = point2.to_crs(point2.estimate_utm_crs())
-
-    # Calculer la distance
-    distance = point1_utm.distance(point2_utm).iloc[0]
-
-    return np.round(distance, 3)
-
 def calcul_dist(lat1, lon1, lat2, lon2):
     """
     Calcule la distance en mètres entre deux points géographiques en utilisant geographiclib.
@@ -170,7 +144,7 @@ def choix_station():
         st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
         # Standardisation du ratio
-        st.session_state.ratioSC = standardisation('Donnees/tranfo_ratio.pkl',ratio)
+        st.session_state.ratioSC = standardisation('Donnees/tranfo_ratio.pkl',ratio,"ratio")
 
         st.write(f"Caserne responsable : {station_resp}.")
 
@@ -189,7 +163,7 @@ def choix_station():
             st.session_state.station_dep = station_dep
             st.session_state.arrondissement_dep = arrondissement_dep
             # Standardisation de la distance
-            st.session_state.distancestd = standardisation('Donnees/tranfo_distance.pkl',distance)
+            st.session_state.distancestd = standardisation('Donnees/tranfo_distance.pkl',distance,"ditance")
             # Construction stat_resp_rep
             if station_resp == station_dep :
                 st.session_state.stat_resp_rep = 1
@@ -249,11 +223,12 @@ def charger_model(chemin_fichier):
         st.error(f"Erreur lors du chargement du scaler : {e}")
         return None
 
-def standardisation(lien,valeur):
+def standardisation(lien,valeur,nom):
     model = charger_model(lien)
+    df = pd.DataFrame({nom: valeur})
     if model is not None:
-        valeur = np.array(valeur).reshape(-1,1)
-        return model.transform(valeur)
+        #valeur = np.array(valeur).reshape(-1,1)
+        return model.transform(df)
     else :
         st.error("Pb avec le model")
 
