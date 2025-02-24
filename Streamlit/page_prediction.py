@@ -5,8 +5,8 @@ from pyproj import Geod
 import pandas as pd
 import numpy as np
 import pickle
+import joblib
 import cloudpickle
-#import joblib
 #import sklearn
 #import lime
 
@@ -40,13 +40,13 @@ def choix_lat_long():
     if "coords_selected" not in st.session_state:
         st.session_state.coords_selected = False
 
-    # Bouton pour afficher la carte
+    # Bouton pour afficher la carte et faire disparaitre tous les autres boutons
     if st.session_state.show_position_bouton:
         if st.button("Choix de la position") and st.session_state.show_all:
             st.session_state.show_heure_bouton = False
             st.session_state.show_type_bouton = False
             st.session_state.map_visible = True
-            st.session_state.coords_selected = False
+            #st.session_state.coords_selected = False
 
     # Affichage de la carte uniquement si l'utilisateur a cliqué sur "Choix de la position"
     if st.session_state.map_visible:
@@ -56,8 +56,16 @@ def choix_lat_long():
         london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
         london_map.add_child(folium.LatLngPopup())
 
+        # Création de la carte Folium
+        london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
+        folium.LatLngPopup().add_to(london_map)  # Assurez-vous que c'est bien ajouté à la carte
+
         # Affichage de la carte
         map_data = st_folium(london_map, width=700, height=500)
+
+        ## Affichage de la carte
+        #map_data = st_folium(london_map, width=700, height=500)
+        #st.write("Données de la carte :", map_data)
 
         # Récupération des coordonnées
         if map_data and "last_clicked" in map_data and map_data["last_clicked"]:
@@ -131,13 +139,8 @@ def choix_station():
         st.session_state.arrondissement = arrondissement
         st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
-
-        
         # Standardisation du ratio
-        scaler = charger_model('Donnees/tranfo_ratio.pkl')
-        #ratio_standardisee = np.array(ratio).reshape(-1,1)
-        ratio_standardisee = scaler.transform(ratio)
-        st.session_state.ratioSC = ratio_standardisee
+        st.session_state.ratioSC = standardisation('Donnees/tranfo_ratio.pkl',ratio)
 
         st.write(f"Caserne responsable : {station_resp}.")
 
@@ -156,10 +159,7 @@ def choix_station():
             st.session_state.station_dep = station_dep
             st.session_state.arrondissement_dep = arrondissement_dep
             # Standardisation de la distance
-            scaler = charger_model('Donnees/tranfo_distance.pkl')
-            distance_standardisee = np.array(distance).reshape(-1,1)
-            distance_standardisee = scaler.transform(distance_standardisee)
-            st.session_state.distancestd = distance_standardisee
+            st.session_state.distancestd = standardisation('Donnees/tranfo_distance.pkl',distance)
             # Construction stat_resp_rep
             if station_resp == station_dep :
                 st.session_state.stat_resp_rep = 1
@@ -207,7 +207,7 @@ def choix_type():
             elif "station_dep" not in st.session_state:
                 st.session_state.show_station_bouton = True
 
-def charger_model2(chemin_fichier):
+def charger_model(chemin_fichier):
     try:
         with open(chemin_fichier, 'rb') as fichier_scaler:
             scaler_charge = pickle.load(fichier_scaler)
@@ -220,17 +220,13 @@ def charger_model2(chemin_fichier):
         st.error(f"Erreur lors du chargement du scaler : {e}")
         return None
 
-def charger_model(filename):
-    try:
-        with open(filename, 'rb') as f:
-            model = cloudpickle.load(f)
-        return model
-    except FileNotFoundError:
-        st.error(f"Fichier modèle non trouvé à : {filename}")
-        return None
-    except Exception as e:
-        st.error(f"Erreur lors du chargement du modèle : {e}")
-        return None
+def standardisation(lien,valeur):
+    model = charger_model(lien)
+    if model is not None:
+        valeur = np.array(valeur).reshape(-1,1)
+        return model.transform(valeur)
+    else :
+        st.error("Pb avec le model")
 
 def param_incident():
 
@@ -352,9 +348,13 @@ def prediction():
             st.write(df)
             
             filename = 'Donnees/gradient_boosting_model2v2.joblib'
+            st.write("chargement gb_model2")
             gb_model2 = joblib.load(filename)
             filename = 'Donnees/explainer_lime.pkl'
-            explainer_lime = charger_model(filename)
+            st.write("chargement explainer")
+            with open(filename, 'rb') as f:
+                explainer_lime = cloudpickle.load(f)
+            #explainer_lime = joblib.load(filename)
             if explainer_lime:
                 explanation = explainer_lime.explain_instance(df.iloc[0], gb_model2.predict_proba)
                 st.write(explanation)

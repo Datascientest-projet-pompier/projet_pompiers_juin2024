@@ -1,6 +1,9 @@
 import streamlit as st
-import streamlit.components.v1 as components
-import pandas as pd
+import numpy as np
+import streamlit as st
+#import pandas as pd
+#import scipy
+#import sklearn
 
 
 from page_intro import page_intro
