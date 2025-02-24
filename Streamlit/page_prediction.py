@@ -1,7 +1,10 @@
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
-from pyproj import Geod
+#from pyproj import Geod
+#import geopandas as gpd
+#from shapely.geometry import Point
+import geographiclib.geodesic as geodesic
 import numpy as np
 import pickle
 import pandas as pd
@@ -83,12 +86,40 @@ def choix_lat_long():
                 st.session_state.map_visible = False
                 st.session_state.show_position_bouton = False
 
-def calcul_dist(lat1, lon1, lat2, lon2):
+def calcul_dist2(lat1, lon1, lat2, lon2):
     """
     Calcule la distance en mètres entre deux points géographiques.
     """
     geod = Geod(ellps='WGS84')
     _, _, distance = geod.inv(lon1, lat1, lon2, lat2)
+    return np.round(distance, 3)
+
+def calcul_dist3(lat1, lon1, lat2, lon2):
+    """
+    Calcule la distance en mètres entre deux points géographiques en utilisant geopandas.
+    """
+    # Créer des GeoSeries à partir des coordonnées
+    point1 = gpd.GeoSeries([Point(lon1, lat1)], crs="EPSG:4326")
+    point2 = gpd.GeoSeries([Point(lon2, lat2)], crs="EPSG:4326")
+
+    # Transformer les GeoSeries en un système de coordonnées projetées (par exemple, UTM)
+    # Choisissez une zone UTM appropriée pour votre région
+    point1_utm = point1.to_crs(point1.estimate_utm_crs())
+    point2_utm = point2.to_crs(point2.estimate_utm_crs())
+
+    # Calculer la distance
+    distance = point1_utm.distance(point2_utm).iloc[0]
+
+    return np.round(distance, 3)
+
+def calcul_dist(lat1, lon1, lat2, lon2):
+    """
+    Calcule la distance en mètres entre deux points géographiques en utilisant geographiclib.
+    """
+    geod = geodesic.Geodesic.WGS84
+    result = geod.Inverse(lat1, lon1, lat2, lon2)
+    distance = result['s12']  # Distance en mètres
+
     return np.round(distance, 3)
 
 def trouver_station_proche(lat, lng, station_df):
