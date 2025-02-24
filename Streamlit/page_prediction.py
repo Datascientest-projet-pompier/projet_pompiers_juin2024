@@ -144,7 +144,7 @@ def choix_station():
         st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
         # Standardisation du ratio
-        st.session_state.ratioSC = standardisation('Donnees/tranfo_ratio.pkl',ratio,"ratio")
+        st.session_state.ratioSC = standardisation('Donnees/tranfo_ratio.pkl',ratio,"ratioSC")
 
         st.write(f"Caserne responsable : {station_resp}.")
 
@@ -223,15 +223,31 @@ def charger_model(chemin_fichier):
         st.error(f"Erreur lors du chargement du scaler : {e}")
         return None
 
-def standardisation(lien,valeur,nom):
+def standardisation2(lien,valeur,nom):
     model = charger_model(lien)
     if not isinstance(valeur, (list, pd.Series)): # Ajout de la vérification
         valeur = [valeur] # Conversion en liste si c'est un scalaire
-    df = pd.DataFrame({nom: valeur})
+    df = pd.DataFrame({nom: valeur}, index=[0])
     if model is not None:
         #valeur = np.array(valeur).reshape(-1,1)
         return model.transform(df)
     else :
+        st.error("Pb avec le model")
+
+def standardisation(lien, valeur, nom):
+    model = charger_model(lien)
+    if not isinstance(valeur, (list, pd.Series)):
+        valeur = [valeur]
+    df = pd.DataFrame({nom: valeur}, index=[0])
+    if nom == "ditance":
+        df.rename(columns={"ditance":"distance"}, inplace = True)
+    if model is not None:
+        try:
+            return model.transform(df)
+        except Exception as e:
+            st.error(f"Erreur lors de la transformation : {e}")
+            return None
+    else:
         st.error("Pb avec le model")
 
 def param_incident():
