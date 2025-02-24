@@ -1,22 +1,18 @@
 # Bibliothèques de base
 numpy
-#==1.24.4
 pandas==2.0.3
 joblib==1.2.0
 
 # Bibliothèques de machine learning
 scikit-learn==1.6.1
-lime #==0.2.0.1
+lime
 cloudpickle==3.1.1
 
 # Bibliothèques pour les cartes et l'interactivité
 folium==0.14.0
-#pyproj==3.6.1 #pyproj==3.4.1
-#streamlit==1.23.0
 streamlit==1.42.2
 streamlit-folium
 streamlit-modal==0.1.0
 
-#geopandas
-#shapely
+# Pour calcul de distance
 geographiclib
