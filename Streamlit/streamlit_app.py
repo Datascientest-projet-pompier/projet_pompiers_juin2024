@@ -1,9 +1,18 @@
 import streamlit as st
-import numpy as np
-import streamlit as st
+#import folium
+#from streamlit_folium import st_folium
+#from pyproj import Geod
 #import pandas as pd
-#import scipy
+#import numpy as np
+#import pickle
+#import joblib
+#import cloudpickle
+#import streamlit.components.v1 as components
+import requests
+from PIL import Image
+from io import BytesIO
 #import sklearn
+#import lime
 
 
 from page_intro import page_intro
@@ -39,11 +48,6 @@ def main():
 
     image_url = "https://s3-eu-west-1.amazonaws.com/tpd/logos/5defb89bc1213200011e72d5/0x0.png"
     #st.image(image_url, width=None) # Affiche l'image à sa taille originale pour obtenir les dimensions.
-
-    # Obtenir les dimensions de l'image (nécessite une requête HTTP)
-    import requests
-    from PIL import Image
-    from io import BytesIO
 
     response = requests.get(image_url)
     img = Image.open(BytesIO(response.content))

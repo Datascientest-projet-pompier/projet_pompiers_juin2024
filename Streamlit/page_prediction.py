@@ -2,13 +2,12 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 from pyproj import Geod
-import pandas as pd
 import numpy as np
 import pickle
+import pandas as pd
 import joblib
 import cloudpickle
-#import sklearn
-#import lime
+import streamlit.components.v1 as components
 
 from fonctions import recup_df
 
@@ -211,7 +210,6 @@ def charger_model(chemin_fichier):
     try:
         with open(chemin_fichier, 'rb') as fichier_scaler:
             scaler_charge = pickle.load(fichier_scaler)
-        st.write("chargement réussi")
         return scaler_charge
     except FileNotFoundError:
         st.error("Fichier scaler non trouvé.")
@@ -348,13 +346,22 @@ def prediction():
             st.write(df)
             
             filename = 'Donnees/gradient_boosting_model2v2.joblib'
-            st.write("chargement gb_model2")
             gb_model2 = joblib.load(filename)
             filename = 'Donnees/explainer_lime.pkl'
-            st.write("chargement explainer")
             with open(filename, 'rb') as f:
                 explainer_lime = cloudpickle.load(f)
             #explainer_lime = joblib.load(filename)
+            #if explainer_lime:
+            #    explanation = explainer_lime.explain_instance(df.iloc[0], gb_model2.predict_proba)
+            #    st.write(explanation)
+
             if explainer_lime:
-                explanation = explainer_lime.explain_instance(df.iloc[0], gb_model2.predict_proba)
-                st.write(explanation)
+                explanation = explainer_lime.explain_instance(df.iloc[0].values, gb_model2.predict_proba)
+
+                # Convertir l'explication en HTML
+                html_explanation = explanation.as_html()
+
+                # Afficher l'explication dans Streamlit
+                components.html(html_explanation,width=None, height=500)  # Ajustez la hauteur selon vos besoins
+            else:
+                st.warning("L'explicateur n'est pas disponible.")

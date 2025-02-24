@@ -1,6 +1,4 @@
 import streamlit as st
-import pandas as pd
-
 
 def page_intro():
     col1, col2, col3 = st.columns([1, 6, 1])
