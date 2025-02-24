@@ -5,7 +5,7 @@ joblib==1.3.2
 
 # Bibliothèques de machine learning
 scikit-learn==1.6.1
-#lime
+lime
 shap>=0.40.0
 cloudpickle==3.1.1
 
