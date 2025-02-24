@@ -225,6 +225,8 @@ def charger_model(chemin_fichier):
 
 def standardisation(lien,valeur,nom):
     model = charger_model(lien)
+    if not isinstance(valeur, (list, pd.Series)): # Ajout de la vérification
+        valeur = [valeur] # Conversion en liste si c'est un scalaire
     df = pd.DataFrame({nom: valeur})
     if model is not None:
         #valeur = np.array(valeur).reshape(-1,1)
