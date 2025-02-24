@@ -11,6 +11,9 @@ import pandas as pd
 import joblib
 import cloudpickle
 import streamlit.components.v1 as components
+import shap
+import tempfile
+import os
 
 from fonctions import recup_df
 
@@ -331,6 +334,74 @@ def validation():
                 st.session_state.boutons_visibles = False  # Masquer les boutons
                 st.rerun()
 
+def afficher_explication_shap(df):
+    filename = 'Donnees/explainer_shap.pkl'
+    try:
+        with open(filename, 'rb') as f:
+            explainer_shap = cloudpickle.load(f)
+
+        if explainer_shap:
+            shap_values = explainer_shap.shap_values(df)
+            shap_values_np = np.array(shap_values[0], dtype=np.float64)
+            instance_np = df.iloc[0].values.astype(np.float64)
+            expected_value = explainer_shap.expected_value[0]
+
+            # Créer le graphique SHAP et le sauvegarder dans un fichier HTML temporaire
+            temp_file = tempfile.NamedTemporaryFile(suffix='.html', delete=False)
+            shap.plots.force(expected_value, shap_values_np, instance_np, matplotlib=False, html_file=temp_file.name)
+            temp_file.close()
+
+            # Lire le contenu du fichier HTML et l'afficher dans Streamlit
+            with open(temp_file.name, 'r', encoding='utf-8') as f:
+                shap_html = f.read()
+            components.html(shap_html, width=None, height=500)
+
+            # Supprimer le fichier temporaire
+            os.unlink(temp_file.name)
+        else:
+            st.warning("L'explicateur SHAP n'est pas disponible.")
+    except FileNotFoundError:
+        st.error(f"Le fichier {filename} n'a pas été trouvé.")
+    except Exception as e:
+        st.error(f"Une erreur s'est produite : {e}")
+
+def afficher_explication_lime(df, gb_model2):
+    """
+    Affiche l'explication LIME pour une instance de DataFrame.
+
+    Args:
+        df (pandas.DataFrame): Le DataFrame contenant l'instance à expliquer.
+        gb_model2: Le modèle Gradient Boosting utilisé pour les prédictions.
+    """
+    filename = 'Donnees/explainer_lime.pkl'
+    try:
+        # Tentative de chargement avec cloudpickle
+        with open(filename, 'rb') as f:
+            explainer_lime = cloudpickle.load(f)
+    except FileNotFoundError:
+        try:
+            # Si cloudpickle échoue, tentative avec joblib
+            explainer_lime = joblib.load(filename)
+        except FileNotFoundError:
+            st.error(f"Le fichier {filename} n'a pas été trouvé.")
+            return
+        except Exception as e:
+            st.error(f"Erreur lors du chargement de l'explainer avec joblib : {e}")
+            return
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'explainer avec cloudpickle : {e}")
+        return
+
+    if explainer_lime:
+        try:
+            explanation = explainer_lime.explain_instance(df.iloc[0].values, gb_model2.predict_proba)
+            html_explanation = explanation.as_html()
+            components.html(html_explanation, width=None, height=500)
+        except Exception as e:
+            st.error(f"Erreur lors de l'explication LIME : {e}")
+    else:
+        st.warning("L'explicateur LIME n'est pas disponible.")
+
 def prediction():
     param_incident()
     st.subheader("Prédiction avec les données de l'incident")
@@ -370,22 +441,16 @@ def prediction():
             st.write(df)
             
             filename = 'Donnees/gradient_boosting_model2v2.joblib'
+            st.write(filename)
             gb_model2 = joblib.load(filename)
-            filename = 'Donnees/explainer_lime.pkl'
-            with open(filename, 'rb') as f:
-                explainer_lime = cloudpickle.load(f)
-            #explainer_lime = joblib.load(filename)
-            #if explainer_lime:
-            #    explanation = explainer_lime.explain_instance(df.iloc[0], gb_model2.predict_proba)
-            #    st.write(explanation)
+            st.write("modele telecharger")
 
-            if explainer_lime:
-                explanation = explainer_lime.explain_instance(df.iloc[0].values, gb_model2.predict_proba)
+            col1, col2 = st.columns(2)  # Utilisation de colonnes pour une meilleure disposition
 
-                # Convertir l'explication en HTML
-                html_explanation = explanation.as_html()
-
-                # Afficher l'explication dans Streamlit
-                components.html(html_explanation,width=None, height=500)  # Ajustez la hauteur selon vos besoins
-            else:
-                st.warning("L'explicateur n'est pas disponible.")
+            if col1.button("Interprétation lime"):
+                afficher_explication_lime(df,gb_model2)
+                
+            if col2.button("Interpretation shap"):
+                afficher_explication_shap(df)
+            
+            
