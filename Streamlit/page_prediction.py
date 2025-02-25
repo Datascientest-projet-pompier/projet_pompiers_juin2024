@@ -385,7 +385,7 @@ def afficher_explication_lime2(df, gb_model2):
     else:
         st.warning("L'explicateur LIME n'est pas disponible.")
 
-def afficher_explication_lime(df, gb_model2):
+def afficher_explication_lime3(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
     try:
         with open(filename, 'rb') as f:
@@ -397,6 +397,23 @@ def afficher_explication_lime(df, gb_model2):
     # Continuez avec l'explication LIME
     explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
     st.components.v1.html(explanation.as_html(), height=800)
+
+def afficher_explication_lime(df, gb_model2):
+    filename = 'Donnees/Modeles/explainer_lime.pkl'
+    try:
+        st.write("Chargement de l'explainer LIME...")
+        with open(filename, 'rb') as f:
+            explainer_lime = cloudpickle.load(f)
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'explainer LIME : {e}")
+        return
+
+    try:
+        st.write("Génération de l'explication LIME...")
+        explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
+        st.components.v1.html(explanation.as_html(), height=800)
+    except Exception as e:
+        st.error(f"Erreur lors de l'explication LIME : {e}")
 
 def prediction():
     param_incident()
