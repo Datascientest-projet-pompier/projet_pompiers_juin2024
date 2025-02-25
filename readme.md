@@ -7,4 +7,6 @@ L’objectif de ce projet est d’estimer **les temps de réponse et de mobilisa
 
 Au vue de la taille du jeu de données l'ensemble des fichier n'ont pas été téléchargé sur ce git. Ils sont accessibles en suivant les liens : [Incident](https://data.london.gov.uk/dataset/london-fire-brigade-incident-records) et [Mobilisation](https://data.london.gov.uk/dataset/london-fire-brigade-mobilisation-records).
 
-Une application Streamlit (en cours de construction) est accessible pour visualiser le travail effectué [Application streamlit](https://projetpompierjuin2024annehaochristelle.streamlit.app/)
+## Ouvrir l'application dans une nouvelle fenêtre
+Une application Streamlit (en cours de construction) est accessible pour visualiser le travail effectué
+[Ouvrir l'application Streamlit dans une nouvelle fenêtre](https://projetpompierjuin2024annehaochristelle.streamlit.app/)
