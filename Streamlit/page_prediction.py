@@ -41,56 +41,6 @@ def choix_heure():
             if "type" not in st.session_state:
                 st.session_state.show_type_bouton = True
 
-def choix_lat_long2():
-    if "map_visible" not in st.session_state:
-        st.session_state.map_visible = False
-    if "coords_selected" not in st.session_state:
-        st.session_state.coords_selected = False
-
-    # Bouton pour afficher la carte et faire disparaitre tous les autres boutons
-    if st.session_state.show_position_bouton:
-        if st.button("Choix de la position") and st.session_state.show_all:
-            st.session_state.show_heure_bouton = False
-            st.session_state.show_type_bouton = False
-            st.session_state.map_visible = True
-            #st.session_state.coords_selected = False
-
-    # Affichage de la carte uniquement si l'utilisateur a cliqué sur "Choix de la position"
-    if st.session_state.map_visible:
-        st.write("Cliquez sur la carte pour sélectionner une position.")
-
-        # Création de la carte Folium
-        london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
-        london_map.add_child(folium.LatLngPopup())
-
-        # Création de la carte Folium
-        london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
-        folium.LatLngPopup().add_to(london_map)  # Assurez-vous que c'est bien ajouté à la carte
-
-        # Affichage de la carte
-        map_data = st_folium(london_map, width=700, height=500)
-
-        ## Affichage de la carte
-        #map_data = st_folium(london_map, width=700, height=500)
-        #st.write("Données de la carte :", map_data)
-
-        # Récupération des coordonnées
-        if map_data and "last_clicked" in map_data and map_data["last_clicked"]:
-            st.session_state.lat = map_data["last_clicked"]["lat"]
-            st.session_state.lng = map_data["last_clicked"]["lng"]
-            st.session_state.coords_selected = True
-
-        # Bouton pour fermer la carte après sélection
-        if st.session_state.coords_selected:
-            if st.button("Fermer la carte"):
-                if "heure" not in st.session_state:
-                    st.session_state.show_heure_bouton = True
-                if "type" not in st.session_state:
-                    st.session_state.show_type_bouton = True
-                st.session_state.show_station_bouton = True
-                st.session_state.map_visible = False
-                st.session_state.show_position_bouton = False
-
 def choix_lat_long():
     if "map_visible" not in st.session_state:
         st.session_state.map_visible = False
@@ -431,44 +381,7 @@ def afficher_explication_shap(df):
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}")
 
-def afficher_explication_lime2(df, gb_model2):
-    """
-    Affiche l'explication LIME pour une instance de DataFrame.
 
-    Args:
-        df (pandas.DataFrame): Le DataFrame contenant l'instance à expliquer.
-        gb_model2: Le modèle Gradient Boosting utilisé pour les prédictions.
-    """
-    filename = 'Donnees/Modeles/explainer_lime.pkl'
-    try:
-        # Tentative de chargement avec cloudpickle
-        with open(filename, 'rb') as f:
-            explainer_lime = cloudpickle.load(f)
-    except FileNotFoundError:
-        try:
-            # Si cloudpickle échoue, tentative avec joblib
-            explainer_lime = joblib.load(filename)
-        except FileNotFoundError:
-            st.error(f"Le fichier {filename} n'a pas été trouvé.")
-            return
-        except Exception as e:
-            st.error(f"Erreur lors du chargement de l'explainer avec joblib : {e}")
-            return
-    except Exception as e:
-        st.error(f"Erreur lors du chargement de l'explainer avec cloudpickle : {e}")
-        return
-
-    if explainer_lime:
-        try:
-            explanation = explainer_lime.explain_instance(df.iloc[0].values, gb_model2.predict_proba)
-            html_explanation = explanation.as_html()
-            components.html(html_explanation, width=None, height=500)
-        except Exception as e:
-            st.error(f"Erreur lors de l'explication LIME : {e}")
-    else:
-        st.warning("L'explicateur LIME n'est pas disponible.")
-
-def afficher_explication_lime3(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
     try:
         with open(filename, 'rb') as f:
@@ -484,7 +397,6 @@ def afficher_explication_lime3(df, gb_model2):
 def afficher_explication_lime(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
     try:
-        st.write("Chargement de l'explainer LIME...")
         with open(filename, 'rb') as f:
             explainer_lime = cloudpickle.load(f)
     except Exception as e:
@@ -492,7 +404,6 @@ def afficher_explication_lime(df, gb_model2):
         return
 
     try:
-        st.write("Génération de l'explication LIME...")
         explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
         st.components.v1.html(explanation.as_html(), height=800)
     except Exception as e:
@@ -538,6 +449,17 @@ def prediction():
             filename = 'Donnees/Modeles/gradient_boosting_model2v2.joblib'
             gb_model2 = joblib.load(filename)
 
+            # Afficher la prédiction
+            st.markdown("#### Prédiction avec les données de l'incident")
+            df_trans = gb_model2.predict_proba(df)
+            prob_classe_0 = round(df_trans[0, 0], 4)
+            prob_classe_1 = round(df_trans[0, 1], 4)
+            st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
+            st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_1)
+
+
+            # Interprétation
+            st.markdown("#### Interprétation avec Lime et Shap")
             col1, col2 = st.columns(2)  # Utilisation de colonnes pour une meilleure disposition
 
             if col1.button("Interprétation lime"):
