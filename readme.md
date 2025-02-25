@@ -9,4 +9,4 @@ Au vue de la taille du jeu de données l'ensemble des fichier n'ont pas été t�
 
 ## Ouvrir l'application dans une nouvelle fenêtre
 Une application Streamlit (en cours de construction) est accessible pour visualiser le travail effectué
-[Application Streamlit](https://projetpompierjuin2024annehaochristelle.streamlit.app/)
+[Application Streamlit](https://projetpompierjuin2024annehaochristelle.streamlit.app/ target="_blank")
