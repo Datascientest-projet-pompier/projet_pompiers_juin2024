@@ -348,7 +348,7 @@ def afficher_explication_shap(df):
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}")
 
-def afficher_explication_lime(df, gb_model2):
+def afficher_explication_lime2(df, gb_model2):
     """
     Affiche l'explication LIME pour une instance de DataFrame.
 
@@ -384,6 +384,19 @@ def afficher_explication_lime(df, gb_model2):
             st.error(f"Erreur lors de l'explication LIME : {e}")
     else:
         st.warning("L'explicateur LIME n'est pas disponible.")
+
+def afficher_explication_lime(df, gb_model2):
+    filename = 'Donnees/Modeles/explainer_lime.pkl'
+    try:
+        with open(filename, 'rb') as f:
+            explainer_lime = cloudpickle.load(f)
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'explainer LIME : {e}")
+        return
+
+    # Continuez avec l'explication LIME
+    explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
+    st.components.v1.html(explanation.as_html(), height=800)
 
 def prediction():
     param_incident()
