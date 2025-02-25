@@ -41,7 +41,7 @@ def choix_heure():
             if "type" not in st.session_state:
                 st.session_state.show_type_bouton = True
 
-def choix_lat_long():
+def choix_lat_long2():
     if "map_visible" not in st.session_state:
         st.session_state.map_visible = False
     if "coords_selected" not in st.session_state:
@@ -90,6 +90,89 @@ def choix_lat_long():
                 st.session_state.show_station_bouton = True
                 st.session_state.map_visible = False
                 st.session_state.show_position_bouton = False
+
+def choix_lat_long():
+    if "map_visible" not in st.session_state:
+        st.session_state.map_visible = False
+    if "coords_selected" not in st.session_state:
+        st.session_state.coords_selected = False
+    if "manual_input" not in st.session_state:
+        st.session_state.manual_input = False
+    if "position_choice_made" not in st.session_state:
+        st.session_state.position_choice_made = False  # Ajout de cette ligne
+
+    # Bouton initial pour lancer le choix de la position
+    if st.session_state.show_position_bouton and not st.session_state.position_choice_made:
+        if st.button("Choix de la position") and st.session_state.show_all:
+            st.session_state.position_choice_made = True
+            st.session_state.show_heure_bouton = False
+            st.session_state.show_type_bouton = False
+
+    # Affichage des options de saisie seulement après avoir cliqué sur le bouton initial
+    if st.session_state.position_choice_made:
+        choice = st.radio("Choisissez la méthode de saisie des coordonnées :", ("Carte", "Saisie manuelle"))
+
+        if choice == "Carte":
+            # Bouton pour afficher la carte
+            if not st.session_state.map_visible:
+                if st.button("Choix de la position sur la carte"):
+                    st.session_state.map_visible = True
+                    st.session_state.manual_input = False
+
+            # Affichage de la carte
+            if st.session_state.map_visible:
+                st.write("Cliquez sur la carte pour sélectionner une position.")
+
+                # Création de la carte Folium
+                london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
+                folium.LatLngPopup().add_to(london_map)
+
+                # Affichage de la carte
+                map_data = st_folium(london_map, width=700, height=500)
+
+                # Récupération des coordonnées
+                if map_data and "last_clicked" in map_data and map_data["last_clicked"]:
+                    st.session_state.lat = map_data["last_clicked"]["lat"]
+                    st.session_state.lng = map_data["last_clicked"]["lng"]
+                    st.session_state.coords_selected = True
+
+                # Bouton pour fermer la carte
+                if st.session_state.coords_selected:
+                    if st.button("Fermer la carte"):
+                        if "heure" not in st.session_state:
+                            st.session_state.show_heure_bouton = True
+                        if "type" not in st.session_state:
+                            st.session_state.show_type_bouton = True
+                        st.session_state.show_station_bouton = True
+                        st.session_state.map_visible = False
+                        st.session_state.show_position_bouton = False
+                        st.session_state.coords_selected = False
+                        st.session_state.position_choice_made = False
+
+        elif choice == "Saisie manuelle":
+            # Saisie manuelle des coordonnées
+            if not st.session_state.manual_input:
+                if st.button("Saisie manuelle des coordonnées"):
+                    st.session_state.manual_input = True
+                    st.session_state.map_visible = False
+
+            if st.session_state.manual_input:
+                lat_manual = st.number_input("Latitude", value=51.5074)
+                lng_manual = st.number_input("Longitude", value=-0.1278)
+
+                if st.button("Valider les coordonnées manuelles"):
+                    st.session_state.lat = lat_manual
+                    st.session_state.lng = lng_manual
+                    st.session_state.coords_selected = True
+                    st.session_state.manual_input = False
+                    if "heure" not in st.session_state:
+                        st.session_state.show_heure_bouton = True
+                    if "type" not in st.session_state:
+                        st.session_state.show_type_bouton = True
+                    st.session_state.show_station_bouton = True
+                    st.session_state.show_position_bouton = False
+                    st.session_state.coords_selected = False
+                    st.session_state.position_choice_made = False
 
 def calcul_dist(lat1, lon1, lat2, lon2):
     """
@@ -449,7 +532,6 @@ def prediction():
             df[nom_col_arrondissement] = 1
             df["distStd"] = st.session_state.distancestd
             df["ratioStd"] = st.session_state.ratioSC
-            df.to_csv('Donnees/df_pred.csv', index=False)
             
             st.write(df)
             
