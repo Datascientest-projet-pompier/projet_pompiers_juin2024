@@ -45,9 +45,9 @@ def main():
     # Appeler la fonction correspondant à la page sélectionnée
     pages[selected_page]()
 
-    st.sidebar.write("""Auteurs : \n
-    * Anne DUBOIS \n
-    * Christelle TESSIER \n
+    st.sidebar.write("""Auteurs :
+    * Anne DUBOIS
+    * Christelle TESSIER [LinkedIn](www.linkedin.com/in/christelle-tessier-368899196)
     * Hao LA
     """)
 
