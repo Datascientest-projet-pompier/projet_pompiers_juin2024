@@ -1,3 +1,6 @@
+# erreur log explication lime
+#/app/scripts/run-streamlit.sh: line 9:   192 Segmentation fault      sudo -E -u appuser /home/adminuser/venv/bin/streamlit "$@"
+
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
@@ -12,6 +15,7 @@ import joblib
 import cloudpickle
 import streamlit.components.v1 as components
 import shap
+import traceback
 
 
 from fonctions import recup_df
@@ -397,38 +401,30 @@ def afficher_chemin_prediction(model, data, feature_names):
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
     try:
-        with open(filename, 'rb') as f:
-            explainer_shap = cloudpickle.load(f)
+        with st.spinner("Chargement de l'explicateur SHAP..."):
+            with open(filename, 'rb') as f:
+                explainer_shap = cloudpickle.load(f)
 
         if explainer_shap:
-            # Obtenir les valeurs SHAP pour la nouvelle ligne
-            shap_values = explainer_shap(df)
+            # Vérification du format de df
+            if not isinstance(df, pd.DataFrame):
+                st.error("Les données doivent être un DataFrame pandas.")
+                return
 
-            # Créer le graphique SHAP sans matplotlib
-            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+            with st.spinner("Calcul des valeurs SHAP..."):
+                shap_values = explainer_shap(df)
 
-            # Afficher le graphique dans Streamlit
+            with st.spinner("Création du graphique SHAP..."):
+                shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+
             shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            st.components.v1.html(shap_html_str, height=600)
+            st.components.v1.html(shap_html_str, height=200)
         else:
             st.warning("L'explicateur SHAP n'est pas disponible.")
     except FileNotFoundError:
         st.error(f"Le fichier {filename} n'a pas été trouvé.")
     except Exception as e:
-        st.error(f"Une erreur s'est produite : {e}")
-
-
-    filename = 'Donnees/Modeles/explainer_lime.pkl'
-    try:
-        with open(filename, 'rb') as f:
-            explainer_lime = cloudpickle.load(f)
-    except Exception as e:
-        st.error(f"Erreur lors du chargement de l'explainer LIME : {e}")
-        return
-
-    # Continuez avec l'explication LIME
-    explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
-    st.components.v1.html(explanation.as_html(), height=800)
+        st.error(f"Une erreur s'est produite : {e}\n{traceback.format_exc()}")
 
 def afficher_explication_lime(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
@@ -508,5 +504,9 @@ def prediction():
                 
             if col2.button("Interpretation shap"):
                 afficher_explication_shap(df)
-            
-            
+
+            # Bouton "Effectuer une autre prédiction" affiché uniquement après la prédiction
+            if st.button("Effectuer une autre prédiction"):
+                st.session_state.clear()
+                st.session_state.boutons_visibles = False  # Masquer les boutons
+                st.rerun()
