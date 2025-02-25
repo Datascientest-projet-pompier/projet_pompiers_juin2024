@@ -12,8 +12,10 @@ import joblib
 import cloudpickle
 import streamlit.components.v1 as components
 import shap
-import tempfile
-import os
+import matplotlib.pyplot as plt
+
+
+
 
 from fonctions import recup_df
 
@@ -147,7 +149,7 @@ def choix_station():
         st.session_state.arrondissement_code = arrondissement_code
         st.session_state.inner = inner
         # Standardisation du ratio
-        st.session_state.ratioSC = standardisation('Donnees/tranfo_ratio.pkl',ratio,"ratioSC")
+        st.session_state.ratioSC = standardisation('Donnees/Modeles/tranfo_ratio.pkl',ratio,"ratioSC")
 
         st.write(f"Caserne responsable : {station_resp}.")
 
@@ -166,7 +168,7 @@ def choix_station():
             st.session_state.station_dep = station_dep
             st.session_state.arrondissement_dep = arrondissement_dep
             # Standardisation de la distance
-            st.session_state.distancestd = standardisation('Donnees/tranfo_distance.pkl',distance,"ditance")
+            st.session_state.distancestd = standardisation('Donnees/Modeles/tranfo_distance.pkl',distance,"ditance")
             # Construction stat_resp_rep
             if station_resp == station_dep :
                 st.session_state.stat_resp_rep = 1
@@ -225,17 +227,6 @@ def charger_model(chemin_fichier):
     except Exception as e:
         st.error(f"Erreur lors du chargement du scaler : {e}")
         return None
-
-def standardisation2(lien,valeur,nom):
-    model = charger_model(lien)
-    if not isinstance(valeur, (list, pd.Series)): # Ajout de la vérification
-        valeur = [valeur] # Conversion en liste si c'est un scalaire
-    df = pd.DataFrame({nom: valeur}, index=[0])
-    if model is not None:
-        #valeur = np.array(valeur).reshape(-1,1)
-        return model.transform(df)
-    else :
-        st.error("Pb avec le model")
 
 def standardisation(lien, valeur, nom):
     model = charger_model(lien)
@@ -335,29 +326,21 @@ def validation():
                 st.rerun()
 
 def afficher_explication_shap(df):
-    filename = 'Donnees/explainer_shap.pkl'
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
     try:
         with open(filename, 'rb') as f:
             explainer_shap = cloudpickle.load(f)
 
         if explainer_shap:
-            shap_values = explainer_shap.shap_values(df)
-            shap_values_np = np.array(shap_values[0], dtype=np.float64)
-            instance_np = df.iloc[0].values.astype(np.float64)
-            expected_value = explainer_shap.expected_value[0]
+            # Obtenir les valeurs SHAP pour la nouvelle ligne
+            shap_values = explainer_shap(df)
 
-            # Créer le graphique SHAP et le sauvegarder dans un fichier HTML temporaire
-            temp_file = tempfile.NamedTemporaryFile(suffix='.html', delete=False)
-            shap.plots.force(expected_value, shap_values_np, instance_np, matplotlib=False, html_file=temp_file.name)
-            temp_file.close()
+            # Créer le graphique SHAP sans matplotlib
+            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
 
-            # Lire le contenu du fichier HTML et l'afficher dans Streamlit
-            with open(temp_file.name, 'r', encoding='utf-8') as f:
-                shap_html = f.read()
-            components.html(shap_html, width=None, height=500)
-
-            # Supprimer le fichier temporaire
-            os.unlink(temp_file.name)
+            # Afficher le graphique dans Streamlit
+            shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+            st.components.v1.html(shap_html_str, height=600)
         else:
             st.warning("L'explicateur SHAP n'est pas disponible.")
     except FileNotFoundError:
@@ -373,7 +356,7 @@ def afficher_explication_lime(df, gb_model2):
         df (pandas.DataFrame): Le DataFrame contenant l'instance à expliquer.
         gb_model2: Le modèle Gradient Boosting utilisé pour les prédictions.
     """
-    filename = 'Donnees/explainer_lime.pkl'
+    filename = 'Donnees/Modeles/explainer_lime.pkl'
     try:
         # Tentative de chargement avec cloudpickle
         with open(filename, 'rb') as f:
@@ -440,10 +423,8 @@ def prediction():
             
             st.write(df)
             
-            filename = 'Donnees/gradient_boosting_model2v2.joblib'
-            st.write(filename)
+            filename = 'Donnees/Modeles/gradient_boosting_model2v2.joblib'
             gb_model2 = joblib.load(filename)
-            st.write("modele telecharger")
 
             col1, col2 = st.columns(2)  # Utilisation de colonnes pour une meilleure disposition
 
