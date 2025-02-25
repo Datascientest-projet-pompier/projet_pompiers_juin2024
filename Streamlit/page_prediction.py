@@ -418,7 +418,7 @@ def afficher_explication_shap(df):
                 shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
 
             shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            st.components.v1.html(shap_html_str, height=600)
+            st.components.v1.html(shap_html_str, height=200)
         else:
             st.warning("L'explicateur SHAP n'est pas disponible.")
     except FileNotFoundError:
@@ -504,5 +504,9 @@ def prediction():
                 
             if col2.button("Interpretation shap"):
                 afficher_explication_shap(df)
-            
-            
+
+            # Bouton "Effectuer une autre prédiction" affiché uniquement après la prédiction
+            if st.button("Effectuer une autre prédiction"):
+                st.session_state.clear()
+                st.session_state.boutons_visibles = False  # Masquer les boutons
+                st.rerun()
