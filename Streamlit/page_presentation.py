@@ -10,3 +10,13 @@ def presentation():
         "Les principales informations sont la première caserne déployée, le temps de réaction (temps entre appel et départ de la caserne) le temps de travail (temps entre le départ de la caserne "
         "et l'arrivée sur les lieu de l'incident), le temps total (temps de réponse et temps de trajet)"
     )
+
+    st.markdown("## Etude des données")
+
+    st.markdown("### Les données Incidents")
+
+    st.write("L'ensemble des données incidents contient 39 variables de tous types et de tous ordres, on peut les regrouper en "
+             "... catégories :")
+    st.markdown("- **données temporelles :** qui permettent de situer dans le temps l'incident")
+    st.markdown("- **données géographique :** qui permettent de situer l'incédent géographique")
+    st.markdown("- **données ")

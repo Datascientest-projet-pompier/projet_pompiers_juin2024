@@ -12,3 +12,9 @@ def page_intro():
     st.write("Pour ce faire nous avons travaillé pendant 4 mois un projet. L’objectif de ce projet est d’estimer **les temps de réponse et de mobilisation** de la Brigade des Pompiers de Londres. La brigade des pompiers de Londres est le service d'incendie et de sauvetage le plus actif du Royaume-Uni  et l'une des plus grandes organisations de lutte contre l'incendie et de sauvetage au monde.")
 
     st.write("Pour  présenter ce projet nous avons créer une application streamlit qui présente les différentes étapes de notre travail.")
+
+    st.write(
+             "Comme les données sont de tailles trop importantes pour être stocker nous avons pris le partie "
+             "d'éxécuter les traitements et la gestion des graphiques sur nos ordinateurs personnels pour ensuite les stocker et les réutiliser "
+             "sur notre dépot Git pour ensuite les exploiter ici."
+    )
