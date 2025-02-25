@@ -1,3 +1,6 @@
+# erreur log explication lime
+#/app/scripts/run-streamlit.sh: line 9:   192 Segmentation fault      sudo -E -u appuser /home/adminuser/venv/bin/streamlit "$@"
+
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
