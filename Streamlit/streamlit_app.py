@@ -19,6 +19,11 @@ from page_intro import page_intro
 from page_presentation import presentation
 from page_localisation import localisation
 from page_prediction import prediction
+from page_visualisation import visualisation
+from page_pretraitement import pretraitement
+from page_modelisation1 import modelisation1
+from page_modelisation2 import modelisation2
+from page_conclusion import conclusion
 
 def main():
     # Sidebar
@@ -26,12 +31,12 @@ def main():
         "Presentation":page_intro,
         "Presentation des données": presentation,
         "Visualisation géographique des données": localisation,
-        "Visualisation des données": presentation,
-        "Prétraitement des données": presentation,
-        "Modélisation 1 - prédiction variable continue": presentation,
-        "Modélisation 2 - prédiction variable discrète": presentation,
+        "Visualisation des données": visualisation,
+        "Prétraitement des données": pretraitement,
+        "Modélisation 1 - prédiction variable continue": modelisation1,
+        "Modélisation 2 - prédiction variable discrète": modelisation2,
         "Prédiction à l'aide du modèle " : prediction,
-        "Conclusion et prespective": presentation
+        "Conclusion et prespective": conclusion
     }
 
     # Barre latérale avec des boutons radio pour chaque page
