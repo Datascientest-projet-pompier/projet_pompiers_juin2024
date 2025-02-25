@@ -12,9 +12,6 @@ import joblib
 import cloudpickle
 import streamlit.components.v1 as components
 import shap
-import matplotlib.pyplot as plt
-
-
 
 
 from fonctions import recup_df
@@ -358,6 +355,45 @@ def validation():
                 st.session_state.boutons_visibles = False  # Masquer les boutons
                 st.rerun()
 
+def afficher_chemin_prediction(model, data, feature_names):
+    """
+    Affiche le chemin de prédiction précis pour une donnée donnée.
+
+    Args:
+        model (GradientBoostingClassifier): Le modèle entraîné.
+        data (pd.DataFrame): La donnée pour laquelle afficher le chemin.
+        feature_names (list): Les noms des caractéristiques.
+    """
+
+    # Sélectionner le premier arbre (vous pouvez itérer sur tous les arbres si nécessaire)
+    tree = model.estimators_[0, 0].tree_
+
+    node_index = 0
+    path = []
+
+    while tree.children_left[node_index] != -1:
+        feature = tree.feature[node_index]
+        threshold = tree.threshold[node_index]
+        value = data.iloc[0, feature]
+
+        path.append({
+            "node_index": node_index,
+            "feature": feature_names[feature],
+            "threshold": threshold,
+            "value": value,
+            "decision": "left" if value <= threshold else "right"
+        })
+
+        if value <= threshold:
+            node_index = tree.children_left[node_index]
+        else:
+            node_index = tree.children_right[node_index]
+
+    # Afficher le chemin
+    st.write("Chemin de prédiction :")
+    for step in path:
+        st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
+
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
     try:
@@ -457,10 +493,15 @@ def prediction():
             st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
             st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_1)
 
+            # Afficher l'arbre de decision
+            st.markdown("#### Arbre de prédiction")            
+            noms_colonnes = df.columns.tolist()
+            afficher_chemin_prediction(gb_model2, df, noms_colonnes)
 
             # Interprétation
             st.markdown("#### Interprétation avec Lime et Shap")
             col1, col2 = st.columns(2)  # Utilisation de colonnes pour une meilleure disposition
+            st.warning("Attention Interprétation Lime rencontre un problème, et fait planté l'application")
 
             if col1.button("Interprétation lime"):
                 afficher_explication_lime(df,gb_model2)
