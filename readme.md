@@ -1,4 +1,4 @@
-![ Texte alternatif](Images/LFB.png)
+![ Texte alternatif]("https://s3-eu-west-1.amazonaws.com/tpd/logos/5defb89bc1213200011e72d5/0x0.png")
 
 - Projet : Datascientest mars 2025
 - Auteur : Anne Dubois, Christelle Tessier et Hao LA
