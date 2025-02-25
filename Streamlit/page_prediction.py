@@ -15,6 +15,7 @@ import joblib
 import cloudpickle
 import streamlit.components.v1 as components
 import shap
+import traceback
 
 
 from fonctions import recup_df
@@ -424,42 +425,6 @@ def afficher_explication_shap(df):
         st.error(f"Le fichier {filename} n'a pas été trouvé.")
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}\n{traceback.format_exc()}")
-
-def afficher_explication_shap2(df):
-    filename = 'Donnees/Modeles/explainer_shap.pkl'
-    try:
-        with open(filename, 'rb') as f:
-            explainer_shap = cloudpickle.load(f)
-
-        if explainer_shap:
-            # Obtenir les valeurs SHAP pour la nouvelle ligne
-            shap_values = explainer_shap(df)
-
-            # Créer le graphique SHAP sans matplotlib
-            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
-
-            # Afficher le graphique dans Streamlit
-            shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            st.components.v1.html(shap_html_str, height=600)
-        else:
-            st.warning("L'explicateur SHAP n'est pas disponible.")
-    except FileNotFoundError:
-        st.error(f"Le fichier {filename} n'a pas été trouvé.")
-    except Exception as e:
-        st.error(f"Une erreur s'est produite : {e}")
-
-
-    filename = 'Donnees/Modeles/explainer_lime.pkl'
-    try:
-        with open(filename, 'rb') as f:
-            explainer_lime = cloudpickle.load(f)
-    except Exception as e:
-        st.error(f"Erreur lors du chargement de l'explainer LIME : {e}")
-        return
-
-    # Continuez avec l'explication LIME
-    explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
-    st.components.v1.html(explanation.as_html(), height=800)
 
 def afficher_explication_lime(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
