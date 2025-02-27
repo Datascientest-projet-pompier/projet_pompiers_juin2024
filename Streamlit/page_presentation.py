@@ -5,18 +5,38 @@ def presentation():
     st.write(
         "L'ensemble des données est divisé en deux sous-dossiers. Le premier sous-dossier permet d'obtenir "
         "les informations relatives aux incidents (disponible [ICI](https://data.london.gov.uk/dataset/london-fire-brigade-incident-records)). "
-        "Les principales informations sont la date et l'heure, la position de l'incident (latitude, longitude), la caserne responsable, le type d'incident. "
         "Le second sous-dossier permet d'obtenir les informations relatives à la mobilisation des casernes (disponible [ICI](https://data.london.gov.uk/dataset/london-fire-brigade-mobilisation-records)). "
-        "Les principales informations sont la première caserne déployée, le temps de réaction (temps entre appel et départ de la caserne) le temps de travail (temps entre le départ de la caserne "
-        "et l'arrivée sur les lieu de l'incident), le temps total (temps de réponse et temps de trajet)"
     )
 
-    st.markdown("## Etude des données")
+    st.markdown("### Etude des données initiales")
 
-    st.markdown("### Les données Incidents")
+    st.write("Que ce soit pour les données *Incident* ou les données *Mobilisation* les jeux de données possèdent une variable *IncidentNumber*"
+             " qui permettra de faire la jointure entre les deux tableaux")
 
-    st.write("L'ensemble des données incidents contient 39 variables de tous types et de tous ordres, on peut les regrouper en "
-             "... catégories :")
-    st.markdown("- **données temporelles :** qui permettent de situer dans le temps l'incident")
-    st.markdown("- **données géographique :** qui permettent de situer l'incédent géographique")
-    st.markdown("- **données ")
+    st.write("L'ensemble des données de tous types et de tous ordres, on peut les regrouper en quatre catégories :")
+    st.markdown("- **données temporelles :** qui permettent de situer dans le temps l'incident (année, date et heure).")
+    st.markdown("- **données géographique :** qui permettent de situer l'incédent géographiquement (latitude, longitude, code postal ...)")
+    st.markdown("- **données relatives à l'incident :** qui permettent de caractériser l'incident (caserne responsable/déployée, type d'incident, nombre de camion, coût ...)")
+    st.markdown("- **données cibes :** qui représentent les temps de réaction, de trajet et total")
+
+    st.markdown("### Gestion des valeurs manquantes")
+
+    st.markdown("### Jointure")
+
+    st.markdown("### Création des nouvelles variables")
+    st.markdown("""
+Pour simplifier notre jeu de données nous avons chercher à diminuer le nombre de variables en en regroupant certaines, elles correspondent uniquement aux deux dernières catégories.
+
+<ul>
+  <li><b>données relatives à l'incident :</b>
+    <ul>
+      <li>DetailedIncidentGroup : qui correspond à une simplification de la description de l'incident. Elle rassemble les variables StopCodeDescription et SpecialServiceType, c'est une variable catégorielle contenant ... modalités</li>
+      <li>Sous-élément 1.2</li>
+    </ul>
+  </li>
+  <li><b>données cibes :</b> qui représentent les temps de réaction, de trajet et total</li>
+</ul>
+""", unsafe_allow_html=True)
+
+
+    st.markdown("### Variables consersvée pour l'étude")
