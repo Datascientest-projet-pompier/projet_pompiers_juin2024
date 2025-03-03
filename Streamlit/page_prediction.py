@@ -224,7 +224,7 @@ def choix_station():
 
 def choix_type():
     if st.session_state.show_type_bouton:  # Afficher le bouton seulement si show_type_bouton est True
-        if st.button("Choix du type d'incident") and st.session_state.show_all:
+        if st.button("Choix du type de propriété") and st.session_state.show_all:
             st.session_state.show_type_choix = True
             st.session_state.show_heure_bouton = False
             st.session_state.show_position_bouton = False

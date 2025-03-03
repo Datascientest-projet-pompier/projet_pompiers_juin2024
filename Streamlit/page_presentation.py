@@ -30,13 +30,22 @@ Pour simplifier notre jeu de données nous avons chercher à diminuer le nombre 
 <ul>
   <li><b>données relatives à l'incident :</b>
     <ul>
-      <li>DetailedIncidentGroup : qui correspond à une simplification de la description de l'incident. Elle rassemble les variables StopCodeDescription et SpecialServiceType, c'est une variable catégorielle contenant ... modalités</li>
-      <li>Sous-élément 1.2</li>
+      <li>DetailedIncidentGroup : qui correspond à une simplification de la description de l'incident. Elle rassemble les variables StopCodeDescription et SpecialServiceType, c'est une variable catégorielle contenant 9 modalités</li>
+      <li>Bor_inc_rep : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident et la casserne responsable
+                sont dans le même arrondissement.</li>
+      <li>Bor_resp_rep : qui correspond à un indicateur (vrai ou faux) donnant l'information si la caserne responsable et la 
+                caserne déployée sont dans le même arrondissement.</li>
+      <li>Stat_resp_rep : qui correspond à un indicateur (vrai ou faux) donnant l'information si la caserne responsable et la 
+                cassrne déployée sont identiques.</li>
+      <li>Distance : qui  correspond à la distance (à vol d'oiseau) entre l'incident et la caserne déployée.</li> 
     </ul>
   </li>
-  <li><b>données cibes :</b> qui représentent les temps de réaction, de trajet et total</li>
+  <li><b>données cibes :</b>
+    <ul>
+       <li>TotalResponseTime : qui correspond au temps total à savoir temps de réaction et temps de trajet.</li>                
+  </li>
 </ul>
 """, unsafe_allow_html=True)
 
 
-    st.markdown("### Variables consersvée pour l'étude")
+    st.markdown("### Variables consersvées pour l'étude")
