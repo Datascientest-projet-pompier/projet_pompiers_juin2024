@@ -1,7 +1,6 @@
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 def tab_stat(df):
     variables = ["TurnoutTimeSeconds", "TravelTimeSeconds", "TotalResponseTime", "distance","ratioSC"]
@@ -32,25 +31,3 @@ def tab_stat(df):
     df_recap = pd.DataFrame(data, index=index)
 
     return df_recap
-
-def graph_distribution(df,variable):
-    df_grouped = df.groupby(variable).size().reset_index(name="Nombre d'incidents")
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.bar(df_grouped[variable], df_grouped["Nombre d'incidents"])
-    ax.set_xlabel(variable)
-    ax.set_ylabel("Nombre d'incidents")
-    ax.set_title(f"Nombre d'incidents pour les valeurs de {variable}")
-    #ax.set_xticks(range(0, 24, 5))
-    return fig
-
-def creer_pointplot(df, x_col, y_col, title):
-    """Crée un point plot avec des barres d'erreur."""
-    plt.figure(figsize=(8, 6))  # Ajustez la taille selon vos besoins
-    sns.pointplot(x=x_col, y=y_col, data=df)
-    plt.title(title)
-    plt.xlabel(x_col)
-    plt.ylabel(y_col)
-    plt.xticks(rotation=45)  # Rotation des étiquettes de l'axe x si nécessaire
-    plt.tight_layout()  # Ajuste les paramètres du sous-tracé pour éviter les coupures d'étiquettes
-    return plt.gcf()  # Retourne la figure actuelle

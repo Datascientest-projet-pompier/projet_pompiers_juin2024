@@ -3,7 +3,6 @@ import pandas as pd
 import os
 
 from fonctions import texte_justifie
-from fonctionsstat import tab_stat, graph_distribution, creer_pointplot
 
 
 def visualisation():
