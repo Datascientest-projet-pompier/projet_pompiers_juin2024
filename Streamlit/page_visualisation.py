@@ -3,6 +3,7 @@ import pandas as pd
 import os
 
 from fonctions import texte_justifie
+from fonctionsstat  import tab_stat
 
 
 def visualisation():
