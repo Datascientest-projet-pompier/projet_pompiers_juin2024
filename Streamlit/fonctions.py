@@ -8,3 +8,11 @@ def recup_df(nom,separateur = ','):
     except FileNotFoundError:
         st.error(f"Le fichier {nom} n'a pas été trouvé.")
         return
+    
+def texte_justifie(texte):
+    """Justifie le texte donné."""
+    return f"""
+    <div style="text-align: justify;">
+    {texte}
+    </div>
+    """
