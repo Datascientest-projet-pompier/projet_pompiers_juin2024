@@ -7,6 +7,8 @@ from fonctionsstat  import tab_stat
 
 
 def visualisation():
+    st.title("Visualisation")
+
     st.markdown(texte_justifie(
         "A ce stade notre dataframe représentant l'ensemble des incidents est composé de plus d'un millions de"
         " lignes représentant chacune un incident et de ??? variables représentant soit une information sur la "
