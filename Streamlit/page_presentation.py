@@ -50,10 +50,11 @@ def presentation():
 
     st.markdown(texte_justifie(
         "Les données manquantes apparaissent sur :"
-        "<ul><li><b>Heures de retour :</b> qui n'est plus renseignée.</li>"
-        "<li><b>Raison du retard :</b> qui n'est renseigner que dans 25% des cas.</li>"
+        "<ul><li><b>Heures de retour :</b> qui ne sont plus renseignées.</li>"
+        "<li><b>Raison du retard :</b> qui n'est renseignée que dans 25% des cas.</li>"
         "<li> <b>Date et heure de départ sur certains incidents :</b> cette information est crucial "
-        "pour notre modèle, nous avons donc supprimer les lignes correspondantes (inférieur à 1.5%)</li></ul>")
+        "pour notre modèle, nous avons donc supprimé les lignes correspondantes (supression de moins de 1.5% des lignes)"
+        "</li></ul>")
         , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -132,18 +133,18 @@ def presentation():
           "<li> Données géographiques :"
             "<ul>"
               "<li><code>Borough</code> : donnant l'arrondissement de la caserne</li>"
-              "<li><code>Ratio</code> : représentant la superficie affectée a une caserne (distinction par arrondissement)</li>"
+              "<li><code>RatioSC</code> : représentant la superficie affectée a une caserne (distinction par arrondissement)</li>"
               "<li><code>Distance</code> : représentant la distance à vol d'oiseau entre la caserne et l'incident</li>"
             "</ul></li>"
 
           "<li> Variables Booléennes :"
             "<ul>"
-              "<li><code>Bor_inc_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident et la casserne "
-              "responsable sont dans le même arrondissement.</li>"
-              "<li><code>Bor_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si la caserne responsable et la "
-              "caserne déployée sont dans le même arrondissement.</li>"
-              "<li><code>Stat_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si la caserne "
-              "responsable et la caserne déployée sont identiques.</li>"
+              "<li><code>Bor_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information "
+              "si la caserne répondante est la même que la caserne responsable.</li>"
+              "<li><code>Bor_inc_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident "
+              "et la casserne répondante sont dans le même arrondissement.</li>"
+              "<li><code>Bor_inc_resp</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident "
+              "et la caserne responsable sont dans le même arrondissement.</li>"
             "</ul></li>"
         "</ul>")
         , unsafe_allow_html=True)

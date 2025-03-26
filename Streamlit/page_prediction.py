@@ -487,7 +487,7 @@ def prediction():
             prob_classe_0 = round(df_trans[0, 0], 4)
             prob_classe_1 = round(df_trans[0, 1], 4)
             st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
-            st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_1)
+            st.write("Prédiction que l'arrivée sur site soit supérieur à 6 min : ",prob_classe_1)
 
             # Afficher l'arbre de decision
             st.markdown("#### Arbre de prédiction")            

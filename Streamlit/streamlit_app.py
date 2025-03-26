@@ -18,11 +18,12 @@ from io import BytesIO
 from page_intro import page_intro
 from page_presentation import presentation
 from page_localisation import localisation
-from page_prediction import prediction
 from page_visualisation import visualisation
 from page_pretraitement import pretraitement
-from page_modelisation1 import modelisation1
-from page_modelisation2 import modelisation2
+from page_methodologie import methodologie
+from page_resultat import resultat
+from page_interpretabilité import interpretabilite
+from page_prediction import prediction
 from page_conclusion import conclusion
 
 def main():
@@ -33,9 +34,10 @@ def main():
         "Visualisation géographique des données": localisation,
         "Visualisation des données": visualisation,
         "Prétraitement des données": pretraitement,
-        "Modélisation 1 - prédiction variable continue": modelisation1,
-        "Modélisation 2 - prédiction variable discrète": modelisation2,
-        "Prédiction à l'aide du modèle " : prediction,
+        "Méthodologie utilisée": methodologie,
+        "Quelques résultat" : resultat,
+        "Interprétabilité du modèle" : interpretabilite,
+        "Prédiction à l'aide du modèle": prediction,
         "Conclusion et prespective": conclusion
     }
 
