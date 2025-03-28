@@ -189,7 +189,7 @@ def interpretabilite():
         feat_imp_t = feat_imp.T  # Transformation du tableau
 
         st.markdown(texte_justifie(
-            "Une première manière de voir l'importance des variables est d'utiliser l'attribut de classe "
+            "Une autre manière d'interpréter le modèle est de voir l'importance des variables est d'utiliser l'attribut de classe "
             "<code>g_model2.features_importances_</code>."
             )
             , unsafe_allow_html=True)
@@ -262,7 +262,7 @@ def interpretabilite():
                 "</ul>"
                 ), unsafe_allow_html=True)
 
-        with st.expander("⚠️ Différences entre features_importances et shape values "):
+        with st.expander("⚠️ Différences entre features_importances et shape_values "):
             st.markdown("""
             | Méthode | Comment c'est calculé ? | Points forts | Limitations |
             |---------|-------------------------|--------------|-------------|
@@ -270,7 +270,44 @@ def interpretabilite():
             | **SHAP values**  | Basé sur la **théorie des jeux** : il attribue une contribution individuelle à chaque feature en tenant compte de toutes les combinaisons possibles de features. | Plus fiable, prend en compte les interactions entre features. | Plus lent à calculer, nécessite plus de ressources. |
             """)
 
-
     with tab2:
         st.subheader("Explicabilité")
-        st.write("Ici, vous trouverez les explications sur les prédictions du modèle.")
+
+        st.markdown(texte_justifie(
+            "L'explicabilité permet de comprendre comment le modèle, à fait sa prédiction. Quelles ont été les variables qui ont"
+            "permis la prédiction.<br>"
+            "Pour illustrer l'explicabilité nous avons choisis incidents donc la prédiction est 1 (supérieur à 6 min), le premier "
+            "incident à un temps total d'intervention supérieur à 6 min (prédiction correcte) et le second un temps total d'intervention"
+            "inférieur à 6 min (prédiction incorrecte). Deux autre incidents ont étés choisis de tel sorte que la prédiction est"
+            " 0 (inférieur à 6 min), e premier incident à un temps total d'intervention inférieur à 6 min (prédiction correcte) et"
+            " le second un temps total d'intervention supérieur à 6 min (prédiction incorrecte)"
+            )
+            , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        st.image("Donnees/Images/explicabilite.png",
+                  caption="Explicabilité de quatre réponses", use_container_width=True)
+        
+        with st.expander("📌 Interprétation"):
+            st.markdown(texte_justifie(
+                "<ul>"
+                    "<li><b>Incident n°1 :</b> observation = prédiction = temps d'intervention supérieur à 6 minutes.<br>"
+                    "La variable <code>H1117=0</code> est la principale variable avec une contribution négative au modèle"
+                    " alors que <code>distStd=1.244</code>, <code>H26=1</code>, <code>Stat_resp_rep=0</code> et <code>Borough_E09000028=1</code>"
+                    " sont les principales avec une contribution positive. Ces observations sont cohérentes avec nos conclusions de "
+                    "l'interprétabilité global : le fait que l'incident ait eu lieu sur la plage horaire nocturne [2-6] et que la caserne déployée"
+                    " ne soit pas la caserne responsable influence la prédiction vers la valeur positive (ResponseTimeBinary prédit à 1).</li>"
+                    "<li><b>Incident n°0 :</b> observation : temps d'intervention supérieur à 6 minutes, prédiction incorrecte.<br>"
+                    "Les variables <code>distStd=-0.1353</code>, <code>Stat_resp_rep=1</code>, <code>H26=0</code> et <code>H1117=0</code>"
+                    " ont une contribution négative suffisante pour que la prédiction soit négative (temps d'intervention inférieur à"
+                    " 6 minutes) alors que la valeur observée est positive.</li>"
+                    "<li><b>Incident n°2 :</b> observation = prédiction = temps d'intervention inférieur à 6 minutes.<br>"
+                    "La contribution négative des variables <code>distStd=-0.01524</code> et <code>H1117=0</code> est suffisante"
+                    " pour contrebalancer la contribution positive des variables <code>H26=1</code>, <code>Stat_resp_rep=0</code>"
+                    " et <code>Borough_E09000028=1</code>.</li>"
+                    "<li><b>Incident n°15 :</b> observation : temps d'intervention inférieur à 6 minutes, prédiction incorrecte.<br>"
+                    "La contribution négative de la variable <code>H1117=0</code> n'est pas suffisante pour contrebalancer la contribution"
+                    " positive des variables <code>distStd=0.6656</code>, <code>Stat_resp_rep=0</code>, <code>Bor_inc_rep=0</code>,"
+                    " <code>Bor_resp_rep=0</code>.</li>"
+                "</ul>"
+                ), unsafe_allow_html=True)
