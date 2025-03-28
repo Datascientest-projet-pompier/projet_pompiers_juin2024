@@ -23,6 +23,7 @@ from page_pretraitement import pretraitement
 from page_methodologie import methodologie
 from page_resultat import resultat
 from page_interpretabilité import interpretabilite
+from page_variables import variables
 from page_prediction import prediction
 from page_conclusion import conclusion
 
@@ -31,8 +32,9 @@ def main():
     pages = {
         "Presentation":page_intro,
         "Presentation des données": presentation,
-        "Visualisation géographique des données": localisation,
         "Visualisation des données": visualisation,
+        "Variables du modèle": variables,
+        "Visualisation géographique des données": localisation,
         "Prétraitement des données": pretraitement,
         "Méthodologie utilisée": methodologie,
         "Quelques résultat" : resultat,
