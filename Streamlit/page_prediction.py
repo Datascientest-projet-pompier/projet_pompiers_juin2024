@@ -499,10 +499,10 @@ def prediction():
             col1, col2 = st.columns(2)  # Utilisation de colonnes pour une meilleure disposition
             st.warning("Attention Interprétation Lime rencontre un problème, et fait planté l'application")
 
-            if col1.button("Interprétation lime"):
+            if col1.button("Interprétation Shap"):
                 afficher_explication_lime(df,gb_model2)
                 
-            if col2.button("Interpretation shap"):
+            if col2.button("Interpretation Lime"):
                 afficher_explication_shap(df)
 
             # Bouton "Effectuer une autre prédiction" affiché uniquement après la prédiction

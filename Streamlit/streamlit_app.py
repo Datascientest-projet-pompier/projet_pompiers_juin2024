@@ -36,7 +36,7 @@ def main():
         "Prétraitement des données": pretraitement,
         "Méthodologie utilisée": methodologie,
         "Quelques résultat" : resultat,
-        "Interprétabilité du modèle" : interpretabilite,
+        "Compréhension du modèle" : interpretabilite,
         "Prédiction à l'aide du modèle": prediction,
         "Conclusion et prespective": conclusion
     }
