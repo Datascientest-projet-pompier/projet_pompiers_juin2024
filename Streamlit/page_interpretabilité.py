@@ -1,10 +1,55 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import joblib
 from PIL import Image
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
 
 from fonctions import texte_justifie
 
+# Fonction pour afficher un arbre spécifique
+def afficher_arbre(gb_model, col_names, arbre_index=0, max_depth=2):
+    fig, ax = plt.subplots(figsize=(20, 10))
+    plot_tree(gb_model.estimators_[arbre_index, 0],  # Sélectionner l'arbre
+              filled=True,
+              feature_names=col_names, 
+              max_depth=max_depth,
+              ax=ax)  # Utiliser l'axe pour Streamlit
+    st.pyplot(fig)  # Afficher avec Streamlit
+
+
+def count_var(gb_model, col_names, liste, arbre_index):
+    # Récupérer l'arbre de décision
+    tree = gb_model.estimators_[arbre_index, 0].tree_
+
+    # Nombre de nœuds dans l'arbre
+    n_nodes = tree.node_count
+
+    # Initialisation du DataFrame avec des zéros pour le nombre d'apparitions
+    resultat = pd.DataFrame(0, index=liste, columns=["Nombre d'apparition", "Proportion"])
+
+    # Parcours des nœuds de l'arbre
+    for i in range(n_nodes):
+        feature_index = tree.feature[i]
+        
+        # Vérifier si le nœud utilise une caractéristique (non-feuille)
+        if feature_index != -2:  # -2 signifie une feuille, pas une caractéristique
+            feature_name = col_names[feature_index]
+            
+            # Si le nom de la variable est dans la liste, incrémenter son compteur
+            if feature_name in liste:
+                resultat.loc[feature_name, "Nombre d'apparition"] += 1
+
+    # Calcul des proportions
+    for var_name in liste:
+        # Calculer la proportion par rapport au nombre total de nœuds (en pourcentage)
+        if resultat.loc[var_name, "Nombre d'apparition"] > 0:
+            resultat.loc[var_name, "Proportion"] = (resultat.loc[var_name, "Nombre d'apparition"] / n_nodes) * 100
+
+    return resultat
+    
 
 def interpretabilite():
     st.title("Interpretabilité du modèle")
@@ -91,8 +136,11 @@ def interpretabilite():
     with tab1:
         st.subheader("Interprétabilité")
         st.markdown(texte_justifie(
-            "Une première chose importante à connaitre est l'importance de chaque variable. Cette dernière est stockée dans le "
-            "modèle.")
+            "L'interprétabilité du modèle peu être vue de deux manières :"
+            "<ul>"
+                "<li> Visualisation des arbres de décisions.</li>"
+                "<li> Importances des variables.</li>"
+            "</ul>")
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         
@@ -102,12 +150,33 @@ def interpretabilite():
         st.markdown("##### 👁️ Visualisation de l'arbre de prédiction")
 
         st.markdown(texte_justifie(
-            "Pour notre modèle la profondeur maximale est 400 arbres, l'algorithme n'a pas convergé avant."
-            " Il nous est donc impossible de représenter l'arbre dans sa globalité.")
+            "Pour notre modèle la profondeur il y a eu 400 itérations maximums (<code>n_estimators = 400</code>) à chaque itération "
+            "un arbre de prédiction est construit pour minimiser l'erreur précédente. Chaque arbre à une profondeur maximale de"
+            " 9 (<code>max_depth = 9</code>).<br>"
+            " Il nous est donc impossible de représenter chaque arbre n'y d'en représenter la totalité.")
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Récupération des noms de colonne
+        df = pd.read_csv("Donnees/Doc csv/list_col.csv")
+        col_names = df.columns.tolist()
 
+        # Choix de l'arbre affiché
+        num_arbre = st.number_input("Itération de l'algorithme",
+                                            min_value=0,
+                                            max_value=gb_model2.estimators_.shape[0],
+                                            value=1,
+                                            step=1)
 
+        with st.expander(f"👁️ Visualisation de l'arbre de prédication itération : {num_arbre}"):
+            # Récupération du nom des colonnes
+            afficher_arbre(gb_model2,col_names, arbre_index=num_arbre-1, max_depth=2)
+
+        with st.expander(f"👁️ Utilisation de la variable dans l'arbre d'itération : {num_arbre}"):
+            liste = st.multiselect("Vos variables d'intéret :", col_names)
+            st.write(count_var(gb_model2, col_names, liste, num_arbre-1))
+            
+    
         st.markdown("##### 👁️ Visualisation de l'importance des variables")
 
         # Calcul de l'importance des features en pourcentage
@@ -125,7 +194,7 @@ def interpretabilite():
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-       
+
         st.dataframe(feat_imp_t.style.format("{:.2f}%"))
 
         with st.expander("📌 Interprétation"):
