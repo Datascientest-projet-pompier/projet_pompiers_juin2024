@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import plotly.graph_objects as go
+from matplotlib.ticker import FuncFormatter
 
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
@@ -64,7 +65,6 @@ def graphQuali_countPlot(df, variable):
     # Affichage du graphique dans Streamlit
     st.plotly_chart(fig)
 
-
 def graphQuali_pointplot(df, variable):
     """
     Affiche un pointplot (indication de la moyenne + IC95%) des temps (transformation Box-Cox) en fonction d'une variable catégorielle.
@@ -82,6 +82,52 @@ def graphQuali_pointplot(df, variable):
         df[variable] = pd.Categorical(df[variable], categories=jours_semaine, ordered=True)
     elif variable == 'Month':
         df[variable] = pd.Categorical(df[variable], categories=mois, ordered=True)
+    
+    # Création du graphique
+    fig, axes = plt.subplots(1, 1, figsize=(6, 5))
+    
+    # Tracer le pointplot
+    sns.pointplot(x=variable, y=var, data=df, ax=axes)
+    
+    # Titres et labels
+    axes.set_title(f"Pointplot de {var} \nen fonction de {variable}")
+    axes.set_xlabel(variable)
+    axes.set_ylabel(var)
+
+    if variable == 'ratioSC':
+        # Formatter les ticks de l'axe des abscisses en entiers
+        axes.xaxis.set_major_formatter(FuncFormatter(lambda x, pos: int(x)))
+
+    if variable == 'DayOfWeek' or variable == 'Month':
+        # Incline les annotations de l'axe des abscisses
+        plt.xticks(rotation=45, ha='right')  # Ajout de cette ligne
+        plt.tight_layout() # Ajout de cette ligne
+    
+    # Affichage du graphique
+    plt.tight_layout()
+    st.pyplot(fig)
+
+
+def graphQuali_pointplot2(df, variable):
+    """
+    Affiche un pointplot (indication de la moyenne + IC95%) des temps (transformation Box-Cox) en fonction d'une variable catégorielle.
+
+    Args:
+        df (pandas.DataFrame): Le DataFrame contenant les données.
+        variable (str): Le nom de la colonne à représenter.
+    """
+    var = 'boxcox_TotalResponseTime'  # Variable à tracer
+
+    jours_semaine = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    mois = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+    if variable == 'DayOfWeek':
+        df[variable] = pd.Categorical(df[variable], categories=jours_semaine, ordered=True)
+    elif variable == 'Month':
+        df[variable] = pd.Categorical(df[variable], categories=mois, ordered=True)
+    elif variable == 'ratioSC':
+        # Formatter les ticks de l'axe des abscisses en entiers
+        axes.xaxis.set_major_formatter(FuncFormatter(lambda x, pos: int(x)))
     
     # Création du graphique
     fig, axes = plt.subplots(1, 1, figsize=(6, 5))
@@ -192,3 +238,23 @@ def graphQuali_boxplot(df, variable):
 
     plt.tight_layout()
     st.pyplot(fig)  # Afficher le graphique dans Streamlit
+
+def afficher_correlations(df,variable):
+    """
+    Calcule et affiche les corrélations (Pearson, Spearman, Kendall) entre
+    'boxcox_TotalResponseTime' et 'distance'.
+
+    Args:
+        df (pandas.DataFrame): Le DataFrame contenant les données.
+    """
+
+    cor_pearson = df[['boxcox_TotalResponseTime', variable]].corr(method='pearson').iloc[0, 1]
+    cor_spearman = df[['boxcox_TotalResponseTime', variable]].corr(method='spearman').iloc[0, 1]
+    cor_kendall = df[['boxcox_TotalResponseTime', variable]].corr(method='kendall').iloc[0, 1]
+
+    correlation = pd.DataFrame({
+        'type': ['pearson', 'spearman', 'kendall'],
+        'correlation': [cor_pearson, cor_spearman, cor_kendall]
+    })
+
+    st.write(correlation)

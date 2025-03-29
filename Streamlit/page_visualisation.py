@@ -26,7 +26,6 @@ def visualisation():
 
     # Récupération des données de 2023
     df2023 = pd.read_csv("Donnees/Doc csv/df2023.csv")
-    st.write(df2023.columns)
 
     # Création des onglets
     tab1, tab2 = st.tabs(["Etude statistique", "Data Visualisation"])
@@ -214,25 +213,36 @@ def visualisation():
         " Elle varie de 0,6 mètre à 18,8 kilomètres. Sa distribution est asymétrique à droite, 50%"
         " des valeurs étant comprise entre 0.87 et 2,2 kilomètres.")
         , unsafe_allow_html=True)
-      
-      df2023['distance_r']=np.round(df2023.distance,0)
 
-            # Création des colonnes
+      # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
 
       with col1:
-        fonctionsgraph.graph_countIncident(df2023, 'distance_r')
+        st.image("Donnees/Images/rep_distance.png",use_container_width=True)
     
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
-        fonctionsgraph.graphQuali_pointplot(df2023, 'distance_r')
+        st.image("Donnees/Images/graph_distance.png",use_container_width=True)
+    
+      with st.expander(f"📌 Interprétation"):
+        st.markdown(texte_justifie(
+            "La distance influence le temps de trajet ce qui est logique.<br>"
+            " Nous avons calculé les corrélations linéaires (Pearson) , monotones (Spearman) et de rang (Pearson)."
+            " Les plus fortes sont obtenues avec la méthode de Spearman. Pour le temps de réponse total, cette corrélation"
+            " est de 0,66.<br>"
+            "Remarque : la methode de Spearman est non paramétrique; elle ne fait pas d'hypothèse de normalité sur les"
+            " variables. Compte tenu de la distribution de la distance (voir figure ci-dessus), cette méthode est plus "
+            "adaptée que Pearson (hypothèse de normalité)"
+            )
+            , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
+        fonctionsgraph.afficher_correlations(df2023,'distance')
+      
       st.markdown("### RatioSC")
       st.markdown(texte_justifie(
         "")
-        , unsafe_allow_html=True)
-      
-      df2023['distance_r']=np.round(df2023.distance,0)
+        , unsafe_allow_html=True)      
 
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
@@ -242,8 +252,16 @@ def visualisation():
     
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
-        st.image("Donnees/Images/graph_distance.png",
-                  caption="Illustration du Gradient Boosting", use_container_width=True)
+        fonctionsgraph.graphQuali_pointplot(df2023, 'ratioSC')
+
+      with st.expander(f"📌 Interprétation"):
+        st.markdown(texte_justifie(
+                "A FAIRE"
+                )
+                , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        fonctionsgraph.afficher_correlations(df2023,'ratioSC')
+    
       
     
 
