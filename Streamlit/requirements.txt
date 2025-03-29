@@ -20,7 +20,7 @@ streamlit-modal==0.1.0
 geographiclib
 
 #bibliotheques de graph 
-plotly.expres==6.0.1
+plotly==6.0.1
 
 setuptools
 ipython
