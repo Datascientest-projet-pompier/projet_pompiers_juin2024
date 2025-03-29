@@ -23,5 +23,8 @@ geographiclib
 plotly==6.0.1
 seaborn == 0.13.2
 
+#bibliotheque de statistique
+statsmodels == 0.14.4
+
 setuptools
 ipython
