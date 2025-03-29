@@ -2,24 +2,24 @@ import streamlit as st
 from fonctions import texte_justifie
 
 def variables():
-    st.title("Les Variables du modèle")
-    st.markdown("## Variables sélectionnées pour le machine learning")
+    st.title("Les Variables du modèle sélectionnées")
 
-    st.markdown(texte_justifie(
-        "Pour sélectionner nos variables nous avons utilisé les critères suivants :"
-        "<ul>"
-            "<li> Les variables quantitatives (distance et densité)"
+    with st.expander(f"Méthodologie de choix"):
+        st.markdown(texte_justifie(
+            "Pour sélectionner nos variables nous avons utilisé les critères suivants :"
             "<ul>"
-                "<li> Tendance sur les graphiques,</li>"
-                "<li> Test de corrélation de Spearman est significatif.</li>"
-            "</ul></li>"
-            "<li> Les variables qualitatives (toutes les autres)"
-            "<ul>"
-                "<li> Ecart entre la moyenne du temps par catégorie la plus forte et la plus faible est supérieur à 5%</li>"
-                "<li> Test d’ANOVA est significatif</li>"
-            "</ul></li>"
-        "</ul>")
-        , unsafe_allow_html=True)
+                "<li> Les variables quantitatives (distance et densité)"
+                "<ul>"
+                    "<li> Tendance sur les graphiques,</li>"
+                    "<li> Test de corrélation de Spearman est significatif.</li>"
+                "</ul></li>"
+                "<li> Les variables qualitatives (toutes les autres)"
+                "<ul>"
+                    "<li> Ecart entre la moyenne du temps par catégorie la plus forte et la plus faible est supérieur à 5%</li>"
+                    "<li> Test d’ANOVA est significatif</li>"
+                "</ul></li>"
+            "</ul>")
+            , unsafe_allow_html=True)
 
     st.markdown(texte_justifie(
         "Suites aux  différentes analyses nous avons décidé de travailler avec les variables explicatives suivantes :"

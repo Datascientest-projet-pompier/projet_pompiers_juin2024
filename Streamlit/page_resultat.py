@@ -58,22 +58,25 @@ def resultat():
     , unsafe_allow_html=True)    
     st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown(texte_justifie(
-        "Cinq métriques sont utilisées :"
-        "<ul>"
-            "<li><b>L'accuracy :</b> mesure la proportion de prédictions correctes par rapport au nombre"
-            " total de prédictions. C'est une mesure globale de la performance du modèle,</li>"
-            "<li><b>La précision :</b> mesure la précision pour chacune des classes(0 ou 1). Précision 0 renvoie la"
-            " proportion de valeur prédite à 0 étant réellement à 0 par rapport au total des valeur 0. Mathématiquement "
-            "<math>R_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Positifs}</math>  idem pour Précision 1,</li>"
-            "<li><b>Le Recall :</b> mesure la proportion de toutes les instances positives réelles qui ont été correctement"
-            " identifiées par le modèle. Mathématiquement "
-            "<math>F1__0=\frac{Vrais Positifs}{Vrais Positifs + Faux Négatifs}</math>,</li>"
-            "<li><b>F1-score :</b> mesure la moyenne harmonique de la précision et du rappel. Mathématiquement "
-            "<math>R_0=2 \times \frac{Precision \times Rappel}{Precision + Rappel}</math>,</li>"
-            "<li><b>AUC ROC :</b> mesure l'air sous la courbe ROC(Nombre de vrais positifs (rappel) en fonction du taux de "
-            "faux positifs), elle mesure de la capacité du modèle à distinguer les classes.</li>"
-        "</ul>")
+    st.markdown(r"""
+        Cinq métriques sont utilisées :
+                
+        - **L'accuracy :** mesure la proportion de prédictions correctes par rapport au nombre total de prédictions. C'est une mesure globale de la performance du modèle,
+            
+        - **La précision :** mesure la précision pour chacune des classes(0 ou 1). Précision 0 renvoie la proportion de valeur prédite à 0 étant réellement à 0 par rapport au total des valeur 0. 
+
+        $$R_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Positifs} $$
+                
+        idem pour Précision 1,
+        
+        - **Le Recall :** mesure la proportion de toutes les instances positives réelles qui ont été correctement identifiées par le modèle.
+            
+        $$F1_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Négatifs}$$
+            
+        - **F1-score :** mesure la moyenne harmonique de la précision et du rappel. Mathématiquement 
+            
+        - **AUC ROC :** mesure l'air sous la courbe ROC(Nombre de vrais positifs (rappel) en fonction du taux de faux positifs), elle mesure de la capacité du modèle à distinguer les classes.
+        """
     , unsafe_allow_html=True)    
     st.markdown("<br>", unsafe_allow_html=True)
 
