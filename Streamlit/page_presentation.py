@@ -13,7 +13,7 @@ def presentation():
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Création des onglets
-    tab1, tab2, tab3, tab4 = st.tabs(["Etude des données initiales", "Gestion des valeurs manquantes","Néttoyage et jointure",
+    tab1, tab2, tab3, tab4 = st.tabs(["Etude des données initiales", "Gestion des valeurs manquantes","Nettoyage et jointure",
     "Création des nouvelles variables"])
 
     with tab1:
@@ -66,7 +66,7 @@ def presentation():
       st.markdown("<br>", unsafe_allow_html=True)
 
     with tab3:
-      st.subheader("Néttoyage et jointure")
+      st.subheader("Nettoyage et jointure")
 
       st.markdown(texte_justifie(
         "Le 9 janvier 2014 les autorités londoniennes ont fermés 10 casernes. Nous avons donc choisis de ne"
@@ -136,15 +136,18 @@ def presentation():
 
           "<li> Données géographiques :"
             "<ul>"
-              "<li><code>Borough</code> : donnant l'arrondissement de la caserne</li>"
+              "<li><code>inner</code> : donnant l'information si l'arrondissement est dans le \"Londres Interieur\" "
+              "ou le \"Londres Extérieur\" (définition donnée par l'Office for National Statistics (ONS))</li>"
               "<li><code>RatioSC</code> : représentant la superficie affectée a une caserne (distinction par arrondissement)</li>"
               "<li><code>Distance</code> : représentant la distance à vol d'oiseau entre la caserne et l'incident</li>"
             "</ul></li>"
 
           "<li> Variables Booléennes :"
             "<ul>"
-              "<li><code>Bor_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information "
+              "<li><code>Stat_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information "
               "si la caserne répondante est la même que la caserne responsable.</li>"
+              "<li><code>Bor_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information "
+              "si la caserne répondante est dans le même arrondissement que la même que la caserne responsable.</li>"
               "<li><code>Bor_inc_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident "
               "et la casserne répondante sont dans le même arrondissement.</li>"
               "<li><code>Bor_inc_resp</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident "
@@ -152,3 +155,5 @@ def presentation():
             "</ul></li>"
         "</ul>")
         , unsafe_allow_html=True)
+      
+      
