@@ -176,6 +176,57 @@ def interpretabilite():
             liste = st.multiselect("Vos variables d'intéret :", col_names)
             st.write(count_var(gb_model2, col_names, liste, num_arbre-1))
             
+        with st.expander(f"📌 Interprétation arbre à l'initialisation"):
+            afficher_arbre(gb_model2,col_names, arbre_index=0, max_depth=2)
+            st.markdown(texte_justifie(
+                "Dans cet arbre, la première séparation se fait sur la variable <code>Bor_resp_rep</code> qui est une variable"
+                " binaire représentant si la caserne déployée (répondante) et la caserne responsable sont dans le même"
+                " arrondissement (1 = oui, 0 = non). Au second niveau, les deux noeuds se séparent en branches supplémentaires"
+                " selon la même variable : la distance standardisée (distStd). La borne est légèrement différente si la caserne"
+                " répondante et la caserne déployée sont identiques (<code>distStd<=0.531</code> versus <code>distStd=0.484</code>"
+                "). La distance a aussi beaucoup de poids sur le troisième niveau de l'arbre car elle intervient dans 3 tests "
+                "sur 4."
+                )
+                , unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(texte_justifie(
+                "Vous trouverez ci-dessous la proportion d'apparition de chaque variables."
+                )
+                , unsafe_allow_html=True)
+            tab = count_var(gb_model2, col_names, col_names, 0)
+            st.write(tab)
+            
+            
+            
+        with st.expander(f"📌 Interprétation arbre à la dernière itération"):
+            afficher_arbre(gb_model2,col_names, arbre_index=399, max_depth=2)
+            st.markdown(texte_justifie(
+                "Dans cet arbre, la première séparation se fait sur la variable <code>Borough_E09000010</code>, qui est"
+                " une variable binaire indiquant si l'observation appartient à un certain arrondissement (1 = oui, 0 = non)."
+                " Cette séparation divise les données en deux sous-ensembles principaux.<br>"
+                "Au second niveau, si l'observation appartient à l'arrondissement correspondant à <code>Borough_E09000010</code>"
+                ", une nouvelle séparation est effectuée sur la variable <code>H1117</code>, qui est également binaire et indique si "
+                "l'incident à eu lieu entre 11h et 17h. En revanche, si l'observation ne correspond pas à cet arrondissement,"
+                " la séparation se fait sur la variable <code>Bor_inc_rep</code>, qui indique si l'incident a été signalé"
+                " dans le même arrondissement que la caserne qui à répondue.<br>"
+                "Au troisième niveau, les branches se divisent encore en fonction de plusieurs variables :"
+                "<ul>"
+                    "<li>Dans le sous-arbre gauche, la séparation est faite sur <code>Borough_E09000007</code> et "
+                    "<code>Borough_E09000020</code></li>"
+                    "<li>Dans le sous-arbre droit, deux variables interviennent : <code>distStd</code>, qui correspond"
+                    " à une mesure de distance normalisée, et <code>PropCat_Boat</code>, qui est une variable catégorique "
+                    "liée aux propriétés."
+                )
+                , unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(texte_justifie(
+                "Vous trouverez ci-dessous la proportion d'apparition de chaque variables."
+                )
+                , unsafe_allow_html=True)
+            tab = count_var(gb_model2, col_names, col_names, 399)
+            st.write(tab)
+                
+            
     
         st.markdown("##### 👁️ Visualisation de l'importance des variables")
 
@@ -243,22 +294,23 @@ def interpretabilite():
                     "il y a plus de chance que le temps d'intervention soit inférieur à 6 minutes. Cette influence s'explique"
                     " car si la caserne déployée (répondante) n'est pas la caserne responsable cela implique sûrement une "
                     "distance plus importante.</li>"
-                    "<li>Les observations où H1117=1 / H26=1 sont associées à des valeurs SHAP élevées. Autrement dit,"
-                    " il y a plus de chance que le temps d'intervention soit supérieur à 6 minutes si l'incident a lieu"
-                    " sur les plages horaires [2 - 6] et [11 - 17]. Pour la plage horaire nocturne, cela s'explique par"
+                    "<li>Les observations où <code>H1117=1</code> / <code>H26=1</code> sont associées à des valeurs SHAP élevées."
+                    " Autrement dit, il y a plus de chance que le temps d'intervention soit supérieur à 6 minutes si l'incident "
+                    "a lieu sur les plages horaires [2 - 6] et [11 - 17]. Pour la plage horaire nocturne, cela s'explique par"
                     " une faible mobilisation (heures creuses, moins de pompiers présents en caserne). Pour l'autre plage,"
                     " on peut supposer que la densité importante du trafic routier augmente le temps de trajet.</li>"
-                    "<li>Des valeurs fortes de ratioStd sont associées à des valeurs SHAP élevées. Pour rappel ratioStd représente"
-                    " le ratio entre la superficie d'un arrondissement et le nombre de casernes dans celui-ci. Il y a donc plus de"
-                    " chance que le temps d'intervention soit supérieur à 6 minutes quand cette densité est forte. On peut "
-                    "supposer que moins il y a de casernes au kilometre carré (densité forte), plus la caserne a de distance"
-                    " à parcourir pour agir et donc plus le temps de trajet est long.</li>"
-                    "<li>Les variables PropCat_Outdoor, PropCat_Other Residential et PropCat_Dwelling - qui précisent le type"
-                    " de localisation de l'incident - influencent la prédiction du modèle de façon positive pour la première"
-                    " et négative pour les deux autres. Autrement dit, si un incident a lieu en extérieur (PropCat_Outdoor=1,"
-                    " forte valeur), il y a plus de chance que le temps de trajet soit supérieur à 6 minutes ; c'est l'inverse"
-                    " si l'incident a lieu chez un particulier (Dwelling) ou dans un autre type de résidence (temps de trajet "
-                    "de moins de 6 minutes plus probable).</li>"
+                    "<li>Des valeurs fortes de <code>ratioStd</code> sont associées à des valeurs SHAP élevées. Pour rappel "
+                    "<code>ratioStd</code> représente le ratio entre la superficie d'un arrondissement par rapport au nombre"
+                    " de casernes dans celui-ci. Il y a donc plus de chance que le temps d'intervention soit supérieur"
+                    " à 6 minutes quand cette densité est forte. On peut supposer que moins il y a de casernes au kilometre"
+                    " carré (ratio fort), plus la caserne a de distance à parcourir pour agir et donc plus le temps de trajet"
+                    " est long.</li>"
+                    "<li>Les variables <code>PropCat_Outdoor</code>, <code>PropCat_Other</code> Residential et <code>PropCat_Dwelling"
+                    "</code> - qui précisent le type de localisation de l'incident - influencent la prédiction du modèle de façon"
+                    " positive pour la première et négative pour les deux autres. Autrement dit, si un incident a lieu en extérieur"
+                    " (<code>PropCat_Outdoor=1</code>, forte valeur), il y a plus de chance que le temps de trajet soit supérieur"
+                    " à 6 minutes ; c'est l'inverse si l'incident a lieu chez un particulier (Dwelling) ou dans un autre type de"
+                    " résidence (temps de trajet de moins de 6 minutes plus probable).</li>"
                 "</ul>"
                 ), unsafe_allow_html=True)
 

@@ -19,6 +19,8 @@ streamlit-modal==0.1.0
 # Pour calcul de distance
 geographiclib
 
+#bibliotheques de graph 
+plotly.expres==6.0.1
 
 setuptools
 ipython

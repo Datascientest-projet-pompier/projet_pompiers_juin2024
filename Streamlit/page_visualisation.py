@@ -5,47 +5,50 @@ import os
 from fonctions import texte_justifie
 from fonctionsstat  import tab_stat
 
+import matplotlib.pyplot as plt
 
 def visualisation():
     st.title("Visualisation")
 
     st.markdown(texte_justifie(
         "A ce stade notre dataframe représentant l'ensemble des incidents est composé de plus d'un millions de"
-        " lignes représentant chacune un incident et de ??? variables représentant soit une information sur la "
-        "description de l'incident soit la variable cible (temps). Un grand nombre des variables est qualitative"
-        " et seulement sont des variables quantitatives (<code>Time*</code>, <code>Distance</code> et <code>Ratio</code>)."
-        " Le tableau ne contient plus de valeurs manquantes, mais certaines valeurs extrème n'ont pas été retirées.")
+        " lignes représentant chacune un incident et plus de 50 variables représentant soit une information sur la "
+        "description de l'incident soit la variable cible (temps). L'objectif de cette partie est l'étude de ces variables"
+        " pour choisir celles qui seront conservées dans le modèle.<br>"
+        "A vue du grand nombre de données et après une étude préalable, pour cette partie nous n'utiliserons que les données"
+        " de 2023."
+        "Remarque : Le tableau ne contient plus de valeurs manquantes, mais les valeurs extrème ou abérantes peuvent encore être présente.")
     , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown(texte_justifie(
-        "A vue du grand nombre de données et après une étude préalable pour cette partie nous n'utiliserons que les données"
-        " de 2023.")
-    , unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    st.markdown("## Statistiques descriptives sur les variables quantitatives")
-    
-    st.markdown(texte_justifie(
-        "Une rapide étude statistique nous donne les informations suivantes :")
-    , unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-
+    # Récupération des données de 2023
     df2023 = pd.read_csv("Donnees/Doc csv/df2023.csv")
-    tab = tab_stat(df2023)
 
-    st.table(tab)
+    # Création des onglets
+    tab1, tab2 = st.tabs(["Etude statistique", "Data Visualisation"])
 
-    st.markdown("## Data Visualisation")
+    with tab1:
+      st.subheader("Etude statistique")
+      st.markdown(texte_justifie(
+        " Notre jeu de données contient un grand nombre de variables qualitative et seulement cinq variables quantitatives"
+        " (<code>Time...</code>, <code>Distance</code> et <code>RatioSc</code>)."
+        "Une rapide étude statistique nous donne les informations suivantes :")
+        , unsafe_allow_html=True)
+      st.markdown("<br>", unsafe_allow_html=True)
+      
+      tab = tab_stat(df2023)
+      st.table(tab)
 
-    st.markdown(texte_justifie(
+    with tab2:
+      st.subheader("Data Visualisation")
+      
+      st.markdown(texte_justifie(
         "Au vue de la distribution de la variable cible (temps total), nous avons dans un premier temps effectué"
         " une transformation Box-Cox pour tenter de rendre la variable le plus similaire possible à une distribution "
         "normale. De plus plus seuls certains graphiques sont présentés ici.")
         , unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    st.markdown("### Informations temporelles")
+      st.markdown("<br>", unsafe_allow_html=True)
+      st.markdown("### Informations temporelles")
 
     st.markdown(texte_justifie(
         "Au vue de la distribution de la variable cible (temps total), nous avons dans un premier temps effectué"
