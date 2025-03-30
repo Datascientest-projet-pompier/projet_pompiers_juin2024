@@ -420,5 +420,4 @@ def predictionv2():
                 st.write("temps")
 
             with tab1:
-                afficher_explication_shap(df_bilan)
                 afficher_explication_shap2(df_bilan)
