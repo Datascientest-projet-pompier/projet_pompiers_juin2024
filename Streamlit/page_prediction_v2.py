@@ -44,9 +44,6 @@ def choix_lieu():
             lat = map_data["last_clicked"]["lat"]
             lng = map_data["last_clicked"]["lng"]
 
-        if lat is not None:
-            st.write(lat, lng)
-
     if choix == "Saisie manuelle":
         lat = st.number_input("Latitude", value=51.5074)
         lng = st.number_input("Longitude", value=-0.1278)
@@ -103,13 +100,14 @@ def choix_station(lat, lng, station_df):
     # Menu déroulant pour un choix unique
     station_names = liste_station["Station name"].tolist()
     station_rep = st.selectbox("Choisissez la station :", station_names)
+    distance = liste_station.loc[liste_station["Station name"]==station_rep, 'Distance'].iloc[0]
 
     if station_rep is not None: 
         if st.session_state.liste_choix[2] and st.button("Confirmer la caserne"):
             st.session_state.liste_choix[2]=False
-            return station_resp,station_rep
+            return station_resp,station_rep,distance
         else:
-            return None,None
+            return None,None,None
 
 def choix_type():
     propriete = recup_df("PropertyCategory.csv")
@@ -125,28 +123,118 @@ def choix_type():
         else:
             return None
 
+def charger_model(chemin_fichier):
+    try:
+        with open(chemin_fichier, 'rb') as fichier_scaler:
+            scaler_charge = pickle.load(fichier_scaler)
+        return scaler_charge
+    except FileNotFoundError:
+        st.error("Fichier scaler non trouvé.")
+        return None
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du scaler : {e}")
+        return None
+        
+def standardisation(lien, valeur, nom):
+    model = charger_model(lien)
+    if not isinstance(valeur, (list, pd.Series)):
+        valeur = [valeur]
+    df = pd.DataFrame({nom: valeur}, index=[0])
+    if nom == "ditance":
+        df.rename(columns={"ditance":"distance"}, inplace = True)
+    if model is not None:
+        try:
+            return model.transform(df)
+        except Exception as e:
+            st.error(f"Erreur lors de la transformation : {e}")
+            return None
+    else:
+        st.error("Pb avec le model")
+
 def prepa_incident(station_df):
     list_col = recup_df("list_col.csv")
     noms_colonnes = list_col.columns.tolist()
-    df_bilan = pd.DataFrame(columns=noms_colonnes)
+
+    # Créer un DataFrame rempli de zéros
+    df_bilan = pd.DataFrame(0, index=[0], columns=noms_colonnes)
 
     caserne_resp = st.session_state.data.loc[0, 'caserne_resp']
-    st.write(caserne_resp)
+    caserne_dep = st.session_state.data.loc[0, 'caserne_dep']   
 
-    # Utiliser loc pour accéder à la colonne 'inner london'
     inner = station_df.loc[station_df["Station name"] == caserne_resp, 'inner london']
+    df_bilan.loc[0, 'inner'] = inner.iloc[0]
 
-    # Vérifier si une station correspondante a été trouvée
-    if not inner.empty:
-        # Vérifier si inner contient plusieurs valeurs
-        if len(inner) > 1:
-            st.warning(f"Plusieurs stations trouvées avec le nom : {caserne_resp}. Utilisation de la première.")
-        df_bilan.loc[0, 'inner'] = inner.iloc[0]  # Prendre la première valeur
-    else:
-        st.error(f"Aucune station trouvée avec le nom : {caserne_resp}. Vérifiez le nom de la caserne.")
-        df_bilan.loc[0, 'inner'] = None  # ou une autre valeur par défaut
+    if st.session_state.data.loc[0, 'caserne_resp'] != st.session_state.data.loc[0, 'caserne_dep']:
+        df_bilan.loc[0, 'Stat_resp_rep'] = 1
+        caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
+        bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
+        bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
+        if bor_rep != bor_inc :
+            df_bilan.loc[0, 'Bor_resp_rep'] = 1
+            df_bilan.loc[0, 'Bor_inc_rep'] = 1
+    
+    heure = st.session_state.data.loc[0, 'heure']
+    if 2 <= heure <= 6:
+        df_bilan.loc[0, 'H26'] = 1
+    elif 11 <= heure <= 17:
+        df_bilan.loc[0, 'H1117'] = 1
 
-    st.write(df_bilan)
+    # Standardisation de la distance
+    distance = st.session_state.data.loc[0, 'distance']
+    distancestd = standardisation('Donnees/Modeles/tranfo_distance.pkl',distance,"ditance")
+    df_bilan.loc[0, 'distStd'] = distancestd
+
+    # Standardisation du ratio
+    ratio = station_df.loc[station_df["Station name"] == caserne_dep, 'ratio'].iloc[0]
+    ratioSC = standardisation('Donnees/Modeles/tranfo_ratio.pkl',ratio,"ratioSC")
+    df_bilan.loc[0, 'ratioStd'] = ratioSC
+
+    stat_code = "Borough_" + station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughCode'].iloc[0]
+    df_bilan.loc[0, stat_code] = 1
+    property_code = 'PropCat_' + st.session_state.data.loc[0, 'type_property']
+    df_bilan.loc[0, property_code] = 1
+
+    return df_bilan
+
+def afficher_chemin_prediction(model, data, feature_names):
+    """
+    Affiche le chemin de prédiction précis pour une donnée donnée.
+
+    Args:
+        model (GradientBoostingClassifier): Le modèle entraîné.
+        data (pd.DataFrame): La donnée pour laquelle afficher le chemin.
+        feature_names (list): Les noms des caractéristiques.
+    """
+
+    # Sélectionner le premier arbre (vous pouvez itérer sur tous les arbres si nécessaire)
+    tree = model.estimators_[0, 0].tree_
+
+    node_index = 0
+    path = []
+
+    while tree.children_left[node_index] != -1:
+        feature = tree.feature[node_index]
+        threshold = tree.threshold[node_index]
+        value = data.iloc[0, feature]
+
+        path.append({
+            "node_index": node_index,
+            "feature": feature_names[feature],
+            "threshold": threshold,
+            "value": value,
+            "decision": "left" if value <= threshold else "right"
+        })
+
+        if value <= threshold:
+            node_index = tree.children_left[node_index]
+        else:
+            node_index = tree.children_right[node_index]
+
+    # Afficher le chemin
+    st.write("Chemin de prédiction :")
+    for step in path:
+        st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
+
 
 
         
@@ -164,7 +252,8 @@ def predictionv2():
             'lng': [''],
             'caserne_resp': [''],
             'caserne_dep': [''],
-            'type_property': ['']
+            'distance':[''],
+            'type_property': [''],
         })
 
     station_df = recup_df("FireStationInfo_2.csv",";")
@@ -210,11 +299,12 @@ def predictionv2():
                         st.rerun()
 
             if var == "Choix caserne déployée" and st.session_state.data.loc[0,'lat']!='' and st.session_state.data.loc[0,'lng']!='':
-                station_resp,station_rep = choix_station(st.session_state.data.loc[0,'lat'],st.session_state.data.loc[0,'lng'], station_df)
+                station_resp,station_rep, distance = choix_station(st.session_state.data.loc[0,'lat'],st.session_state.data.loc[0,'lng'], station_df)
 
                 if station_rep is not None :
                     st.session_state.data.loc[0, 'caserne_resp'] = station_resp
                     st.session_state.data.loc[0, 'caserne_dep'] = station_rep
+                    st.session_state.data.loc[0, 'distance'] = distance
                 
                     if not st.session_state.liste_choix[2]:
                         liste_choix_mise_a_jour = [choix for choix, est_choisi in zip(liste_choix_base, st.session_state.liste_choix) if est_choisi]
@@ -231,12 +321,41 @@ def predictionv2():
                         # Recharger le selectbox pour refléter les changements
                         st.rerun()
 
+        if (st.session_state.data.iloc[0] != '').all():
+            if st.button("Effacer les valeurs saisies"):
+                st.session_state.data = pd.DataFrame({                        
+                    'heure': [''],
+                    'lat': [''],
+                    'lng': [''],
+                    'caserne_resp': [''],
+                    'caserne_dep': [''],
+                    'distance':[''],
+                    'type_property': ['']
+                    })
+                st.session_state.liste_choix = [True, True, False, True]
+                liste_choix_mise_a_jour = [choix for choix, est_choisi in zip(liste_choix_base, st.session_state.liste_choix) if est_choisi]
+                # Recharger le selectbox pour refléter les changements
+                st.rerun()
+
+
     with tab2:
         if not (st.session_state.data.iloc[0] != '').all():
             st.write("Choisissez d'abord les paramètre de l'incident (onglet 1)")
         else:
-            if st.button("Effectuer une prédiction"):
-                prepa_incident(station_df)
+            df_bilan = prepa_incident(station_df)
+
+            filename = 'Donnees/Modeles/gradient_boosting_model2v2.joblib'
+            gb_model2 = joblib.load(filename)
+
+            df_trans = gb_model2.predict_proba(df_bilan)
+            prob_classe_0 = round(df_trans[0, 0], 4)
+            prob_classe_1 = round(df_trans[0, 1], 4)
+            st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
+            st.write("Prédiction que l'arrivée sur site soit supérieur à 6 min : ",prob_classe_1)
             
+            # Afficher l'arbre de decision
+            with st.expander(f"Arbre de prédiction"):          
+                noms_colonnes = df_bilan.columns.tolist()
+                afficher_chemin_prediction(gb_model2, df_bilan, noms_colonnes)
 
 
