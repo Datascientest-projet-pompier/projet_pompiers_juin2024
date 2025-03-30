@@ -306,6 +306,33 @@ def afficher_explication_shap(df):
             shap_values = explainer_shap(df)
 
         with st.spinner("Création du graphique SHAP..."):
+            # Création de la figure Matplotlib
+            fig, ax = plt.subplots(figsize=(8, 3))
+
+            # Générer le force_plot et l'enregistrer sous forme d'image
+            shap_plot = shap.force_plot(
+                explainer_shap.expected_value, shap_values.values, df
+            )
+            shap.save_html("shap_plot.html", shap_plot)
+
+            # Lire le fichier et l'afficher dans Streamlit
+            with open("shap_plot.html", "r", encoding="utf-8") as f:
+                html_code = f.read()
+            st.components.v1.html(html_code, height=300)
+
+
+def afficher_explication_shap6(df):  # Ok distant
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+
+    with st.spinner("Chargement de l'explicateur SHAP..."):
+        with open(filename, 'rb') as f:
+            explainer_shap = cloudpickle.load(f)
+
+    if explainer_shap:
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
             plt.figure(figsize=(10, 6))
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
