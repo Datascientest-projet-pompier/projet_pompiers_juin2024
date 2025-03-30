@@ -403,11 +403,10 @@ def predictionv2():
             st.markdown("#### Interprétation de la prédiction de l'incident")
 
             # Création des onglets
-            tab1, tab2 = st.tabs(["Expplicabilité avec Lime","Explicabilité avec Shap"])
+            tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
             with tab2:
-                st.write("temps")
-                #afficher_explication_lime(df_bilan,gb_model2)
+                afficher_explication_lime(df_bilan,gb_model2)
 
             with tab1:
                 afficher_explication_shap(df_bilan)
