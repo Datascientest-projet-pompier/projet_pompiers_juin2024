@@ -53,7 +53,7 @@ def choix_lieu():
             st.session_state.liste_choix[1]=False
             st.session_state.liste_choix[2]=True
             return lat, lng
-        
+
     return None, None  # Retourner None, None si aucune coordonnée n'est sélectionnée
 
 
@@ -102,7 +102,7 @@ def choix_station(lat, lng, station_df):
     station_rep = st.selectbox("Choisissez la station :", station_names)
     distance = liste_station.loc[liste_station["Station name"]==station_rep, 'Distance'].iloc[0]
 
-    if station_rep is not None: 
+    if station_rep is not None:
         if st.session_state.liste_choix[2] and st.button("Confirmer la caserne"):
             st.session_state.liste_choix[2]=False
             return station_resp,station_rep,distance
@@ -116,7 +116,7 @@ def choix_type():
     type = st.selectbox("Choisir une station", type_incident)
 
     # Affichage de la station choisie
-    if type is not None: 
+    if type is not None:
         if st.session_state.liste_choix[3] and st.button("Confirmer le type"):
             st.session_state.liste_choix[3]=False
             return type
@@ -134,7 +134,7 @@ def charger_model(chemin_fichier):
     except Exception as e:
         st.error(f"Erreur lors du chargement du scaler : {e}")
         return None
-        
+
 def standardisation(lien, valeur, nom):
     model = charger_model(lien)
     if not isinstance(valeur, (list, pd.Series)):
@@ -159,7 +159,7 @@ def prepa_incident(station_df):
     df_bilan = pd.DataFrame(0, index=[0], columns=noms_colonnes)
 
     caserne_resp = st.session_state.data.loc[0, 'caserne_resp']
-    caserne_dep = st.session_state.data.loc[0, 'caserne_dep']   
+    caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
 
     inner = station_df.loc[station_df["Station name"] == caserne_resp, 'inner london']
     df_bilan.loc[0, 'inner'] = inner.iloc[0]
@@ -172,7 +172,7 @@ def prepa_incident(station_df):
         if bor_rep != bor_inc :
             df_bilan.loc[0, 'Bor_resp_rep'] = 1
             df_bilan.loc[0, 'Bor_inc_rep'] = 1
-    
+
     heure = st.session_state.data.loc[0, 'heure']
     if 2 <= heure <= 6:
         df_bilan.loc[0, 'H26'] = 1
@@ -236,10 +236,49 @@ def afficher_chemin_prediction(model, data, feature_names):
         st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
 
 
+def afficher_explication_shap(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+    try:
+        with st.spinner("Chargement de l'explicateur SHAP..."):
+            with open(filename, 'rb') as f:
+                explainer_shap = cloudpickle.load(f)
 
-        
+        if explainer_shap:
+            # Vérification du format de df
+            if not isinstance(df, pd.DataFrame):
+                st.error("Les données doivent être un DataFrame pandas.")
+                return
+
+            with st.spinner("Calcul des valeurs SHAP..."):
+                shap_values = explainer_shap(df)
+
+            with st.spinner("Création du graphique SHAP..."):
+                shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+
+            shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+            st.components.v1.html(shap_html_str, height=200)
+        else:
+            st.warning("L'explicateur SHAP n'est pas disponible.")
+    except FileNotFoundError:
+        st.error(f"Le fichier {filename} n'a pas été trouvé.")
+    except Exception as e:
+        st.error(f"Une erreur s'est produite : {e}\n{traceback.format_exc()}")
 
 
+def afficher_explication_lime(df, gb_model2):
+    filename = 'Donnees/Modeles/explainer_lime.pkl'
+    try:
+        with open(filename, 'rb') as f:
+            explainer_lime = cloudpickle.load(f)
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'explainer LIME : {e}")
+        return
+
+    try:
+        explanation = explainer_lime.explain_instance(df.values[0], gb_model2.predict_proba, num_features=10)
+        st.components.v1.html(explanation.as_html(), height=800)
+    except Exception as e:
+        st.error(f"Erreur lors de l'explication LIME : {e}")
 
 
 def predictionv2():
@@ -292,7 +331,7 @@ def predictionv2():
                 if lat is not None :
                     st.session_state.data.loc[0, 'lat'] = lat
                     st.session_state.data.loc[0, 'lng'] = lng
-                
+
                     if not st.session_state.liste_choix[1]:
                         liste_choix_mise_a_jour = [choix for choix, est_choisi in zip(liste_choix_base, st.session_state.liste_choix) if est_choisi]
                         # Recharger le selectbox pour refléter les changements
@@ -305,7 +344,7 @@ def predictionv2():
                     st.session_state.data.loc[0, 'caserne_resp'] = station_resp
                     st.session_state.data.loc[0, 'caserne_dep'] = station_rep
                     st.session_state.data.loc[0, 'distance'] = distance
-                
+
                     if not st.session_state.liste_choix[2]:
                         liste_choix_mise_a_jour = [choix for choix, est_choisi in zip(liste_choix_base, st.session_state.liste_choix) if est_choisi]
                         # Recharger le selectbox pour refléter les changements
@@ -323,7 +362,7 @@ def predictionv2():
 
         if (st.session_state.data.iloc[0] != '').all():
             if st.button("Effacer les valeurs saisies"):
-                st.session_state.data = pd.DataFrame({                        
+                st.session_state.data = pd.DataFrame({
                     'heure': [''],
                     'lat': [''],
                     'lng': [''],
@@ -352,10 +391,20 @@ def predictionv2():
             prob_classe_1 = round(df_trans[0, 1], 4)
             st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
             st.write("Prédiction que l'arrivée sur site soit supérieur à 6 min : ",prob_classe_1)
-            
+
             # Afficher l'arbre de decision
-            with st.expander(f"Arbre de prédiction"):          
+            with st.expander(f"Arbre de prédiction"):
                 noms_colonnes = df_bilan.columns.tolist()
                 afficher_chemin_prediction(gb_model2, df_bilan, noms_colonnes)
 
+            # Interprétation
+            st.markdown("#### Interprétation de la prédiction de l'incident")
 
+            # Création des onglets
+            tab1, tab2 = st.tabs(["Expplicabilité avec Lime","Explicabilité avec Shap"])
+
+            with tab2:
+                afficher_explication_lime(df_bilan,gb_model2)
+
+            with tab1:
+                afficher_explication_shap(df_bilan)
