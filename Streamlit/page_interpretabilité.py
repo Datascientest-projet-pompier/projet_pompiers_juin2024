@@ -14,7 +14,7 @@ def afficher_arbre(gb_model, col_names, arbre_index=0, max_depth=2):
     fig, ax = plt.subplots(figsize=(20, 10))
     plot_tree(gb_model.estimators_[arbre_index, 0],  # Sélectionner l'arbre
               filled=True,
-              feature_names=col_names, 
+              feature_names=col_names,
               max_depth=max_depth,
               ax=ax)  # Utiliser l'axe pour Streamlit
     st.pyplot(fig)  # Afficher avec Streamlit
@@ -33,11 +33,11 @@ def count_var(gb_model, col_names, liste, arbre_index):
     # Parcours des nœuds de l'arbre
     for i in range(n_nodes):
         feature_index = tree.feature[i]
-        
+
         # Vérifier si le nœud utilise une caractéristique (non-feuille)
         if feature_index != -2:  # -2 signifie une feuille, pas une caractéristique
             feature_name = col_names[feature_index]
-            
+
             # Si le nom de la variable est dans la liste, incrémenter son compteur
             if feature_name in liste:
                 resultat.loc[feature_name, "Nombre d'apparition"] += 1
@@ -49,7 +49,7 @@ def count_var(gb_model, col_names, liste, arbre_index):
             resultat.loc[var_name, "Proportion"] = (resultat.loc[var_name, "Nombre d'apparition"] / n_nodes) * 100
 
     return resultat
-    
+
 
 def interpretabilite():
     st.title("Interpretabilité du modèle")
@@ -73,51 +73,51 @@ def interpretabilite():
     # Expander pour afficher/masquer le modèle de Gradient Boosting
     with st.expander("📌 Le modèle de gradient boosting"):
         st.markdown(texte_justifie(
-            "Le Gradient Boosting est une technique d'apprentissage supervisé que l'on utilise ici pour " 
+            "Le Gradient Boosting est une technique d'apprentissage supervisé que l'on utilise ici pour "
             "la classification binaire. Il construit des modèles successifs en corrigeant les erreurs du modèle précédent.")
             , unsafe_allow_html=True)
-        
+
         st.image("Donnees/Images/illustration gradient boosting.png",
                   caption="Illustration du Gradient Boosting", use_container_width=True)
 
-        st.markdown("""
+        st.markdown(r"""
             ##### Les étapes du **gradient boosting**
 
             - **Etape 1 :** 🚀 Initialisation.
-                    
+
             Le modèle effectue une première prévision pour chaque individus, est s'aidant de la proportion de la classe
             "positive $p$
 
             - **Etape 2 :** ❌ Calcul des pseudos-résidus.
-                    
+
             Pour chaque individu, on évalue l’erreur de classification en utilisant une fonction de perte.
-            
+
             - **Etape 3 :** 🚀 Entrainement d'un nouvelle arbre.
             Un nouvelle arbre est entrainé pour minimiser les erreurs calculer précédemment.
-                    
+
             - **Etape 4 :** Mise à jour du modèle.
-                    
+
                 Une fois l’arbre entraîné, on met à jour le modèle global avec la formule suivante :\n
                 $$F_{t+1}(x) = F_t(x) + \lambda h_t(x)$$ \n
                 Où : \n
                 - $F_t(x)$ est la prédiction précédente et $F_{t+1}(x)$ la prédiction désirée.
                 - $h_t(x)$ est l’arbre nouvellement ajouté (étape 3).
                 - $\lambda$ est le taux d’apprentissage (learning rate), qui contrôle la vitesse d’ajustement.
-                    
+
             - **Etape 5 :** 🔁 Répétition.
-                    
+
             On répète les étapes 2 à 4 jusqu'à convergence du modèle ou jusqu'à atteindre le nombre maximal d'itérations.
             """, unsafe_allow_html=True)
-        
+
         st.markdown("""
             ##### Les hyperparamètres utilisés
-            Les hyperparamètres ont été déterminé à l'aide d'un jeu de données réduit. Voici les valeurs trouvées et leurs 
+            Les hyperparamètres ont été déterminé à l'aide d'un jeu de données réduit. Voici les valeurs trouvées et leurs
             explications
             """, unsafe_allow_html=True)
-        
+
         st.code("""
             # Nombre d'arbres dans l'ensemble (forêt aléatoire)
-            n_estimators = 400  
+            n_estimators = 400
             # Taux d'apprentissage, contrôle la contribution de chaque arbre
             learning_rate = 0.0464
             # Fraction des données utilisées pour chaque arbre (87.5% dans ce cas)
@@ -128,7 +128,7 @@ def interpretabilite():
             max_depth = 9
             # Nombre maximal de caractéristiques considérées pour chaque division
             max_features = 25
-            """, language="python")      
+            """, language="python")
 
     # Création des onglets
     tab1, tab2 = st.tabs(["Interprétabilité", "Explicabilité"])
@@ -143,7 +143,7 @@ def interpretabilite():
             "</ul>")
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
         filename = 'Donnees/Modeles/gradient_boosting_model2v2.joblib'
         gb_model2 = joblib.load(filename)
 
@@ -156,7 +156,7 @@ def interpretabilite():
             " Il nous est donc impossible de représenter chaque arbre n'y d'en représenter la totalité.")
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
         # Récupération des noms de colonne
         df = pd.read_csv("Donnees/Doc csv/list_col.csv")
         col_names = df.columns.tolist()
@@ -175,7 +175,7 @@ def interpretabilite():
         with st.expander(f"👁️ Utilisation de la variable dans l'arbre d'itération : {num_arbre}"):
             liste = st.multiselect("Vos variables d'intéret :", col_names)
             st.write(count_var(gb_model2, col_names, liste, num_arbre-1))
-            
+
         with st.expander(f"📌 Interprétation arbre à l'initialisation"):
             afficher_arbre(gb_model2,col_names, arbre_index=0, max_depth=2)
             st.markdown(texte_justifie(
@@ -195,9 +195,9 @@ def interpretabilite():
                 , unsafe_allow_html=True)
             tab = count_var(gb_model2, col_names, col_names, 0)
             st.write(tab)
-            
-            
-            
+
+
+
         with st.expander(f"📌 Interprétation arbre à la dernière itération"):
             afficher_arbre(gb_model2,col_names, arbre_index=399, max_depth=2)
             st.markdown(texte_justifie(
@@ -225,9 +225,9 @@ def interpretabilite():
                 , unsafe_allow_html=True)
             tab = count_var(gb_model2, col_names, col_names, 399)
             st.write(tab)
-                
-            
-    
+
+
+
         st.markdown("##### 👁️ Visualisation de l'importance des variables")
 
         # Calcul de l'importance des features en pourcentage
@@ -256,7 +256,7 @@ def interpretabilite():
                 "<ul>"
                     "<li><code>Distance</code> représentant la distance séparant le lieu de l'incident et la caserne qui c'est déplacée. "
                     "L'importance de cette variable était prévisible car plus la distance augmente plus le temps de trajet augmente.</li>"
-                    "<li><code>RatioSC</code> représentant la superficie affectée à une caserne, plus le ratio est élevé et plus la caserne"                    
+                    "<li><code>RatioSC</code> représentant la superficie affectée à une caserne, plus le ratio est élevé et plus la caserne"
                     " à beaucoup de chose à gérer.</li>"
                     "<li><code>Stat_resp_rep</code>, <code>Bor_resp_rep</code> et <code>Bor_resp_rep</code> représentant des indicateurs (OUI/NON) "
                     "sur la correspondance entre Station_répondante et Station_responsable pour le premier, entre Borough_répondante et "
@@ -264,7 +264,7 @@ def interpretabilite():
                 "</ul>"
                 )
                 , unsafe_allow_html=True)
-        
+
         st.markdown(texte_justifie(
             "Une autre manière de trouver les variables importantes et de déterminer leur influence (positive ou négative) est "
             "de visualiser les shap-values."
@@ -336,10 +336,10 @@ def interpretabilite():
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
         st.image("Donnees/Images/explicabilite.png",
                   caption="Explicabilité de quatre réponses", use_container_width=True)
-        
+
         with st.expander("📌 Interprétation"):
             st.markdown(texte_justifie(
                 "<ul>"

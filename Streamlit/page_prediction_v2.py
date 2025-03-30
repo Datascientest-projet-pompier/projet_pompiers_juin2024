@@ -182,12 +182,12 @@ def prepa_incident(station_df):
     # Standardisation de la distance
     distance = st.session_state.data.loc[0, 'distance']
     distancestd = standardisation('Donnees/Modeles/tranfo_distance.pkl',distance,"ditance")
-    df_bilan.loc[0, 'distStd'] = distancestd
+    df_bilan.loc[0, 'distStd'] = float(distancestd)
 
     # Standardisation du ratio
     ratio = station_df.loc[station_df["Station name"] == caserne_dep, 'ratio'].iloc[0]
     ratioSC = standardisation('Donnees/Modeles/tranfo_ratio.pkl',ratio,"ratioSC")
-    df_bilan.loc[0, 'ratioStd'] = ratioSC
+    df_bilan.loc[0, 'ratioStd'] = float(ratioSC)
 
     stat_code = "Borough_" + station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughCode'].iloc[0]
     df_bilan.loc[0, stat_code] = 1
