@@ -268,21 +268,20 @@ def afficher_explication_shap2(df):
 
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
-    try:
-        with st.spinner("Chargement de l'explicateur SHAP..."):
-            with open(filename, 'rb') as f:
-                explainer_shap = cloudpickle.load(f)
+    with st.spinner("Chargement de l'explicateur SHAP..."):
+        with open(filename, 'rb') as f:
+            explainer_shap = cloudpickle.load(f)
 
-        if explainer_shap:
+    if explainer_shap:
 
-            with st.spinner("Calcul des valeurs SHAP..."):
-                shap_values = explainer_shap(df)
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
 
-            with st.spinner("Création du graphique SHAP..."):
-                shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+        with st.spinner("Création du graphique SHAP..."):
+            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
 
-            shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            st.components.v1.html(shap_html_str, height=200)
+        shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+        st.components.v1.html(shap_html_str, height=200)
 
 
 
