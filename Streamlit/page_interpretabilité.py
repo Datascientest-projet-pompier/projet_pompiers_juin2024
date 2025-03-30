@@ -97,9 +97,11 @@ def interpretabilite():
 
             - **Etape 4 :** Mise à jour du modèle.
 
-                Une fois l’arbre entraîné, on met à jour le modèle global avec la formule suivante :\n
-                $$F_{t+1}(x) = F_t(x) + \lambda h_t(x)$$ \n
-                Où : \n
+                Une fois l’arbre entraîné, on met à jour le modèle global avec la formule suivante :
+
+
+                $$F_{t+1}(x) = F_t(x) + \lambda h_t(x)$$
+                Où :
                 - $F_t(x)$ est la prédiction précédente et $F_{t+1}(x)$ la prédiction désirée.
                 - $h_t(x)$ est l’arbre nouvellement ajouté (étape 3).
                 - $\lambda$ est le taux d’apprentissage (learning rate), qui contrôle la vitesse d’ajustement.
