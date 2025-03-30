@@ -294,7 +294,7 @@ def afficher_explication_shap3(df):
         #shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
         #st.components.v1.html(shap_html_str, height=200)
 
-def afficher_explication_shap4(df):
+def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     with st.spinner("Chargement de l'explicateur SHAP..."):
@@ -310,7 +310,7 @@ def afficher_explication_shap4(df):
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
 
-def afficher_explication_shap(df):
+def afficher_explication_shap4(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     with st.spinner("Chargement de l'explicateur SHAP..."):
