@@ -101,6 +101,8 @@ def interpretabilite():
 
 
                 $$F_{t+1}(x) = F_t(x) + \lambda h_t(x)$$
+
+                    
                 Où :
                 - $F_t(x)$ est la prédiction précédente et $F_{t+1}(x)$ la prédiction désirée.
                 - $h_t(x)$ est l’arbre nouvellement ajouté (étape 3).
