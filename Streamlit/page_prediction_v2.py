@@ -238,7 +238,7 @@ def afficher_chemin_prediction(model, data, feature_names):
         st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
 
 
-def afficher_explication_shap(df):
+def afficher_explication_shap2(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
     try:
         with st.spinner("Chargement de l'explicateur SHAP..."):
@@ -265,6 +265,25 @@ def afficher_explication_shap(df):
         st.error(f"Le fichier {filename} n'a pas été trouvé.")
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}\n{traceback.format_exc()}")
+
+def afficher_explication_shap(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+    try:
+        with st.spinner("Chargement de l'explicateur SHAP..."):
+            with open(filename, 'rb') as f:
+                explainer_shap = cloudpickle.load(f)
+
+        if explainer_shap:
+
+            with st.spinner("Calcul des valeurs SHAP..."):
+                shap_values = explainer_shap(df)
+
+            with st.spinner("Création du graphique SHAP..."):
+                shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+
+            shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+            st.components.v1.html(shap_html_str, height=200)
+
 
 
 def afficher_explication_lime(df, gb_model2):
@@ -406,7 +425,8 @@ def predictionv2():
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
             with tab2:
-                afficher_explication_lime(df_bilan,gb_model2)
+                st.write("temps")
+                #afficher_explication_lime(df_bilan,gb_model2)
 
             with tab1:
                 afficher_explication_shap(df_bilan)
