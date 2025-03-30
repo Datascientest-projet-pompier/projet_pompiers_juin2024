@@ -415,9 +415,9 @@ def predictionv2():
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
-            #with tab2:
-            #    afficher_explication_lime(df_bilan,gb_model2)
+            with tab2:
+                afficher_explication_lime(df_bilan,gb_model2)
             #    st.write("temps")
 
-            #with tab1:
-            #    afficher_explication_shap2(df_bilan)
+            with tab1:
+                afficher_explication_shap(df_bilan)
