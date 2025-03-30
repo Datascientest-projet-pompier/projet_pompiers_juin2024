@@ -10,6 +10,7 @@ import cloudpickle
 import streamlit.components.v1 as components
 import shap
 import traceback
+import matplotlib.pyplot as plt
 
 from fonctions import recup_df
 
@@ -266,24 +267,69 @@ def afficher_explication_shap2(df):
     except Exception as e:
         st.error(f"Une erreur s'est produite : {e}\n{traceback.format_exc()}")
 
-def afficher_explication_shap(df):
+def afficher_explication_shap3(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
     with st.spinner("Chargement de l'explicateur SHAP..."):
         with open(filename, 'rb') as f:
             explainer_shap = cloudpickle.load(f)
 
     if explainer_shap:
+        shap.initjs()
 
         with st.spinner("Calcul des valeurs SHAP..."):
             shap_values = explainer_shap(df)
 
         with st.spinner("Création du graphique SHAP..."):
-            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df, matplotlib=False)
 
-        shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-        st.components.v1.html(shap_html_str, height=200)
+        components.html(shap_html.html(), height=200)
 
 
+        #with st.spinner("Calcul des valeurs SHAP..."):
+         #   shap_values = explainer_shap(df)
+
+        #with st.spinner("Création du graphique SHAP..."):
+         #   shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
+
+        #shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+        #st.components.v1.html(shap_html_str, height=200)
+
+def afficher_explication_shap4(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+
+    with st.spinner("Chargement de l'explicateur SHAP..."):
+        with open(filename, 'rb') as f:
+            explainer_shap = cloudpickle.load(f)
+
+    if explainer_shap:
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
+            plt.figure(figsize=(10, 6))
+            shap.summary_plot(shap_values, df)
+            st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
+
+def afficher_explication_shap(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+
+    with st.spinner("Chargement de l'explicateur SHAP..."):
+        with open(filename, 'rb') as f:
+            explainer_shap = cloudpickle.load(f)
+
+    if explainer_shap:
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
+            shap.initjs()  # Assure que le JS de SHAP est bien chargé
+            shap_html = shap.force_plot(
+                explainer_shap.expected_value, shap_values.values, df, matplotlib=False
+            )
+
+            # Convertir en HTML et afficher dans Streamlit
+            html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+            components.html(html_str, height=300)
 
 def afficher_explication_lime(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
