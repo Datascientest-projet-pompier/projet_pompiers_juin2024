@@ -239,89 +239,8 @@ def afficher_chemin_prediction(model, data, feature_names):
         st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
 
 
-def afficher_explication_shap2(df):
-    filename = 'Donnees/Modeles/explainer_shap.pkl'
-    try:
-        with st.spinner("Chargement de l'explicateur SHAP..."):
-            with open(filename, 'rb') as f:
-                explainer_shap = cloudpickle.load(f)
 
-        if explainer_shap:
-            # Vérification du format de df
-            if not isinstance(df, pd.DataFrame):
-                st.error("Les données doivent être un DataFrame pandas.")
-                return
-
-            with st.spinner("Calcul des valeurs SHAP..."):
-                shap_values = explainer_shap(df)
-
-            with st.spinner("Création du graphique SHAP..."):
-                shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
-
-            shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            st.components.v1.html(shap_html_str, height=200)
-        else:
-            st.warning("L'explicateur SHAP n'est pas disponible.")
-    except FileNotFoundError:
-        st.error(f"Le fichier {filename} n'a pas été trouvé.")
-    except Exception as e:
-        st.error(f"Une erreur s'est produite : {e}\n{traceback.format_exc()}")
-
-def afficher_explication_shap3(df):
-    filename = 'Donnees/Modeles/explainer_shap.pkl'
-    with st.spinner("Chargement de l'explicateur SHAP..."):
-        with open(filename, 'rb') as f:
-            explainer_shap = cloudpickle.load(f)
-
-    if explainer_shap:
-        shap.initjs()
-
-        with st.spinner("Calcul des valeurs SHAP..."):
-            shap_values = explainer_shap(df)
-
-        with st.spinner("Création du graphique SHAP..."):
-            shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df, matplotlib=False)
-
-        components.html(shap_html.html(), height=200)
-
-
-        #with st.spinner("Calcul des valeurs SHAP..."):
-         #   shap_values = explainer_shap(df)
-
-        #with st.spinner("Création du graphique SHAP..."):
-         #   shap_html = shap.force_plot(explainer_shap.expected_value, shap_values.values, df)
-
-        #shap_html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-        #st.components.v1.html(shap_html_str, height=200)
-
-def afficher_explication_shap(df):
-    filename = 'Donnees/Modeles/explainer_shap.pkl'
-
-    with st.spinner("Chargement de l'explicateur SHAP..."):
-        with open(filename, 'rb') as f:
-            explainer_shap = cloudpickle.load(f)
-
-    if explainer_shap:
-        with st.spinner("Calcul des valeurs SHAP..."):
-            shap_values = explainer_shap(df)
-
-        with st.spinner("Création du graphique SHAP..."):
-            # Création de la figure Matplotlib
-            fig, ax = plt.subplots(figsize=(8, 3))
-
-            # Générer le force_plot et l'enregistrer sous forme d'image
-            shap_plot = shap.force_plot(
-                explainer_shap.expected_value, shap_values.values, df
-            )
-            shap.save_html("shap_plot.html", shap_plot)
-
-            # Lire le fichier et l'afficher dans Streamlit
-            with open("shap_plot.html", "r", encoding="utf-8") as f:
-                html_code = f.read()
-            st.components.v1.html(html_code, height=300)
-
-
-def afficher_explication_shap6(df):  # Ok distant
+def afficher_explication_shap2(df):  # Ok distant
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     with st.spinner("Chargement de l'explicateur SHAP..."):
@@ -337,7 +256,7 @@ def afficher_explication_shap6(df):  # Ok distant
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
 
-def afficher_explication_shap4(df):
+def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     with st.spinner("Chargement de l'explicateur SHAP..."):
@@ -497,8 +416,8 @@ def predictionv2():
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
             with tab2:
-                st.write("temps")
-                #afficher_explication_lime(df_bilan,gb_model2)
+                afficher_explication_lime(df_bilan,gb_model2)
 
             with tab1:
                 afficher_explication_shap(df_bilan)
+                afficher_explication_shap2(df_bilan)
