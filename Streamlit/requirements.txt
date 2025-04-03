@@ -9,7 +9,8 @@ pandas==2.2.0
 joblib==1.3.2   #Sur googlecolab 1.4.2
 
 # Bibliothèques de machine learning
-scikit-learn==1.1.2  # Version stable et testée avec SHAP
+scikit-learn>=1.3.0
+#scikit-learn==1.1.2  # Version stable et testée avec SHAP
 #scikit-learn  # Supprime la version erronée
 lime
 shap>=0.40.0
