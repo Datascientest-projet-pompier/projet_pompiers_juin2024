@@ -46,7 +46,7 @@ def count_var(gb_model, col_names, liste, arbre_index):
     for var_name in liste:
         # Calculer la proportion par rapport au nombre total de nœuds (en pourcentage)
         if resultat.loc[var_name, "Nombre d'apparition"] > 0:
-            resultat.loc[var_name, "Proportion"] = float((resultat.loc[var_name, "Nombre d'apparition"] / n_nodes) * 100)
+            resultat.loc[var_name, "Proportion"] = int((resultat.loc[var_name, "Nombre d'apparition"] / n_nodes) * 100)
 
     return resultat
 
