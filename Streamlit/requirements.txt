@@ -1,6 +1,6 @@
-pip
+setuptools>=65.5.0
 wheel
-setuptools
+pip
 ipython
 
 # Bibliothèques de base
