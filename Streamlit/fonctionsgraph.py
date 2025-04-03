@@ -156,7 +156,9 @@ def graphQuali_meanPlot(df, variable, rest):
         combined_x = list(top_half[var_name]) + ['...', '...', '...'] + list(bottom_half[var_name])
         combined_y = list(top_half['boxcox_TotalResponseTime']) + [None, None, None] + list(bottom_half['boxcox_TotalResponseTime'])
 
-        fig = go.Figure(data=go.Line(x=combined_x, y=combined_y, name='Temps total', marker_color='green'))
+        #fig = go.Figure(data=go.Line(x=combined_x, y=combined_y, name='Temps total', marker_color='green'))
+        fig = go.Figure(data=go.Scatter(x=combined_x, y=combined_y, mode='lines', name='Temps total', line=dict(color='green')))
+
 
         # Ajuster la taille pour correspondre à figsize=(6, 5)
         fig.update_layout(title_text=title, yaxis_title="Temps moyen", height=500, width=600)
