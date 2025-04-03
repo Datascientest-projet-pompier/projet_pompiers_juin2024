@@ -1,5 +1,7 @@
 pip
 wheel
+setuptools
+ipython
 
 # Bibliothèques de base
 numpy==1.26.4
@@ -30,8 +32,4 @@ seaborn==0.13.2
 
 # Bibliothèques de statistiques
 statsmodels==0.14.4
-
-# Autres
-setuptools
-ipython
 
