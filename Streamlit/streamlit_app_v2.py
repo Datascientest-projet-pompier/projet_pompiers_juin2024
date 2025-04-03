@@ -32,17 +32,17 @@ def main():
     # Sidebar
     pages = {
         "Presentation":page_intro,
-        #"Presentation des données": presentation,
-        #"Visualisation des données": visualisation,
-        #"Variables du modèle": variables,
-        #"Visualisation géographique des données": localisation,
-        #"Prétraitement des données": pretraitement,
-        #"Méthodologie utilisée": methodologie,
-        #"Quelques résultat" : resultat,
-        #"Compréhension du modèle" : interpretabilite,
-        #"Prédiction à l'aide du modèle": predictionv2,
-        #"Prédiction à l'aide du modèle v2": predictionv2,
-        #"Conclusion et prespective": conclusion
+        "Presentation des données": presentation,
+        "Visualisation des données": visualisation,
+        "Variables du modèle": variables,
+        "Visualisation géographique des données": localisation,
+        "Prétraitement des données": pretraitement,
+        "Méthodologie utilisée": methodologie,
+        "Quelques résultat" : resultat,
+        "Compréhension du modèle" : interpretabilite,
+        "Prédiction à l'aide du modèle": predictionv2,
+        "Prédiction à l'aide du modèle v2": predictionv2,
+        "Conclusion et prespective": conclusion
     }
 
     # Barre latérale avec des boutons radio pour chaque page
