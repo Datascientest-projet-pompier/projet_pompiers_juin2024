@@ -1,3 +1,6 @@
+pip
+wheel
+
 # Bibliothèques de base
 numpy==1.26.4
 pandas==2.2.0
@@ -31,3 +34,4 @@ statsmodels==0.14.4
 # Autres
 setuptools
 ipython
+
