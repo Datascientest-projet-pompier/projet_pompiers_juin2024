@@ -25,7 +25,7 @@ from page_resultat import resultat
 from page_interpretabilité import interpretabilite
 from page_variables import variables
 #from page_prediction import prediction
-from page_prediction_v2 import predictionv2
+from page_prediction_v3 import predictionv3
 from page_conclusion import conclusion
 
 def main():
@@ -40,7 +40,7 @@ def main():
         "Méthodologie utilisée": methodologie,
         "Quelques résultat" : resultat,
         "Compréhension du modèle" : interpretabilite,
-        "Prédiction à l'aide du modèle": predictionv2,
+        "Prédiction à l'aide du modèle": predictionv3,
         #"Prédiction à l'aide du modèle v2": prediction,
         "Conclusion et prespective": conclusion
     }
