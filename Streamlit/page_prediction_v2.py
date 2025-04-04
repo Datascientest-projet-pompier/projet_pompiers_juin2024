@@ -426,5 +426,9 @@ def predictionv2():
                 st.write("temps")
 
             with tab1:
+                if use_shap:
+                    afficher_explication_shap(df_bilan)
+                else:
+                    st.write("SHAP est désactivé")
             #    afficher_explication_shap(df_bilan)
-                st.write("rzmps")
+            #    st.write("rzmps")
