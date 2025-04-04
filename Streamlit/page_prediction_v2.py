@@ -333,7 +333,8 @@ def afficher_explication_lime_vinit(df, gb_model2):
         st.error(f"Erreur lors de l'explication LIME : {e}")
 
 
-def predictionv2():
+def predictionv2():   
+    
     st.subheader("Prédiction avec les données de l'incident")
     # Initialiser un DataFrame avec une première ligne vide
     if 'data' not in st.session_state:
@@ -453,20 +454,23 @@ def predictionv2():
             st.markdown("#### Interprétation de la prédiction de l'incident")
             
 
-            # Ajouter un switch pour activer ou désactiver SHAP
-            use_shap = st.sidebar.checkbox("Activer SHAP", value=False)
-            use_lime = st.sidebar.checkbox("Activer LIME", value=False)
-
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
+            # Exemple simple de sidebar
+            st.sidebar.title("Sidebar Test")
+            use_shap = st.sidebar.checkbox("Activer SHAP", value=False)
+            use_lime = st.sidebar.checkbox("Activer LIME", value=False)
+
             with tab1:
+                st.write("SHAP activé:", use_shap)
                 if use_shap:
                     afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
                 else:
                     st.write("SHAP est désactivé")
 
             with tab2:
+                st.write("LIME activé:", use_lime)
                 if use_lime:
                     afficher_explication_lime(df_bilan, gb_model2)  # Appeler l'explication LIME si activée
                 else:
