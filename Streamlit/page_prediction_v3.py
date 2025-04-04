@@ -435,8 +435,13 @@ def predictionv3():
                     st.write("SHAP est désactivé")
 
             with tab2:
-                use_lime = st.checkbox("Activer LIME - ATTENTION FAIT PLANTER APPLICATION SUR STREAMLIT CLOUD", value=False)
-                if use_lime:
-                    afficher_explication_lime(df_bilan, gb_model2)  # Appeler l'explication LIME si activée
-                else:
-                    st.write("LIME est désactivé")
+                try:
+                    if use_lime:
+                        afficher_explication_lime(df_bilan, gb_model2)
+                except Exception as e:
+                    st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
+                #use_lime = st.checkbox("Activer LIME - ATTENTION FAIT PLANTER APPLICATION SUR STREAMLIT CLOUD", value=False)
+                #if use_lime:
+                #    afficher_explication_lime(df_bilan, gb_model2)  # Appeler l'explication LIME si activée
+                #else:
+                #    st.write("LIME est désactivé")
