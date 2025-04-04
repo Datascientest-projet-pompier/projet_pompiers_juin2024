@@ -451,9 +451,11 @@ def predictionv2():
 
             # Interprétation
             st.markdown("#### Interprétation de la prédiction de l'incident")
+            
 
             # Ajouter un switch pour activer ou désactiver SHAP
             use_shap = st.sidebar.checkbox("Activer SHAP", value=False)
+            use_lime = st.sidebar.checkbox("Activer LIME", value=False)
 
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
