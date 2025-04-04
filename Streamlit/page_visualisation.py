@@ -2,13 +2,23 @@ import streamlit as st
 import pandas as pd
 import os
 import numpy as np
+import streamlit.components.v1 as components
 
 from fonctions import texte_justifie
 from fonctionsstat  import tab_stat
+from fonctions import recup_df
 
 import matplotlib.pyplot as plt
 
 import fonctionsgraph
+
+def lire_html(chemin_fichier):
+    try:
+        with open(chemin_fichier, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        st.error(f"Erreur lors de la lecture du fichier HTML : {e}")
+        return None
 
 def visualisation():
     st.title("Visualisation")
@@ -28,7 +38,7 @@ def visualisation():
     df2023 = pd.read_csv("Donnees/Doc csv/df2023_v2.csv")
 
     # Création des onglets
-    tab1, tab2 = st.tabs(["Etude statistique", "Data Visualisation"])
+    tab1, tab2 ,tab3 = st.tabs(["Etude statistique", "Data Visualisation","Visualisation géographique"])
 
     with tab1:
       st.subheader("Etude statistique")
@@ -38,19 +48,19 @@ def visualisation():
         "Une rapide étude statistique nous donne les informations suivantes :")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
-      
+
       tab = tab_stat(df2023)
       st.table(tab)
 
     with tab2:
       st.subheader("Data Visualisation")
-      
+
       st.markdown(texte_justifie(
         "Au vue de la distribution de la variable cible (temps total), nous avons dans un premier temps effectué"
         " une transformation Box-Cox pour tenter de rendre la variable le plus similaire possible à une distribution "
         "normale. De plus plus seuls certains graphiques sont présentés ici.")
         , unsafe_allow_html=True)
-      
+
       st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown("#### Informations temporelles")
@@ -61,11 +71,11 @@ def visualisation():
 
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
-      
+
       # Affichage du premier graphique dans la première colonne
       with col1:
         fonctionsgraph.graph_countIncident(df2023, var_temps)
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         fonctionsgraph.graphQuali_pointplot(df2023, var_temps)
@@ -104,17 +114,17 @@ def visualisation():
 
       var_list = ['IncGeo_BoroughName','IncGeo_WardName','DeployedFromStation_Name','GoodLocation',"inner"]
       var_geo = var_list[indice]
-      
+
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
-      
+
       # Affichage du premier graphique dans la première colonne
       with col1:
         if var_geo in ['GoodLocation','inner']:
             fonctionsgraph.graphQuali_boxplot(df2023, var_geo)
         else:
             fonctionsgraph.graphQuali_countPlot(df2023, var_geo)
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         if var_geo in ['GoodLocation','inner']:
@@ -191,22 +201,22 @@ def visualisation():
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
 
       st.markdown("#### Variables explicatives du type d'incident")
       st.markdown(texte_justifie(
         "Le type d'incident est décrit par deux variables : <code>IncidentGroup</code> et <code>DetailedIncidentGroup</code> "
         "qui donnent une information plus ou moins détaillée sur le type d'incident.")
         , unsafe_allow_html=True)
-      
+
       # Choix de l'arbre affiché
       var_liste = ['Fire','IncidentGroup','DetailedIncidentGroup']
       # Menu déroulant pour un choix unique
       var_type = st.selectbox("Choisissez une variable d'intérêt :", var_liste)
-      
+
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
-      
+
       # Affichage du premier graphique dans la première colonne
       with col1:
         if var_type == 'DetailedIncidentGroup':
@@ -214,7 +224,7 @@ def visualisation():
         else:
             fonctionsgraph.graphQuali_boxplot(df2023, var_type)
 
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         if var_type == 'DetailedIncidentGroup':
@@ -249,23 +259,23 @@ def visualisation():
         "<code>PropertyType</code> et <code>'HighPropertyType'</code> qui donnent une information plus ou moins détaillée "
         "sur le type de propriété (respectivement 3 modalités, 47 modalités et 293 modalités).")
         , unsafe_allow_html=True)
-      
+
       # Choix de l'arbre affiché
       var_liste = ['PropertyCategory','HighPropertyType','PropertyType']
       # Menu déroulant pour un choix unique
       var_prop = st.selectbox("Choisissez une variable d'intérêt :", var_liste)
-      
+
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
-      
+
       # Affichage du premier graphique dans la première colonne
       with col1:
         fonctionsgraph.graphQuali_countPlot(df2023, var_prop)
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         fonctionsgraph.graphQuali_meanPlot(df2023, var_prop, rest=50)
-    
+
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
             "La distribution des temps est similaire selon le type de propriété. "
@@ -297,11 +307,11 @@ def visualisation():
 
       with col1:
         st.image("Donnees/Images/rep_distance.png",use_container_width=True)
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         st.image("Donnees/Images/graph_distance.png",use_container_width=True)
-    
+
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
             "La distance influence le temps de trajet ce qui est logique.<br>"
@@ -316,15 +326,15 @@ def visualisation():
         st.markdown("<br>", unsafe_allow_html=True)
 
         fonctionsgraph.afficher_correlations(df2023,'distance')
-      
-      st.markdown("#### RatioSC")     
+
+      st.markdown("#### RatioSC")
 
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
 
       with col1:
         fonctionsgraph.graph_countIncident(df2023, 'ratioSC')
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         fonctionsgraph.graphQuali_pointplot(df2023, 'ratioSC')
@@ -345,8 +355,8 @@ def visualisation():
                 )
                 , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-      
-      
+
+
       st.markdown("#### Sur les variables booléennes")
 
       # Choix de l'arbre affiché
@@ -355,15 +365,15 @@ def visualisation():
       # Menu déroulant pour un choix unique
       var = st.selectbox("Choisissez une variable d'intérêt :", var_nom)
       var_bool = var_nom[indice]
-      
+
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
-      
+
       # Affichage du premier graphique dans la première colonne
       with col1:
         fonctionsgraph.graphQuali_boxplot(df2023, var_bool)
 
-    
+
       # Affichage du deuxième graphique dans la deuxième colonne
       with col2:
         fonctionsgraph.graphQuali_pointplot(df2023, var_bool)
@@ -431,9 +441,29 @@ def visualisation():
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        
-    
-      
-    
+      with tab3:
+        df_2024 = recup_df("df_2024.csv")
 
+        caserne = df_2024['IncidentStationGround'].unique()
+        caserne = [c.lower() for c in caserne]
+        caserne = sorted(caserne)
 
+        st.title("Affichage de Cartes HTML")
+
+        # Case à cocher pour le choix des incidents
+        choix_incidents = st.radio(
+          "Sélectionnez les incidents à afficher :",
+          ["Tous les incidents", "Incidents avec temps supérieur à 6 min"]
+        )
+
+        # Sélection de la carte à afficher
+        carte_choisie = st.selectbox("Choisissez une carte :", caserne)
+
+        if choix_incidents == "Tous les incidents":
+          chemin_fichier = f"Donnees/Cartes/{carte_choisie}.html"
+        else :
+          chemin_fichier = f"Donnees/Cartes/{carte_choisie}1.html"
+
+        # Lire et afficher la carte HTML choisie
+        html_carte = lire_html(chemin_fichier)
+        components.html(html_carte, height=600)  # Ajustez la hauteur selon vos besoins

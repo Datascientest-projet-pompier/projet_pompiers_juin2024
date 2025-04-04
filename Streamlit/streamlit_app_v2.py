@@ -17,7 +17,7 @@ from io import BytesIO
 
 from page_intro import page_intro
 from page_presentation import presentation
-from page_localisation import localisation
+#from page_localisation import localisation
 from page_visualisation import visualisation
 from page_pretraitement import pretraitement
 from page_methodologie import methodologie
@@ -34,7 +34,7 @@ def main():
         "Presentation des données": presentation,
         "Visualisation des données": visualisation,
         "Variables du modèle": variables,
-        "Visualisation géographique des données": localisation,
+        #"Visualisation géographique des données": localisation,
         "Prétraitement des données": pretraitement,
         "Méthodologie utilisée": methodologie,
         "Quelques résultat" : resultat,
