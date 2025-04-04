@@ -28,6 +28,28 @@ def choix_heure():
         return heure_choisie
 
 def choix_lieu():
+    lat, lng = None, None
+    choix = st.radio("Choisissez la méthode de saisie des coordonnées :", ("Carte", "Saisie manuelle"))
+    if choix == "Carte":
+        # Création d'une carte Folium simplifiée
+        simple_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
+        # Affichage de la carte
+        map_data = st_folium(simple_map, width=700, height=500)
+        if map_data and "last_clicked" in map_data and map_data["last_clicked"]:
+            lat = map_data["last_clicked"]["lat"]
+            lng = map_data["last_clicked"]["lng"]
+    if choix == "Saisie manuelle":
+        lat = st.number_input("Latitude", value=51.5074)
+        lng = st.number_input("Longitude", value=-0.1278)
+    if lat is not None:
+        if st.session_state.liste_choix[1] and st.button("Confirmer la position"):
+            st.session_state.liste_choix[1]=False
+            st.session_state.liste_choix[2]=True
+            return lat, lng
+    return None, None
+
+
+def choix_lieu_init():
 
     lat, lng = None, None  # Initialiser lat et lng à None
 
