@@ -435,11 +435,9 @@ def predictionv3():
                     st.write("SHAP est désactivé")
 
             with tab2:
-                use_lime = st.checkbox("Activer LIME", value=False)
-                if use_lime:
-                    try:
+                try:
+                    use_lime = st.checkbox("Activer LIME", value=False)
+                    if use_lime:
                         afficher_explication_lime(df_bilan, gb_model2)
-                    except Exception as e:
-                        st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
-                else:
-                    st.write("LIME est désactivé")
+                except Exception as e:
+                    st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
