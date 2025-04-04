@@ -305,6 +305,13 @@ def afficher_explication_lime(df, gb_model2):
 
 def predictionv3():
 
+    m = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
+    folium.LatLngPopup().add_to(m)
+
+    st_data = st_folium(m, width=700, height=500)
+    st.write(st_data)
+
+
     st.subheader("Prédiction avec les données de l'incident")
     # Initialiser un DataFrame avec une première ligne vide
     if 'data' not in st.session_state:
