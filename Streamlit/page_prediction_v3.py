@@ -430,13 +430,14 @@ def predictionv3():
             with tab1:
                 use_shap = st.checkbox("Activer SHAP", value=False)
                 if use_shap:
+                    afficher_explication_shap_version_horizontal(df_bilan)
                     afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
                 else:
                     st.write("SHAP est désactivé")
 
             with tab2:
+                use_lime = st.checkbox("Activer LIME", value=False)
                 try:
-                    use_lime = st.checkbox("Activer LIME", value=False)
                     if use_lime:
                         afficher_explication_lime(df_bilan, gb_model2)
                 except Exception as e:
