@@ -256,7 +256,7 @@ def afficher_explication_shap2(df):  # Ok distant
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
 
-def afficher_explication_shap(df):
+def afficher_explication_shap(df):  
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
@@ -268,6 +268,7 @@ def afficher_explication_shap(df):
             shap_values = explainer_shap(df)
 
         with st.spinner("Création du graphique SHAP..."):
+            shap.initjs()  # Assurez-vous que JS de SHAP est bien chargé
             plt.figure(figsize=(10, 6))
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
@@ -275,7 +276,6 @@ def afficher_explication_shap(df):
     except Exception as e:
         st.error(f"Erreur avec SHAP : {e}")
         st.text(traceback.format_exc())
-
 
 def afficher_explication_shap_vinit(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
@@ -308,6 +308,7 @@ def afficher_explication_lime(df, gb_model2):
         explanation = explainer_lime.explain_instance(
             df.values[0], gb_model2.predict_proba, num_features=10
         )
+        # Afficher LIME dans Streamlit
         st.components.v1.html(explanation.as_html(), height=800)
 
     except Exception as e:
@@ -457,12 +458,8 @@ def predictionv2():
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
-            # Exemple simple de sidebar
-            st.sidebar.title("Sidebar Test")
-            use_shap = st.sidebar.checkbox("Activer SHAP", value=False)
-            use_lime = st.sidebar.checkbox("Activer LIME", value=False)
-
             with tab1:
+                use_shap = st.checkbox("Activer SHAP", value=False)
                 st.write("SHAP activé:", use_shap)
                 if use_shap:
                     afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
@@ -470,6 +467,7 @@ def predictionv2():
                     st.write("SHAP est désactivé")
 
             with tab2:
+                use_lime = st.checkbox("Activer LIME", value=False)
                 st.write("LIME activé:", use_lime)
                 if use_lime:
                     afficher_explication_lime(df_bilan, gb_model2)  # Appeler l'explication LIME si activée
