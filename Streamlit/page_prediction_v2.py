@@ -27,7 +27,7 @@ def choix_heure():
         st.session_state.liste_choix[0]=False
         return heure_choisie
 
-def choix_lieu():
+def choix_lieu_gpt():
     lat, lng = None, None
     choix = st.radio("Choisissez la méthode de saisie des coordonnées :", ("Carte", "Saisie manuelle"))
     if choix == "Carte":
@@ -49,7 +49,7 @@ def choix_lieu():
     return None, None
 
 
-def choix_lieu_init():
+def choix_lieu():
 
     lat, lng = None, None  # Initialiser lat et lng à None
 
