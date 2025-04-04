@@ -436,7 +436,7 @@ def predictionv3():
                     st.write("SHAP est désactivé")
 
             with tab2:
-                use_lime = st.checkbox("Activer LIME", value=False)
+                use_lime = st.checkbox("Activer LIME - Attention plantage ", value=False)
                 try:
                     if use_lime:
                         afficher_explication_lime(df_bilan, gb_model2)
