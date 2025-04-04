@@ -436,8 +436,10 @@ def predictionv3():
 
             with tab2:
                 use_lime = st.checkbox("Activer LIME", value=False)
-                try:
-                    if use_lime:
+                if use_lime:
+                    try:
                         afficher_explication_lime(df_bilan, gb_model2)
-                except Exception as e:
-                    st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
+                    except Exception as e:
+                        st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
+                else:
+                    st.write("LIME est désactivé")
