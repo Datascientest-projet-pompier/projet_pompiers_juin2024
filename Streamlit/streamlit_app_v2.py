@@ -41,7 +41,7 @@ def main():
         "Quelques résultat" : resultat,
         "Compréhension du modèle" : interpretabilite,
         "Prédiction à l'aide du modèle": predictionv2,
-        #"Prédiction à l'aide du modèle v2": predictionv2,
+        "Prédiction à l'aide du modèle v2": prediction,
         "Conclusion et prespective": conclusion
     }
 
