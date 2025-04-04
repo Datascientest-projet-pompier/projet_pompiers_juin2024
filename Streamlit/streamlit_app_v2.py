@@ -24,7 +24,7 @@ from page_methodologie import methodologie
 from page_resultat import resultat
 from page_interpretabilité import interpretabilite
 from page_variables import variables
-from page_prediction import prediction
+#from page_prediction import prediction
 from page_prediction_v2 import predictionv2
 from page_conclusion import conclusion
 
