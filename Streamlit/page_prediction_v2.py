@@ -278,12 +278,15 @@ def afficher_explication_shap(df):
             components.html(html_str, height=300)
 
 def afficher_explication_lime(df, gb_model2):
+
     filename = 'Donnees/Modeles/explainer_lime.pkl'
     try:
         with open(filename, 'rb') as f:
             explainer_lime = cloudpickle.load(f)
     except Exception as e:
         st.error(f"Erreur lors du chargement de l'explainer LIME : {e}")
+        import traceback
+        st.text(traceback.format_exc())
         return
 
     try:
