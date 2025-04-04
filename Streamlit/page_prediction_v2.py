@@ -8,7 +8,7 @@ import pandas as pd
 import joblib
 import cloudpickle
 import streamlit.components.v1 as components
-#import shap
+import shap
 import traceback
 import matplotlib.pyplot as plt
 
@@ -418,17 +418,11 @@ def predictionv2():
             # Ajouter un switch pour activer ou désactiver SHAP
             use_shap = st.sidebar.checkbox("Activer SHAP", value=False)
 
-            if use_shap:
-                import shap
-                st.write("SHAP activé")
-            else:
-                st.write("SHAP désactivé")
-
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
             with tab2:
-                afficher_explication_lime(df_bilan,gb_model2)
+                #afficher_explication_lime(df_bilan,gb_model2)
                 st.write("temps")
 
             with tab1:
