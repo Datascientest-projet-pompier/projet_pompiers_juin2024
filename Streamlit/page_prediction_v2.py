@@ -416,8 +416,9 @@ def predictionv2():
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
             with tab2:
-                afficher_explication_lime(df_bilan,gb_model2)
-            #    st.write("temps")
+            #    afficher_explication_lime(df_bilan,gb_model2)
+                st.write("temps")
 
             with tab1:
-                afficher_explication_shap(df_bilan)
+            #    afficher_explication_shap(df_bilan)
+                st.write("rzmps")
