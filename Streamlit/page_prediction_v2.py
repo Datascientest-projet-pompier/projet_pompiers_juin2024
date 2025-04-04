@@ -458,19 +458,14 @@ def predictionv2():
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
-            with tab2:
-                st.write("Test LIME")
-                if st.sidebar.checkbox("Activer LIME", value=False):
-                    afficher_explication_lime(df_bilan, gb_model2)
-                else:
-                    st.write("LIME est désactivé")
-                #afficher_explication_lime(df_bilan,gb_model2)
-                #st.write("temps")
-
             with tab1:
                 if use_shap:
-                    afficher_explication_shap(df_bilan)
+                    afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
                 else:
                     st.write("SHAP est désactivé")
-            #    afficher_explication_shap(df_bilan)
-            #    st.write("rzmps")
+
+            with tab2:
+                if use_lime:
+                    afficher_explication_lime(df_bilan, gb_model2)  # Appeler l'explication LIME si activée
+                else:
+                    st.write("LIME est désactivé")
