@@ -256,7 +256,33 @@ def afficher_explication_shap2(df):  # Ok distant
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
 
-def afficher_explication_shap(df):  
+def afficher_explication_shap(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+
+    try:
+        with st.spinner("Chargement de l'explicateur SHAP..."):
+            with open(filename, 'rb') as f:
+                explainer_shap = cloudpickle.load(f)
+
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
+            shap.initjs()  # Assure que le JS de SHAP est bien chargé
+            shap_html = shap.force_plot(
+                explainer_shap.expected_value, shap_values.values, df, matplotlib=False
+            )
+
+            # Convertir en HTML et afficher dans Streamlit
+            html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
+            components.html(html_str, height=300)
+
+    except Exception as e:
+        st.error(f"Erreur avec SHAP : {e}")
+        st.text(traceback.format_exc())
+
+
+def afficher_explication_shap_versiontab(df):  
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
@@ -460,15 +486,13 @@ def predictionv2():
 
             with tab1:
                 use_shap = st.checkbox("Activer SHAP", value=False)
-                st.write("SHAP activé:", use_shap)
                 if use_shap:
                     afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
                 else:
                     st.write("SHAP est désactivé")
 
             with tab2:
-                use_lime = st.checkbox("Activer LIME", value=False)
-                st.write("LIME activé:", use_lime)
+                use_lime = st.checkbox("Activer LIME - ATTENTION FAIT PLANTER APPLICATION SUR STREAMLIT CLOUD", value=False)
                 if use_lime:
                     afficher_explication_lime(df_bilan, gb_model2)  # Appeler l'explication LIME si activée
                 else:
