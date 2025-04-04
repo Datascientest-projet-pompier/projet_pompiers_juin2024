@@ -259,6 +259,27 @@ def afficher_explication_shap2(df):  # Ok distant
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
+    try:
+        with st.spinner("Chargement de l'explicateur SHAP..."):
+            with open(filename, 'rb') as f:
+                explainer_shap = cloudpickle.load(f)
+
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
+            plt.figure(figsize=(10, 6))
+            shap.summary_plot(shap_values, df)
+            st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
+
+    except Exception as e:
+        st.error(f"Erreur avec SHAP : {e}")
+        st.text(traceback.format_exc())
+
+
+def afficher_explication_shap_vinit(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+
     with st.spinner("Chargement de l'explicateur SHAP..."):
         with open(filename, 'rb') as f:
             explainer_shap = cloudpickle.load(f)
@@ -278,6 +299,22 @@ def afficher_explication_shap(df):
             components.html(html_str, height=300)
 
 def afficher_explication_lime(df, gb_model2):
+    filename = 'Donnees/Modeles/explainer_lime.pkl'
+    
+    try:
+        with open(filename, 'rb') as f:
+            explainer_lime = cloudpickle.load(f)
+
+        explanation = explainer_lime.explain_instance(
+            df.values[0], gb_model2.predict_proba, num_features=10
+        )
+        st.components.v1.html(explanation.as_html(), height=800)
+
+    except Exception as e:
+        st.error(f"Erreur avec LIME : {e}")
+        st.text(traceback.format_exc())
+
+def afficher_explication_lime_vinit(df, gb_model2):
 
     filename = 'Donnees/Modeles/explainer_lime.pkl'
     try:
