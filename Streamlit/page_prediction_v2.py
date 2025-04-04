@@ -459,6 +459,7 @@ def predictionv2():
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
 
             with tab2:
+                st.write("Test LIME")
                 if st.sidebar.checkbox("Activer LIME", value=False):
                     afficher_explication_lime(df_bilan, gb_model2)
                 else:
