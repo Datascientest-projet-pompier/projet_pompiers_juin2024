@@ -265,7 +265,7 @@ def afficher_explication_shap_version_horizontal(df):   # pb javascript
         st.text(traceback.format_exc())
 
 
-def afficher_explication_shap(df):  
+def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
@@ -288,7 +288,7 @@ def afficher_explication_shap(df):
 
 def afficher_explication_lime(df, gb_model2):
     filename = 'Donnees/Modeles/explainer_lime.pkl'
-    
+
     try:
         with open(filename, 'rb') as f:
             explainer_lime = cloudpickle.load(f)
@@ -303,8 +303,8 @@ def afficher_explication_lime(df, gb_model2):
         st.error(f"Erreur avec LIME : {e}")
         st.text(traceback.format_exc())
 
-def predictionv3():   
-    
+def predictionv3():
+
     st.subheader("Prédiction avec les données de l'incident")
     # Initialiser un DataFrame avec une première ligne vide
     if 'data' not in st.session_state:
@@ -422,7 +422,7 @@ def predictionv3():
 
             # Interprétation
             st.markdown("#### Interprétation de la prédiction de l'incident")
-            
+
 
             # Création des onglets
             tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
@@ -436,12 +436,9 @@ def predictionv3():
                     st.write("SHAP est désactivé")
 
             with tab2:
-                use_lime = st.checkbox("Activer LIME - ATTENTION FAIT PLANTER APPLICATION SUR STREAMLIT CLOUD", value=False)
-                if use_lime:
-                    try:
-                        st.write("LIME activé, lancement de l’explication...")
+                use_lime = st.checkbox("Activer LIME", value=False)
+                try:
+                    if use_lime:
                         afficher_explication_lime(df_bilan, gb_model2)
-                    except Exception as e:
-                        st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
-                        st.write("Trace de l’erreur :")
-                        st.code(traceback.format_exc())
+                except Exception as e:
+                    st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
