@@ -56,6 +56,7 @@ def choix_lieu():
     choix = st.radio("Choisissez la méthode de saisie des coordonnées :", ("Carte", "Saisie manuelle"))
 
     if choix == "Carte":
+        st.write("DEBUG : Carte sélectionnée")  # Test
         # Création de la carte Folium
         london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
         folium.LatLngPopup().add_to(london_map)
