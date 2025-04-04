@@ -256,7 +256,7 @@ def afficher_explication_shap2(df):  # Ok distant
             shap.summary_plot(shap_values, df)
             st.pyplot(plt.gcf())  # Affiche le graphique dans Streamlit
 
-def afficher_explication_shap(df):
+def afficher_explication_shap_version_horizontal(df):   # pb javascript
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
@@ -282,7 +282,7 @@ def afficher_explication_shap(df):
         st.text(traceback.format_exc())
 
 
-def afficher_explication_shap_versiontab(df):  
+def afficher_explication_shap(df):  
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
