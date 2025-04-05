@@ -3,8 +3,6 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-
-
 from page_intro import page_intro
 from page_presentation import presentation
 from page_visualisation import visualisation
