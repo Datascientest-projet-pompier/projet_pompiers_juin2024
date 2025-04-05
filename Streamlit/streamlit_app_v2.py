@@ -13,6 +13,7 @@ from page_interpretabilité import interpretabilite
 from page_variables import variables
 from page_prediction_v3 import predictionv3
 from page_conclusion import conclusion
+from page_test import test
 
 def main():
     # Sidebar
@@ -26,7 +27,8 @@ def main():
         "Quelques résultat" : resultat,
         "Compréhension du modèle" : interpretabilite,
         "Prédiction à l'aide du modèle": predictionv3,
-        "Conclusion et prespective": conclusion
+        "Conclusion et prespective": conclusion,
+        "test": test
     }
 
     # Barre latérale avec des boutons radio pour chaque page
