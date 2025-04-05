@@ -1,6 +1,6 @@
 setuptools>=65.5.0
 wheel
-pip
+pip==25.0.1
 ipython
 
 # Bibliothèques de base
@@ -33,4 +33,3 @@ seaborn==0.13.2
 
 # Bibliothèques de statistiques
 statsmodels==0.14.4
-
