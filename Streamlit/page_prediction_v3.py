@@ -34,7 +34,6 @@ def choix_lieu():
     choix = st.radio("Choisissez la méthode de saisie des coordonnées :", ("Carte", "Saisie manuelle"))
 
     if choix == "Carte":
-        st.write("DEBUG : Carte sélectionnée")  # Test
         # Création de la carte Folium
         london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
         folium.LatLngPopup().add_to(london_map)
@@ -239,7 +238,32 @@ def afficher_chemin_prediction(model, data, feature_names):
     for step in path:
         st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
 
-def afficher_explication_shap_version_horizontal(df):   # pb javascript
+
+def afficher_explication_shap_version_horizontal(df):
+    filename = 'Donnees/Modeles/explainer_shap.pkl'
+
+    try:
+        with st.spinner("Chargement de l'explicateur SHAP..."):
+            with open(filename, 'rb') as f:
+                explainer_shap = cloudpickle.load(f)
+
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
+            shap.initjs()
+            plt.figure(figsize=(10, 6))
+            shap.force_plot(
+                explainer_shap.expected_value, shap_values.values[0], df.iloc[0], matplotlib=True, show=False
+            )
+            st.pyplot(plt.gcf())
+
+    except Exception as e:
+        st.error(f"Erreur avec SHAP : {e}")
+        st.text(traceback.format_exc())
+
+
+def afficher_explication_shap_version_horizontal2(df):   # pb javascript
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
