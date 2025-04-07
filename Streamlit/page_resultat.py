@@ -58,27 +58,28 @@ def resultat():
     , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown(r"""
-        Cinq métriques sont utilisées :
+    with st.expander(f"📌 Métriques Utilisées"):
+        st.markdown(r"""
+            Cinq métriques sont utilisées :
 
-        - **L'accuracy :** mesure la proportion de prédictions correctes par rapport au nombre total de prédictions. C'est une mesure globale de la performance du modèle,
+            - **L'accuracy :** mesure la proportion de prédictions correctes par rapport au nombre total de prédictions. C'est une mesure globale de la performance du modèle,
 
-        - **La précision :** mesure la précision pour chacune des classes(0 ou 1). Précision 0 renvoie la proportion de valeur prédite à 0 étant réellement à 0 par rapport au total des valeur 0.
+            - **La précision :** mesure la précision pour chacune des classes(0 ou 1). Précision 0 renvoie la proportion de valeur prédite à 0 étant réellement à 0 par rapport au total des valeur 0.
 
-        $$R_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Positifs} $$
+            $$R_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Positifs} $$
 
-        idem pour Précision 1,
+            idem pour Précision 1,
 
-        - **Le Recall :** mesure la proportion de toutes les instances positives réelles qui ont été correctement identifiées par le modèle.
+            - **Le Recall :** mesure la proportion de toutes les instances positives réelles qui ont été correctement identifiées par le modèle.
 
-        $$F1_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Négatifs}$$
+            $$F1_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Négatifs}$$
 
-        - **F1-score :** mesure la moyenne harmonique de la précision et du rappel. Mathématiquement
+            - **F1-score :** mesure la moyenne harmonique de la précision et du rappel. Mathématiquement
 
-        - **AUC ROC :** mesure l'air sous la courbe ROC(Nombre de vrais positifs (rappel) en fonction du taux de faux positifs), elle mesure de la capacité du modèle à distinguer les classes.
-        """
-    , unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
+            - **AUC ROC :** mesure l'air sous la courbe ROC(Nombre de vrais positifs (rappel) en fonction du taux de faux positifs), elle mesure de la capacité du modèle à distinguer les classes.
+            """
+        , unsafe_allow_html=True)
+
 
     st.markdown(texte_justifie(
         "Résultats sur le jeu d'entrainement (fusionné).")
@@ -101,3 +102,27 @@ def resultat():
         "Le choix du modèle c'est effectué à l'aide des résultats sur le jeu de données test. Au vue des résultats"
         "le modèle convservé est celui de <b>Gradient Boosting#2</b>")
     , unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    with st.expander(f"📌 Hyperparamètres Utilisés"):
+        st.markdown("""
+            ##### Les hyperparamètres utilisés
+            Les hyperparamètres ont été déterminé à l'aide d'un jeu de données réduit. Voici les valeurs trouvées et leurs
+            explications.
+            """, unsafe_allow_html=True)
+
+        st.code("""
+                # Nombre d'arbres dans l'ensemble (forêt aléatoire)
+                n_estimators = 400
+                # Taux d'apprentissage, contrôle la contribution de chaque arbre
+                learning_rate = 0.0464
+                # Fraction des données utilisées pour chaque arbre (87.5% dans ce cas)
+                subsample = 0.875
+                # Fraction minimale d'échantillons requise pour diviser un nœud interne
+                min_samples_split = 0.0005
+                # Profondeur maximale de chaque arbre (9 niveaux dans ce cas)
+                max_depth = 9
+                # Nombre maximal de caractéristiques considérées pour chaque division
+                max_features = 25
+                """, language="python")

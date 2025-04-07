@@ -39,10 +39,10 @@ def visualisation():
     df2023 = pd.read_csv("Donnees/Doc csv/df2023_v2.csv")
 
     # Création des onglets
-    tab1, tab2 ,tab3, tab4 = st.tabs(["Etude statistique"," Transformation du temps total", "Data Visualisation","Visualisation géographique"])
+    tab1, tab2 ,tab3, tab4 = st.tabs(["Statistique descriptive"," Transformation du temps total", "Data Visualisation","Visualisation géographique"])
 
     with tab1:
-      st.subheader("Etude statistique")
+      st.subheader("Statistique descriptive")
       st.markdown(texte_justifie(
         " Notre jeu de données contient un grand nombre de variables qualitative et seulement cinq variables quantitatives"
         " (<code>Time...</code>, <code>Distance</code> et <code>RatioSc</code>)."

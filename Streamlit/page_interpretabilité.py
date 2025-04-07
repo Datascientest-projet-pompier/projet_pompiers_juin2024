@@ -106,7 +106,7 @@ def interpretabilite():
 
                 $$F_{t+1}(x) = F_t(x) + \lambda h_t(x)$$
 
-                    
+
                 Où :
                 - $F_t(x)$ est la prédiction précédente et $F_{t+1}(x)$ la prédiction désirée.
                 - $h_t(x)$ est l’arbre nouvellement ajouté (étape 3).
@@ -116,27 +116,6 @@ def interpretabilite():
 
             On répète les étapes 2 à 4 jusqu'à convergence du modèle ou jusqu'à atteindre le nombre maximal d'itérations.
             """, unsafe_allow_html=True)
-
-        st.markdown("""
-            ##### Les hyperparamètres utilisés
-            Les hyperparamètres ont été déterminé à l'aide d'un jeu de données réduit. Voici les valeurs trouvées et leurs
-            explications
-            """, unsafe_allow_html=True)
-
-        st.code("""
-            # Nombre d'arbres dans l'ensemble (forêt aléatoire)
-            n_estimators = 400
-            # Taux d'apprentissage, contrôle la contribution de chaque arbre
-            learning_rate = 0.0464
-            # Fraction des données utilisées pour chaque arbre (87.5% dans ce cas)
-            subsample = 0.875
-            # Fraction minimale d'échantillons requise pour diviser un nœud interne
-            min_samples_split = 0.0005
-            # Profondeur maximale de chaque arbre (9 niveaux dans ce cas)
-            max_depth = 9
-            # Nombre maximal de caractéristiques considérées pour chaque division
-            max_features = 25
-            """, language="python")
 
     # Création des onglets
     tab1, tab2 = st.tabs(["Interprétabilité", "Explicabilité"])
