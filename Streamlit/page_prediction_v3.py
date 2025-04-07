@@ -449,21 +449,4 @@ def predictionv3():
             st.markdown("#### Interprétation de la prédiction de l'incident")
 
 
-            # Création des onglets
-            tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
-
-            with tab1:
-                use_shap = st.checkbox("Activer SHAP", value=False)
-                if use_shap:
-                    afficher_explication_shap_version_horizontal(df_bilan)
-                    afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
-                else:
-                    st.write("SHAP est désactivé")
-
-            with tab2:
-                use_lime = st.checkbox("Activer LIME - Attention plantage ", value=False)
-                try:
-                    if use_lime:
-                        afficher_explication_lime(df_bilan, gb_model2)
-                except Exception as e:
-                    st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
+            afficher_explication_shap_version_horizontal(df_bilan)
