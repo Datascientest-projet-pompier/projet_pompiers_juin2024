@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 import streamlit.components.v1 as components
+from PIL import Image
 
 from fonctions import texte_justifie
 from fonctionsstat  import tab_stat
@@ -38,7 +39,7 @@ def visualisation():
     df2023 = pd.read_csv("Donnees/Doc csv/df2023_v2.csv")
 
     # Création des onglets
-    tab1, tab2 ,tab3 = st.tabs(["Etude statistique", "Data Visualisation","Visualisation géographique"])
+    tab1, tab2 ,tab3, tab4 = st.tabs(["Etude statistique"," Transformation du temps total", "Data Visualisation","Visualisation géographique"])
 
     with tab1:
       st.subheader("Etude statistique")
@@ -53,6 +54,81 @@ def visualisation():
       st.table(tab)
 
     with tab2:
+      st.write("Transformation du temps total")
+      st.markdown(texte_justifie(
+        "La variable cible est le temps total de réponse (<code>TotalResponseTime</code>) qui est la somme des temps"
+        " de réaction (<code>ResponseTime</code>) et de trajet (<code>TravelTime</code>).<br>"), unsafe_allow_html=True)
+
+      # Charger l'image avec PIL
+      image = Image.open("Donnees/Images/temps-original.png")
+
+      # Redimensionner l'image à 50%
+      new_size = (image.width // 3*2, image.height // 3*2)
+      resized_image = image.resize(new_size)
+
+      # Centrer avec Streamlit
+      st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+      st.image(resized_image)
+      st.markdown("</div>", unsafe_allow_html=True)
+
+      st.markdown(texte_justifie(
+         "Comme la distribution de cette variable est asymétrique à droite, nous avons décidé de faire une transformation pour"
+         "la rendre plus proche d'une distribution normale."
+        "Nous avons essayé quatre transformations : logarithmique, racine carrée, Box-Cox et Yeo Jonhson ."
+        )
+        , unsafe_allow_html=True)
+
+      # Choix de la transformation à afficher
+      var_liste = ['Logarithmique','Racine carrée','Box-Cox','Yeo-Johnson']
+      # Menu déroulant pour un choix unique
+      var_transfo = st.selectbox("Choisissez une transformation :", var_liste)
+
+      if var_transfo == 'Logarithmique':
+        # Charger l'image avec PIL
+        image = Image.open("Donnees/Images/temps-logarithme.png")
+
+        # Redimensionner l'image à 50%
+        new_size = (image.width // 3*2, image.height // 3*2)
+        resized_image = image.resize(new_size)
+
+        # Centrer avec Streamlit
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.image(resized_image)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+      elif var_transfo == 'Racine carrée':
+        # Charger l'image avec PIL
+        image = Image.open("Donnees/Images/temps-racine-carree.png")
+
+        # Redimensionner l'image à 50%
+        new_size = (image.width // 3*2, image.height // 3*2)
+        resized_image = image.resize(new_size)
+
+        # Centrer avec Streamlit
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.image(resized_image)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+      elif var_transfo == 'Box-Cox':
+        # Charger l'image avec PIL
+        image = Image.open("Donnees/Images/temps-boc-cox.png")
+
+        # Centrer avec Streamlit
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.image(image)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+      else:
+        # Charger l'image avec PIL
+        image = Image.open("Donnees/Images/temps-teo-jonhson.png")
+
+        # Centrer avec Streamlit
+        st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+        st.image(image)
+        st.markdown("</div>", unsafe_allow_html=True)
+
+
+    with tab3:
       st.subheader("Data Visualisation")
 
       st.markdown(texte_justifie(
@@ -441,7 +517,7 @@ def visualisation():
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-      with tab3:
+      with tab4:
         df_2024 = recup_df("df_2024.csv")
 
         caserne = df_2024['IncidentStationGround'].unique()
