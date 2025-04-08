@@ -167,13 +167,14 @@ def prepa_incident(station_df):
 
     if st.session_state.data.loc[0, 'caserne_resp'] == st.session_state.data.loc[0, 'caserne_dep']:
         df_bilan.loc[0, 'Stat_resp_rep'] = 1
-    else:
-        caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
-        bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
-        bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
-        if bor_rep == bor_inc :
-            df_bilan.loc[0, 'Bor_resp_rep'] = 1
-            df_bilan.loc[0, 'Bor_inc_rep'] = 1
+
+    caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
+    bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
+    bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
+    
+    if bor_rep == bor_inc :
+        df_bilan.loc[0, 'Bor_resp_rep'] = 1
+        df_bilan.loc[0, 'Bor_inc_rep'] = 1
 
     heure = st.session_state.data.loc[0, 'heure']
     if 2 <= heure <= 6:
