@@ -171,7 +171,7 @@ def prepa_incident(station_df):
     caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
     bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
     bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
-    
+
     if bor_rep == bor_inc :
         df_bilan.loc[0, 'Bor_resp_rep'] = 1
         df_bilan.loc[0, 'Bor_inc_rep'] = 1
@@ -359,8 +359,6 @@ def predictionv3():
             if df_bilan.empty:
                 st.warning("⚠️ Le DataFrame df_bilan est vide. Aucune prédiction ne peut être effectuée.")
             else:
-                max_index = len(df_bilan) - 1
-
                 idx = 0
 
                 X_input = df_bilan.iloc[[idx]]  # Toujours en DataFrame
@@ -395,7 +393,7 @@ def predictionv3():
                 st.pyplot(fig)
 
                 final_pred = gb_model2.predict(X_input)[0]
-                final_proba = gb_model2.predict_proba(X_input)[0][1]
+                final_proba = gb_model2.predict_proba(X_input)[0][final_pred]
                 st.write(f" **Classe prédite finale :** {final_pred}, **Probabilité finale :** {final_proba:.4f}")
 
             # Interprétation
