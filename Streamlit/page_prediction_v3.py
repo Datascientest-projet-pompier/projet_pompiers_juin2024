@@ -165,12 +165,13 @@ def prepa_incident(station_df):
     inner = station_df.loc[station_df["Station name"] == caserne_resp, 'inner london']
     df_bilan.loc[0, 'inner'] = inner.iloc[0]
 
-    if st.session_state.data.loc[0, 'caserne_resp'] != st.session_state.data.loc[0, 'caserne_dep']:
+    if st.session_state.data.loc[0, 'caserne_resp'] == st.session_state.data.loc[0, 'caserne_dep']:
         df_bilan.loc[0, 'Stat_resp_rep'] = 1
+    else:
         caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
         bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
         bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
-        if bor_rep != bor_inc :
+        if bor_rep == bor_inc :
             df_bilan.loc[0, 'Bor_resp_rep'] = 1
             df_bilan.loc[0, 'Bor_inc_rep'] = 1
 
@@ -199,46 +200,6 @@ def prepa_incident(station_df):
 
     return df_bilan
 
-def afficher_chemin_prediction(model, data, feature_names):
-    """
-    Affiche le chemin de prédiction précis pour une donnée donnée.
-
-    Args:
-        model (GradientBoostingClassifier): Le modèle entraîné.
-        data (pd.DataFrame): La donnée pour laquelle afficher le chemin.
-        feature_names (list): Les noms des caractéristiques.
-    """
-
-    # Sélectionner le premier arbre (vous pouvez itérer sur tous les arbres si nécessaire)
-    tree = model.estimators_[0, 0].tree_
-
-    node_index = 0
-    path = []
-
-    while tree.children_left[node_index] != -1:
-        feature = tree.feature[node_index]
-        threshold = tree.threshold[node_index]
-        value = data.iloc[0, feature]
-
-        path.append({
-            "node_index": node_index,
-            "feature": feature_names[feature],
-            "threshold": threshold,
-            "value": value,
-            "decision": "left" if value <= threshold else "right"
-        })
-
-        if value <= threshold:
-            node_index = tree.children_left[node_index]
-        else:
-            node_index = tree.children_right[node_index]
-
-    # Afficher le chemin
-    st.write("Chemin de prédiction :")
-    for step in path:
-        st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
-
-
 def afficher_explication_shap_version_horizontal(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
@@ -262,33 +223,6 @@ def afficher_explication_shap_version_horizontal(df):
         st.error(f"Erreur avec SHAP : {e}")
         st.text(traceback.format_exc())
 
-
-def afficher_explication_shap_version_horizontal2(df):   # pb javascript
-    filename = 'Donnees/Modeles/explainer_shap.pkl'
-
-    try:
-        with st.spinner("Chargement de l'explicateur SHAP..."):
-            with open(filename, 'rb') as f:
-                explainer_shap = cloudpickle.load(f)
-
-        with st.spinner("Calcul des valeurs SHAP..."):
-            shap_values = explainer_shap(df)
-
-        with st.spinner("Création du graphique SHAP..."):
-            shap.initjs()  # Assure que le JS de SHAP est bien chargé
-            shap_html = shap.force_plot(
-                explainer_shap.expected_value, shap_values.values, df, matplotlib=False
-            )
-
-            # Convertir en HTML et afficher dans Streamlit
-            html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            components.html(html_str, height=300)
-
-    except Exception as e:
-        st.error(f"Erreur avec SHAP : {e}")
-        st.text(traceback.format_exc())
-
-
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
@@ -310,22 +244,6 @@ def afficher_explication_shap(df):
         st.error(f"Erreur avec SHAP : {e}")
         st.text(traceback.format_exc())
 
-def afficher_explication_lime(df, gb_model2):
-    filename = 'Donnees/Modeles/explainer_lime.pkl'
-
-    try:
-        with open(filename, 'rb') as f:
-            explainer_lime = cloudpickle.load(f)
-
-        explanation = explainer_lime.explain_instance(
-            df.values[0], gb_model2.predict_proba, num_features=10
-        )
-        # Afficher LIME dans Streamlit
-        st.components.v1.html(explanation.as_html(), height=800)
-
-    except Exception as e:
-        st.error(f"Erreur avec LIME : {e}")
-        st.text(traceback.format_exc())
 
 def predictionv3():
 
