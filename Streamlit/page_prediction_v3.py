@@ -435,15 +435,49 @@ def predictionv3():
             gb_model2 = joblib.load(filename)
 
             df_trans = gb_model2.predict_proba(df_bilan)
-            prob_classe_0 = round(df_trans[0, 0], 4)
-            prob_classe_1 = round(df_trans[0, 1], 4)
-            st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
-            st.write("Prédiction que l'arrivée sur site soit supérieur à 6 min : ",prob_classe_1)
 
-            # Afficher l'arbre de decision
-            with st.expander(f"Arbre de prédiction"):
-                noms_colonnes = df_bilan.columns.tolist()
-                afficher_chemin_prediction(gb_model2, df_bilan, noms_colonnes)
+
+            if df_bilan.empty:
+                st.warning("⚠️ Le DataFrame df_bilan est vide. Aucune prédiction ne peut être effectuée.")
+            else:
+                max_index = len(df_bilan) - 1
+
+                idx = 0
+
+                X_input = df_bilan.iloc[[idx]]  # Toujours en DataFrame
+
+                st.markdown("#### Échantillon sélectionné")
+                st.write(X_input)
+
+                # Calcul des prédictions à chaque arbre
+                probas = list(gb_model2.staged_predict_proba(X_input))
+                proba_classe_1 = [p[0][1] for p in probas]
+                proba_classe_0 = [p[0][0] for p in probas]
+
+                # Affichage côte à côte
+                st.markdown("#### Évolution des probabilités pour chaque classe")
+
+                fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=(14, 6))
+
+                # Probabilité classe 0
+                ax0.plot(range(1, len(proba_classe_0)+1), proba_classe_0, marker="o", color='blue')
+                ax0.set_title("Classe 0 (probabilité)")
+                ax0.set_xlabel("Nombre d'arbres")
+                ax0.set_ylabel("Probabilité")
+                ax0.grid(True)
+
+                # Probabilité classe 1
+                ax1.plot(range(1, len(proba_classe_1)+1), proba_classe_1, marker="o", color='green')
+                ax1.set_title("Classe 1 (probabilité)")
+                ax1.set_xlabel("Nombre d'arbres")
+                ax1.set_ylabel("Probabilité")
+                ax1.grid(True)
+
+                st.pyplot(fig)
+
+                final_pred = gb_model2.predict(X_input)[0]
+                final_proba = gb_model2.predict_proba(X_input)[0][1]
+                st.write(f" **Classe prédite finale :** {final_pred}, **Probabilité finale :** {final_proba:.4f}")
 
             # Interprétation
             st.markdown("#### Interprétation de la prédiction de l'incident")
