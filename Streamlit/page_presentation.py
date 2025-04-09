@@ -4,17 +4,18 @@ from fonctions import texte_justifie
 def presentation():
     st.title("Présentation des données")
     st.markdown(texte_justifie(
-    "L'ensemble des données est divisé en deux sous-dossiers. Le premier sous-dossier permet d'obtenir "
-    "les informations relatives aux incidents "
-    "(disponible <a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-incident-records\">ICI</a>). "
-    "Le second sous-dossier permet d'obtenir les informations relatives à la mobilisation des casernes (disponible "
-    "<a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-mobilisation-records\">ICI</a>). "
+    "Les jeux de données sur les <b>incidents</b> et les <b>mobilisations</b> sont mis à jour tous les mois "
+    "sur le site de la Brigade des Pompiers de Londres."
+    "La base de données sur les incidents est "
+    "disponible <a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-incident-records\">ICI</a>. "
+    "Celle sur la mobilisation des casernes (et l'envoi de camions de secours) est disponible "
+    "<a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-mobilisation-records\">ICI</a>. "
   ), unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     # Création des onglets
     tab1, tab2, tab3, tab4 = st.tabs(["Etude des données initiales", "Gestion des valeurs manquantes","Nettoyage et jointure",
-    "Création variables"])
+    "Création de variables"])
 
     with tab1:
       st.subheader("Etude des données initiales")
