@@ -19,7 +19,7 @@ cloudpickle==3.1.1
 # Bibliothèques pour les cartes et l'interactivité
 folium==0.14.0
 streamlit==1.44.0
-streamlit-folium==0.9.0  # Assurez-vous que la version est bien compatible avec la version de Streamlit
+streamlit-folium>=0.12.0  # Assurez-vous que la version est bien compatible avec la version de Streamlit
 #streamlit-folium
 streamlit-modal==0.1.0
 

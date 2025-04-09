@@ -18,8 +18,8 @@ from page_test import test
 def main():
     # Sidebar
     pages = {
-        "Presentation":page_intro,
-        "Presentation des données": presentation,
+        "Objectif":page_intro,
+        "Présentation des données": presentation,
         "Visualisation des données": visualisation,
         "Variables du modèle": variables,
         "Prétraitement des données": pretraitement,
@@ -27,8 +27,12 @@ def main():
         "Quelques résultats" : resultat,
         "Compréhension du modèle" : interpretabilite,
         "Prédiction à l'aide du modèle": predictionv3,
+<<<<<<< HEAD
         "Conclusion et perspectives": conclusion,
         "test": test
+=======
+        "Conclusion et prespectives": conclusion
+>>>>>>> ef3e5023ce03d77867fe1cde537110e1e602c7de
     }
 
     # Barre latérale avec des boutons radio pour chaque page

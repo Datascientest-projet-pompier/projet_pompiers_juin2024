@@ -11,10 +11,10 @@ def presentation():
     "<a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-mobilisation-records\">ICI</a>). "
   ), unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
-    
+
     # Création des onglets
     tab1, tab2, tab3, tab4 = st.tabs(["Etude des données initiales", "Gestion des valeurs manquantes","Nettoyage et jointure",
-    "Création des nouvelles variables"])
+    "Création variables"])
 
     with tab1:
       st.subheader("Etude des données initiales")
@@ -35,12 +35,12 @@ def presentation():
         "<li><b>données cibes :</b> qui représentent les temps de réaction, de trajet et total</li></ul>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
-    
+
     with tab2:
       st.subheader("Gestion des valeurs manquantes")
 
       st.markdown("#### Sur les fichiers incidents")
-    
+
       st.markdown(texte_justifie(
         "Les données manquantes apparaissent sur :"
         "<ul>"
@@ -80,7 +80,7 @@ def presentation():
         "incidents et mobilisation)...<br>Si la ligne correspondante à un incident contenait une incohérence elle à été supprimée.")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
-    
+
       st.markdown(texte_justifie(
         "Pour notre étude nous avons eu besoin de joindre les fichiers incidents et mobilisations."
         " La jointure à été effectuée sur <b>IncidentNumber</b> qui est le numéro unique décrivant l'incident."
@@ -90,27 +90,27 @@ def presentation():
         "sur place.")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
-    
+
       st.markdown(texte_justifie(
         "Après nettoyage, le dataframe joint contient des données sur 1 037 713 incidents gérés par la Brigade"
         " des Pompiers de Londres sur une période de plus de 10 ans (10 Janvier 2014 au 30 Septembre 2024).")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
-    
+
     with tab4:
       st.subheader("Création des nouvelles variables")
 
-   
+
       st.markdown(texte_justifie(
         "Pour simplifier notre jeu de données nous avons chercher à diminuer le nombre de variables en en regroupant certaines, "
         " elles correspondent uniquement aux deux dernières catégories."
         "<br>"
         "<ul>"
           "<li><b>données relatives à l'incident :</b>"
-          
+
           "<ul>"
           "<li>Type d'incidents :"
-          
+
             "<ul>"
               "<li><code>DetailedIncidentGroup</code> : qui correspond à une simplification de la description de l'incident. "
               "Elle rassemble les variables <code>StopCodeDescription</code> et <code>SpecialServiceType</code>, c'est une variable"
@@ -120,7 +120,7 @@ def presentation():
             "</ul></li>"
 
           "<li>Types de lieu affecté :"
-          
+
             "<ul>"
               "<li><code>HighPropertyType</code> : qui représente une simplification de la variable <code>PropertyType</code>. "
               "Elle permet de passer d'une variable catégorielle à 293 modalités à une variable à 47 modalités</li>"
@@ -131,7 +131,7 @@ def presentation():
           "<li> Données temporelles :"
             "<ul>"
               "<li><code>DayOfWeek</code> : représentant le jour de la semaine de l'incident.</li>"
-              "<li><code>Month</code> : représentant le mois de l'incident.</li>"              
+              "<li><code>Month</code> : représentant le mois de l'incident.</li>"
             "</ul></li>"
 
           "<li> Données géographiques :"
@@ -155,5 +155,3 @@ def presentation():
             "</ul></li>"
         "</ul>")
         , unsafe_allow_html=True)
-      
-      

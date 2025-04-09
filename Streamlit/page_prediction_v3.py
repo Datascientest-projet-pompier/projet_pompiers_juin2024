@@ -34,7 +34,6 @@ def choix_lieu():
     choix = st.radio("Choisissez la méthode de saisie des coordonnées :", ("Carte", "Saisie manuelle"))
 
     if choix == "Carte":
-        st.write("DEBUG : Carte sélectionnée")  # Test
         # Création de la carte Folium
         london_map = folium.Map(location=[51.5074, -0.1278], zoom_start=12)
         folium.LatLngPopup().add_to(london_map)
@@ -166,14 +165,16 @@ def prepa_incident(station_df):
     inner = station_df.loc[station_df["Station name"] == caserne_resp, 'inner london']
     df_bilan.loc[0, 'inner'] = inner.iloc[0]
 
-    if st.session_state.data.loc[0, 'caserne_resp'] != st.session_state.data.loc[0, 'caserne_dep']:
+    if st.session_state.data.loc[0, 'caserne_resp'] == st.session_state.data.loc[0, 'caserne_dep']:
         df_bilan.loc[0, 'Stat_resp_rep'] = 1
-        caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
-        bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
-        bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
-        if bor_rep != bor_inc :
-            df_bilan.loc[0, 'Bor_resp_rep'] = 1
-            df_bilan.loc[0, 'Bor_inc_rep'] = 1
+
+    caserne_dep = st.session_state.data.loc[0, 'caserne_dep']
+    bor_rep = station_df.loc[station_df["Station name"] == caserne_dep, 'BoroughName'].iloc[0]
+    bor_inc = station_df.loc[station_df["Station name"] == caserne_resp, 'BoroughName'].iloc[0]
+
+    if bor_rep == bor_inc :
+        df_bilan.loc[0, 'Bor_resp_rep'] = 1
+        df_bilan.loc[0, 'Bor_inc_rep'] = 1
 
     heure = st.session_state.data.loc[0, 'heure']
     if 2 <= heure <= 6:
@@ -200,46 +201,7 @@ def prepa_incident(station_df):
 
     return df_bilan
 
-def afficher_chemin_prediction(model, data, feature_names):
-    """
-    Affiche le chemin de prédiction précis pour une donnée donnée.
-
-    Args:
-        model (GradientBoostingClassifier): Le modèle entraîné.
-        data (pd.DataFrame): La donnée pour laquelle afficher le chemin.
-        feature_names (list): Les noms des caractéristiques.
-    """
-
-    # Sélectionner le premier arbre (vous pouvez itérer sur tous les arbres si nécessaire)
-    tree = model.estimators_[0, 0].tree_
-
-    node_index = 0
-    path = []
-
-    while tree.children_left[node_index] != -1:
-        feature = tree.feature[node_index]
-        threshold = tree.threshold[node_index]
-        value = data.iloc[0, feature]
-
-        path.append({
-            "node_index": node_index,
-            "feature": feature_names[feature],
-            "threshold": threshold,
-            "value": value,
-            "decision": "left" if value <= threshold else "right"
-        })
-
-        if value <= threshold:
-            node_index = tree.children_left[node_index]
-        else:
-            node_index = tree.children_right[node_index]
-
-    # Afficher le chemin
-    st.write("Chemin de prédiction :")
-    for step in path:
-        st.write(f"Nœud {step['node_index']}: {step['feature']} { '<=' if step['decision'] == 'left' else '>'} {step['threshold']:.4f} (Valeur: {step['value']:.4f})")
-
-def afficher_explication_shap_version_horizontal(df):   # pb javascript
+def afficher_explication_shap_version_horizontal(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
@@ -251,19 +213,16 @@ def afficher_explication_shap_version_horizontal(df):   # pb javascript
             shap_values = explainer_shap(df)
 
         with st.spinner("Création du graphique SHAP..."):
-            shap.initjs()  # Assure que le JS de SHAP est bien chargé
-            shap_html = shap.force_plot(
-                explainer_shap.expected_value, shap_values.values, df, matplotlib=False
+            shap.initjs()
+            plt.figure(figsize=(10, 6))
+            shap.force_plot(
+                explainer_shap.expected_value, shap_values.values[0], df.iloc[0], matplotlib=True, show=False
             )
-
-            # Convertir en HTML et afficher dans Streamlit
-            html_str = f"<head>{shap.getjs()}</head><body>{shap_html.html()}</body>"
-            components.html(html_str, height=300)
+            st.pyplot(plt.gcf())
 
     except Exception as e:
         st.error(f"Erreur avec SHAP : {e}")
         st.text(traceback.format_exc())
-
 
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
@@ -286,22 +245,6 @@ def afficher_explication_shap(df):
         st.error(f"Erreur avec SHAP : {e}")
         st.text(traceback.format_exc())
 
-def afficher_explication_lime(df, gb_model2):
-    filename = 'Donnees/Modeles/explainer_lime.pkl'
-
-    try:
-        with open(filename, 'rb') as f:
-            explainer_lime = cloudpickle.load(f)
-
-        explanation = explainer_lime.explain_instance(
-            df.values[0], gb_model2.predict_proba, num_features=10
-        )
-        # Afficher LIME dans Streamlit
-        st.components.v1.html(explanation.as_html(), height=800)
-
-    except Exception as e:
-        st.error(f"Erreur avec LIME : {e}")
-        st.text(traceback.format_exc())
 
 def predictionv3():
 
@@ -411,35 +354,50 @@ def predictionv3():
             gb_model2 = joblib.load(filename)
 
             df_trans = gb_model2.predict_proba(df_bilan)
-            prob_classe_0 = round(df_trans[0, 0], 4)
-            prob_classe_1 = round(df_trans[0, 1], 4)
-            st.write("Prédiction que l'arrivée sur site soit inférieur à 6 min : ",prob_classe_0)
-            st.write("Prédiction que l'arrivée sur site soit supérieur à 6 min : ",prob_classe_1)
 
-            # Afficher l'arbre de decision
-            with st.expander(f"Arbre de prédiction"):
-                noms_colonnes = df_bilan.columns.tolist()
-                afficher_chemin_prediction(gb_model2, df_bilan, noms_colonnes)
+
+            if df_bilan.empty:
+                st.warning("⚠️ Le DataFrame df_bilan est vide. Aucune prédiction ne peut être effectuée.")
+            else:
+                idx = 0
+
+                X_input = df_bilan.iloc[[idx]]  # Toujours en DataFrame
+
+                st.markdown("#### Échantillon sélectionné")
+                st.write(X_input)
+
+                # Calcul des prédictions à chaque arbre
+                probas = list(gb_model2.staged_predict_proba(X_input))
+                proba_classe_1 = [p[0][1] for p in probas]
+                proba_classe_0 = [p[0][0] for p in probas]
+
+                # Affichage côte à côte
+                st.markdown("#### Évolution des probabilités pour chaque classe")
+
+                fig, (ax0, ax1) = plt.subplots(ncols=2, figsize=(14, 6))
+
+                # Probabilité classe 0
+                ax0.plot(range(1, len(proba_classe_0)+1), proba_classe_0, marker="o", color='blue')
+                ax0.set_title("Classe 0 (probabilité)")
+                ax0.set_xlabel("Nombre d'arbres")
+                ax0.set_ylabel("Probabilité")
+                ax0.grid(True)
+
+                # Probabilité classe 1
+                ax1.plot(range(1, len(proba_classe_1)+1), proba_classe_1, marker="o", color='green')
+                ax1.set_title("Classe 1 (probabilité)")
+                ax1.set_xlabel("Nombre d'arbres")
+                ax1.set_ylabel("Probabilité")
+                ax1.grid(True)
+
+                st.pyplot(fig)
+
+                final_pred = gb_model2.predict(X_input)[0]
+                final_proba = gb_model2.predict_proba(X_input)[0][final_pred]
+                st.write(f" **Classe prédite finale :** {final_pred}, **Probabilité finale :** {final_proba:.4f}")
 
             # Interprétation
             st.markdown("#### Interprétation de la prédiction de l'incident")
 
 
-            # Création des onglets
-            tab1, tab2 = st.tabs(["Expplicabilité avec Shap","Explicabilité avec Lime"])
-
-            with tab1:
-                use_shap = st.checkbox("Activer SHAP", value=False)
-                if use_shap:
-                    afficher_explication_shap_version_horizontal(df_bilan)
-                    afficher_explication_shap(df_bilan)  # Appeler l'explication SHAP si activée
-                else:
-                    st.write("SHAP est désactivé")
-
-            with tab2:
-                use_lime = st.checkbox("Activer LIME - Attention plantage ", value=False)
-                try:
-                    if use_lime:
-                        afficher_explication_lime(df_bilan, gb_model2)
-                except Exception as e:
-                    st.error("Erreur LIME – désactivé pour éviter plantage sur Streamlit Cloud.")
+            afficher_explication_shap_version_horizontal(df_bilan)
