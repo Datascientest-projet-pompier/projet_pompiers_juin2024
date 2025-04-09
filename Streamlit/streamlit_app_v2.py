@@ -27,12 +27,7 @@ def main():
         "Quelques résultats" : resultat,
         "Compréhension du modèle" : interpretabilite,
         "Prédiction à l'aide du modèle": predictionv3,
-<<<<<<< HEAD
-        "Conclusion et perspectives": conclusion,
-        "test": test
-=======
         "Conclusion et prespectives": conclusion
->>>>>>> ef3e5023ce03d77867fe1cde537110e1e602c7de
     }
 
     # Barre latérale avec des boutons radio pour chaque page
