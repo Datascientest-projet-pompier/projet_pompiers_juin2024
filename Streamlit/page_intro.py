@@ -13,20 +13,20 @@ def page_intro():
                                " Nous effectuons une formation chez Datascientest pour valider un module de Data Sciences.")
                                , unsafe_allow_html=True)
 
-    st.markdown(texte_justifie("Pour ce faire nous avons travaillé pendant 6 mois sur un projet. L’objectif de ce projet est "
+    st.markdown(texte_justifie("Pour ce faire nous avons travaillé pendant 6 mois sur un projet dont l’objectif était "
                                "d’estimer le temps de réponse de la Brigade des Pompiers de Londres."
-                                " La brigade des Pompiers de Londres est le service d'incendie et de sauvetage le plus actif"
-                                 " du Royaume-Uni  et l'une des plus grandes organisations de lutte contre l'incendie et de "
-                                 "sauvetage au monde.")
+                               " Cette brigade est le service d'incendie et de sauvetage le plus actif du Royaume-Uni. "
+                                "C’est aussi le second d’Europe (après la Brigade des Sapeurs-Pompiers de Paris) et le cinquième dans le monde, "
+                                "en termes de personnel et de ressources. Elle compte 102 casernes réparties sur les 33 arrondissements (ou Boroughs) "
+                                "du Grand Londres, 142 camions et plus de 5 000 employés."
+                                 )
                                  , unsafe_allow_html=True)
-
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(texte_justifie("Pour  présenter ce projet nous avons créé une application streamlit qui présente les différentes"
-                               " étapes de notre travail.")
+                               " étapes de notre travail."
+                               "Comme les données sont de taille trop importante pour être stockées nous avons pris le parti "
+                               "d'exécuter les traitements et la gestion des graphiques sur nos ordinateurs personnels, pour ensuite les enregistrer et les réutiliser "
+                               "sur notre dépôt Git et enfin les exploiter ici."
+                               )
                                , unsafe_allow_html=True)
-
-    st.markdown(texte_justifie(
-             "Comme les données sont de taille trop importante pour être stockées nous avons pris le parti "
-             "d'exécuter les traitements et la gestion des graphiques sur nos ordinateurs personnels, pour ensuite les enregistrer et les réutiliser "
-             "sur notre dépôt Git et enfin les exploiter ici.")
-             , unsafe_allow_html=True)
     
