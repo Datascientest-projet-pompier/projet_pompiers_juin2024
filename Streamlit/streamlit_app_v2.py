@@ -24,10 +24,10 @@ def main():
         "Variables du modèle": variables,
         "Prétraitement des données": pretraitement,
         "Méthodologie utilisée": methodologie,
-        "Quelques résultat" : resultat,
+        "Quelques résultats" : resultat,
         "Compréhension du modèle" : interpretabilite,
         "Prédiction à l'aide du modèle": predictionv3,
-        "Conclusion et prespective": conclusion,
+        "Conclusion et perspectives": conclusion,
         "test": test
     }
 
