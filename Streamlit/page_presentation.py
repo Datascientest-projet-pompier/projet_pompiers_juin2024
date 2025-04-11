@@ -43,6 +43,13 @@ def presentation():
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
+      with st.expander(f"📌 Variables temporelles"):
+        st.markdown(texte_justifie(
+            "test"
+            )
+            , unsafe_allow_html=True)
+
+
     with tab2:
       st.subheader("Gestion des valeurs manquantes")
 
@@ -56,7 +63,7 @@ def presentation():
           "Les coordonnées géographiques approximées utilisant le système national britannique (British National Grid ou BNG) sont toujours renseignées. "
           "Nous les avons utilisées si les données géographiques exactes sont manquantes afin de calculer une latitude et longitude approximées.</li>"
           "<li><b>la variable <code>SpecialServiceType</code> </b> est renseignée uniquement si la variable "
-          "<code>StopCodeDescription</code> a pour valeur <it>\"*Special Service*\"</it>.</li> "
+          "<code>StopCodeDescription</code> a pour valeur \"_Special_ _Service_\".</li> "
           "<li><b>les informations sur le premier et second camion arrivé sur site</b>. "
           " Il peut n’y avoir qu’un voire aucun camion déployé. Ces lignes sont supprimées lors de la jointure.</li></ul>")
         , unsafe_allow_html=True)
@@ -104,7 +111,7 @@ def presentation():
 
       st.markdown(texte_justifie(
         "<b>Les données concernent 1 037 713 incidents gérés par la Brigade </b>"
-        "<b>des Pompiers de Londres sur une période de <br>plus de 10 ans</b> (10 Janvier 2014 au 30 Septembre 2024).</b>")
+        "<b>des Pompiers de Londres sur une période de plus de 10 ans (10 Janvier 2014 au 30 Septembre 2024).</b>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
       
@@ -119,13 +126,11 @@ def presentation():
         "</li></ul>"
         )
         , unsafe_allow_html=True)
-      st.markdown("<br>", unsafe_allow_html=True)
-
+      
       st.markdown(texte_justifie(
         "Enfin, si plusieurs camions étaient déployés, nous avons conservé uniquement les informations relatives au premier camion arrivé sur place."
         )
         , unsafe_allow_html=True)
-      st.markdown("<br>", unsafe_allow_html=True)
 
     with tab4:
       st.subheader("Création de variables")
