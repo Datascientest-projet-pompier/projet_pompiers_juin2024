@@ -35,21 +35,45 @@ def presentation():
       st.markdown(texte_justifie(
         "L'ensemble des variables des deux bases peut être regroupé en quatre catégories :"
         "<ul><li><b>variables temporelles :</b> elles situent l'incident dans le temps (année, date et heure).</li>"
-        "<li><b>variables géographiques :</b> elles situent l'incident dans l'espace (latitude, longitude, "
-        "Borough, Ward, code postal ...)</li>"
         "<li><b>variables caractérisant l'incident :</b> elles définissent les circonstances et les moyens liés à  l'incident (type d'incident,"
         " caserne responsable et déployée, nombre de camions mobilisés, type de bâtiment impacté, coût, ...)</li>"
+        "<li><b>variables géographiques :</b> elles situent l'incident dans l'espace (latitude, longitude, "
+        "Borough, Ward, code postal ...)</li>"        
         "<li><b>variables cibles :</b> il s'agit du temps total de réaction des pompiers qui est la somme de leur temps de réaction et de trajet </li></ul>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
-      with st.expander(f"📌 Variables temporelles"):
-        st.markdown(texte_justifie(
-            "test"
-            )
-            , unsafe_allow_html=True)
-        st.image("Donnees/Images/rep_distance.png",use_container_width=True)
+      with st.expander(f"📌 Exemple du jeux de données"):
 
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables temporelles</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.image("Donnees/Images/Variables_temporelles.png",use_container_width=True)
+        
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables caractérisant l'incident</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.image("Donnees/Images/Variables_caracteristiques.png",use_container_width=True)
+
+                
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables géographiques</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.image("Donnees/Images/Variables_geographiques.png",use_container_width=True)  
+
+                
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables cibles</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.image("Donnees/Images/Variables_cibles.png",use_container_width=True)       
 
     with tab2:
       st.subheader("Gestion des valeurs manquantes")
