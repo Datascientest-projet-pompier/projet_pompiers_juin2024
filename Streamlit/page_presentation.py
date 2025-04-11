@@ -56,7 +56,7 @@ def presentation():
           "Les coordonnées géographiques approximées utilisant le système national britannique (British National Grid ou BNG) sont toujours renseignées. "
           "Nous les avons utilisées si les données géographiques exactes sont manquantes afin de calculer une latitude et longitude approximées.</li>"
           "<li><b>la variable <code>SpecialServiceType</code> </b> est renseignée uniquement si la variable "
-          "<code>StopCodeDescription</code> a pour valeur \"Spécial Service\".</li> "
+          "<code>StopCodeDescription</code> a pour valeur \"<it>Special Service</it>\".</li> "
           "<li><b>les informations sur le premier et second camion arrivé sur site</b>. "
           " Il peut n’y avoir qu’un voire aucun camion déployé. Ces lignes sont supprimées lors de la jointure.</li></ul>")
         , unsafe_allow_html=True)
