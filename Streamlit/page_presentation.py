@@ -48,7 +48,7 @@ def presentation():
 
       st.markdown("#### Sur les fichiers incidents")
 
-            st.markdown(texte_justifie(
+      st.markdown(texte_justifie(
         "Les valeurs manquantes concernent principalement :"
         "<ul>"
           "<li><b>les données géographiques exactes.</b> Pour garantir l'anonymat, "
