@@ -48,6 +48,7 @@ def presentation():
             "test"
             )
             , unsafe_allow_html=True)
+        st.image("Donnees/Images/rep_distance.png",use_container_width=True)
 
 
     with tab2:
