@@ -83,7 +83,7 @@ def presentation():
         "Les données concernent des incidents ayant eu lieu entre Janvier 2009 et Septembre 2024."
         " La base de données sur les <b>incidents</b> contient 1 759 590 entrées (une par incident). "
         "Celle sur les <b>mobilisations</b> contient 2 458 444 entrées sur 1 630 766 incidents."
-        , unsafe_allow_html=True)
+      ), unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
         "Les données sur les incidents et les mobilisations sont issues de deux logiciels différents et capables de communiquer entre eux. "
