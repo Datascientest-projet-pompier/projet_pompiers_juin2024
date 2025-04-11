@@ -48,32 +48,27 @@ def presentation():
         st.markdown(texte_justifie(
           "<ul><li><b>Variables temporelles</b>  </li></ul>")
         , unsafe_allow_html=True)
+        st.image("Donnees/Images/Variables_temporelles.png",use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        st.image("Donnees/Images/Variables_temporelles.png",use_container_width=True)
-        
         st.markdown(texte_justifie(
           "<ul><li><b>Variables caractérisant l'incident</b>  </li></ul>")
         , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-
         st.image("Donnees/Images/Variables_caracteristiques.png",use_container_width=True)
-
+        st.markdown("<br>", unsafe_allow_html=True)
                 
         st.markdown(texte_justifie(
           "<ul><li><b>Variables géographiques</b>  </li></ul>")
         , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        st.image("Donnees/Images/Variables_geographiques.png",use_container_width=True)  
+        st.image("Donnees/Images/Variables_geographiques.png",use_container_width=True) 
+        st.markdown("<br>", unsafe_allow_html=True) 
 
                 
         st.markdown(texte_justifie(
           "<ul><li><b>Variables cibles</b>  </li></ul>")
         , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        st.image("Donnees/Images/Variables_cibles.png",use_container_width=True)       
+        st.image("Donnees/Images/Variables_cibles.png",use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)       
 
     with tab2:
       st.subheader("Gestion des valeurs manquantes")
@@ -212,3 +207,26 @@ def presentation():
               "et la caserne responsable sont dans le même arrondissement.</li>"
             "</ul>")
         , unsafe_allow_html=True)
+      
+      with st.expander(f"📌 Imputation latitude et longitude"):
+        st.image("Donnees/Images/Imputation_latlong.png",use_container_width=True)
+
+      with st.expander(f"📌 Création de variables"):
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables temporelles</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.image("Donnees/Images/Variables_temporelle_crea.png",use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables caractérisant l'incident</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.image("Donnees/Images/Variables_caracteristiques_crea.png",use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+                
+        st.markdown(texte_justifie(
+          "<ul><li><b>Variables géographiques</b>  </li></ul>")
+        , unsafe_allow_html=True)
+        st.image("Donnees/Images/Variables_geographiques_crea.png",use_container_width=True) 
+        st.markdown("<br>", unsafe_allow_html=True)
+        
