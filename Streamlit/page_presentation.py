@@ -56,7 +56,7 @@ def presentation():
           "Les coordonnées géographiques approximées utilisant le système national britannique (British National Grid ou BNG) sont toujours renseignées. "
           "Nous les avons utilisées si les données géographiques exactes sont manquantes afin de calculer une latitude et longitude approximées.</li>"
           "<li><b>la variable <code>SpecialServiceType</code> </b> est renseignée uniquement si la variable "
-          "<code>StopCodeDescription</code> a pour valeur <it>\"Special Service\"</it>.</li> "
+          "<code>StopCodeDescription</code> a pour valeur <it>\"*Special Service*\"</it>.</li> "
           "<li><b>les informations sur le premier et second camion arrivé sur site</b>. "
           " Il peut n’y avoir qu’un voire aucun camion déployé. Ces lignes sont supprimées lors de la jointure.</li></ul>")
         , unsafe_allow_html=True)
@@ -81,15 +81,12 @@ def presentation():
 
       st.markdown(texte_justifie(
         "Les données concernent des incidents ayant eu lieu entre Janvier 2009 et Septembre 2024."
-        "<ul><li>"
-        " La base de données sur les <b>incidents</b> contient 1 759 590 entrées (une par incident)."
+        " La base de données sur les <b>incidents</b> contient 1 759 590 entrées (une par incident). "
         "Celle sur les <b>mobilisations</b> contient 2 458 444 entrées sur 1 630 766 incidents."
-        "</li></ul>")
         , unsafe_allow_html=True)
-      st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
-        "Les données sur les incidents et les mobilisations sont issues de deux logiciels différents et capables de communiquer entre eux."
+        "Les données sur les incidents et les mobilisations sont issues de deux logiciels différents et capables de communiquer entre eux. "
         "Certains incidents n'apparaissent que dans une des deux bases. Cela représente 7,7% des données incidents et 0,4% des données mobilisations."
         )
         , unsafe_allow_html=True)
@@ -106,18 +103,18 @@ def presentation():
       st.markdown("#### Après jointure")
 
       st.markdown(texte_justifie(
-        "Les données concernent <br>1 037 713 incidents</b> gérés par la Brigade"
-        " des Pompiers de Londres sur une période de <br>plus de 10 ans</b> (10 Janvier 2014 au 30 Septembre 2024).")
+        "<b>Les données concernent 1 037 713 incidents gérés par la Brigade </b>"
+        "<b>des Pompiers de Londres sur une période de <br>plus de 10 ans</b> (10 Janvier 2014 au 30 Septembre 2024).</b>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
       
       st.markdown(texte_justifie(
         "Lors de la jointure, nous avons supprimé les incidents"
         "<ul><li>"
-        "<br>antérieurs au 10/01/2014</b> car "
+        "<b>antérieurs au 10/01/2014</b> car "
         "le 9 janvier 2014 les autorités londoniennes ont fermé 10 casernes, ce qui a modifié la répartition des secteurs dont chaque caserne est responsable.</li>"
         "<li>n'apparaissant que dans une des deux bases de données.</li>"
-        "<li><br>avec des incohérences sur les données temporelles</b> (heure d'arrivée sur les lieux < heure de départ de la caserne) </li>"
+        "<li>avec des incohérences sur les données temporelles</b> (heure d'arrivée sur les lieux < heure de départ de la caserne) </li>"
         "<li>dont les informations communes aux deux bases n'étaient pas identiques (par exemple, écart sur le nombre de camions déployés).</li>"
         "</li></ul>"
         )
@@ -131,60 +128,57 @@ def presentation():
       st.markdown("<br>", unsafe_allow_html=True)
 
     with tab4:
-      st.subheader("Création des nouvelles variables")
-
-
+      st.subheader("Création de variables")
+   
       st.markdown(texte_justifie(
-        "Pour simplifier notre jeu de données nous avons chercher à diminuer le nombre de variables en en regroupant certaines, "
-        " elles correspondent uniquement aux deux dernières catégories."
+        "Au cours de notre première exploration des données, nous avons créé des variables et/ou complété certaines."
         "<br>"
-        "<ul>"
-          "<li><b>données relatives à l'incident :</b>"
-
+        "<br>"
+          
           "<ul>"
-          "<li>Type d'incidents :"
-
+          "<li>Type d'incident :"
+          
             "<ul>"
-              "<li><code>DetailedIncidentGroup</code> : qui correspond à une simplification de la description de l'incident. "
-              "Elle rassemble les variables <code>StopCodeDescription</code> et <code>SpecialServiceType</code>, c'est une variable"
+              "<li><code>DetailedIncidentGroup</code> "
+              "rassemble les variables <code>StopCodeDescription</code> et <code>SpecialServiceType</code>. C'est une variable"
               " catégorielle contenant 9 modalités.</li>"
-              "<li><code>Fire</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident est de"
-              " type feu ou autre.</li>"
+              "<li><code>Fire</code> est un indicateur (vrai ou faux) qui vaut 1 si l'incident est un "
+              " incendie ou une fausse alarme et 0 sinon.</li>"
             "</ul></li>"
 
-          "<li>Types de lieu affecté :"
-
+          "<li>Type de lieu impliqué :"
+          
             "<ul>"
-              "<li><code>HighPropertyType</code> : qui représente une simplification de la variable <code>PropertyType</code>. "
-              "Elle permet de passer d'une variable catégorielle à 293 modalités à une variable à 47 modalités</li>"
-              "<li><code>GoodLocation</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident"
-              " a été correctement localisé</li>"
+              "<li><code>HighPropertyType</code> est une simplification de la variable <code>PropertyType</code>. "
+              "Elle permet de passer d'une variable catégorielle à 293 modalités à une variable à 47 modalités.</li>"
+              "<li><code>GoodLocation</code> indique si le lieu de l'incident indiqué est exacte ou non. C'est une simplification de <code>AddressQualifier</code>.</li>"
             "</ul></li>"
 
           "<li> Données temporelles :"
             "<ul>"
-              "<li><code>DayOfWeek</code> : représentant le jour de la semaine de l'incident.</li>"
-              "<li><code>Month</code> : représentant le mois de l'incident.</li>"
+              "<li><code>DayOfWeek</code> représente le jour de la semaine de l'incident.</li>"
+              "<li><code>Month</code> : représente le mois de l'incident.</li>"              
             "</ul></li>"
 
           "<li> Données géographiques :"
             "<ul>"
-              "<li><code>inner</code> : donnant l'information si l'arrondissement est dans le \"Londres Interieur\" "
-              "ou le \"Londres Extérieur\" (définition donnée par l'Office for National Statistics (ONS))</li>"
-              "<li><code>RatioSC</code> : représentant la superficie affectée a une caserne (distinction par arrondissement)</li>"
-              "<li><code>Distance</code> : représentant la distance à vol d'oiseau entre la caserne et l'incident</li>"
+              "<li><code>inner</code> indique si l'arrondissement de l'incident est dans le \"Londres Intérieur\" "
+              "ou le \"Extérieur\" (selon la définition de l'Office for National Statistics (ONS))</li>"
+              "<li><code>localisation</code> indique à quel cadran (Nord-Est, Nord-Ouest, Sud-Est et Sud-Ouest) de Londres appartient l'arrondissement de l'incident </li>"
+              "<li><code>RatioSC</code> représente la superficie de l'arrondissement affectée a une caserne </li>"
+              "<li><code>Distance</code> représente la distance à vol d'oiseau entre la caserne et l'incident. Pour la calculer, nous avons utilisé la latitudes et longitude de l'incident "
+              "(valeurs exactes ou approximées) et celles de la caserne à partir de laquelle le camion part.</li>"
             "</ul></li>"
 
-          "<li> Variables Booléennes :"
+          "<li> Variables Booléennes sur les casernes"
             "<ul>"
-              "<li><code>Stat_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information "
+              "<li><code>Stat_resp_rep</code> indique "
               "si la caserne répondante est la même que la caserne responsable.</li>"
-              "<li><code>Bor_resp_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information "
+              "<li><code>Bor_resp_rep</code> indique "
               "si la caserne répondante est dans le même arrondissement que la même que la caserne responsable.</li>"
-              "<li><code>Bor_inc_rep</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident "
+              "<li><code>Bor_inc_rep</code> indique si l'incident "
               "et la casserne répondante sont dans le même arrondissement.</li>"
-              "<li><code>Bor_inc_resp</code> : qui correspond à un indicateur (vrai ou faux) donnant l'information si l'incident "
+              "<li><code>Bor_inc_resp</code> indique si l'incident "
               "et la caserne responsable sont dans le même arrondissement.</li>"
-            "</ul></li>"
-        "</ul>")
+            "</ul>")
         , unsafe_allow_html=True)
