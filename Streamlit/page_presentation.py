@@ -56,7 +56,7 @@ def presentation():
           "Les coordonnées géographiques approximées utilisant le système national britannique (British National Grid ou BNG) sont toujours renseignées. "
           "Nous les avons utilisées si les données géographiques exactes sont manquantes afin de calculer une latitude et longitude approximées.</li>"
           "<li><b>la variable <code>SpecialServiceType</code> </b> est renseignée uniquement si la variable "
-          "<code>StopCodeDescription</code> a pour valeur \"<it>Special Service</it>\".</li> "
+          "<code>StopCodeDescription</code> a pour valeur <it>\"Special Service\"</it>.</li> "
           "<li><b>les informations sur le premier et second camion arrivé sur site</b>. "
           " Il peut n’y avoir qu’un voire aucun camion déployé. Ces lignes sont supprimées lors de la jointure.</li></ul>")
         , unsafe_allow_html=True)
@@ -77,32 +77,56 @@ def presentation():
     with tab3:
       st.subheader("Nettoyage et jointure")
 
+      st.markdown("#### Avant jointure")
+
       st.markdown(texte_justifie(
-        "Le 9 janvier 2014 les autorités londoniennes ont fermés 10 casernes. Nous avons donc choisis de ne"
-        " conserver que les événements passés après cette date.")
+        "Les données concernent des incidents ayant eu lieu entre Janvier 2009 et Septembre 2024."
+        "<ul><li>"
+        " La base de données sur les <b>incidents</b> contient 1 759 590 entrées (une par incident)."
+        "Celle sur les <b>mobilisations</b> contient 2 458 444 entrées sur 1 630 766 incidents."
+        "</li></ul>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
-        "Nous avons aussi remarqué des incohérences entre certaines variables, certaines étaient temporelles "
-        "(heure d'arrivée < heure de départ) d'autre d'ordre technique (caserne des camions affectés différentes dans "
-        "incidents et mobilisation)...<br>Si la ligne correspondante à un incident contenait une incohérence elle à été supprimée.")
+        "Les données sur les incidents et les mobilisations sont issues de deux logiciels différents et capables de communiquer entre eux."
+        "Certains incidents n'apparaissent que dans une des deux bases. Cela représente 7,7% des données incidents et 0,4% des données mobilisations."
+        )
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
-        "Pour notre étude nous avons eu besoin de joindre les fichiers incidents et mobilisations."
-        " La jointure à été effectuée sur <b>IncidentNumber</b> qui est le numéro unique décrivant l'incident."
-        " De plus certains incidents n'étaient présents que dans un des deux fichiers, ils ont été supprimés,"
-        " car ne représentent que des événements à la marge (7,7% des données incidents et 0.4% des données"
-        " mobilisations). De plus nous n'avons conservée que les informations relatives au premier camion arrivé"
-        "sur place.")
+        "Pour notre étude, nous avons eu besoin de joindre les deux bases de données incidents et mobilisations."
+        " La jointure a été effectuée sur <b>IncidentNumber</b> qui est un identifiant unique."
+        )
+        , unsafe_allow_html=True)
+      st.markdown("<br>", unsafe_allow_html=True)
+    
+
+      st.markdown("#### Après jointure")
+
+      st.markdown(texte_justifie(
+        "Les données concernent <br>1 037 713 incidents</b> gérés par la Brigade"
+        " des Pompiers de Londres sur une période de <br>plus de 10 ans</b> (10 Janvier 2014 au 30 Septembre 2024).")
+        , unsafe_allow_html=True)
+      st.markdown("<br>", unsafe_allow_html=True)
+      
+      st.markdown(texte_justifie(
+        "Lors de la jointure, nous avons supprimé les incidents"
+        "<ul><li>"
+        "<br>antérieurs au 10/01/2014</b> car "
+        "le 9 janvier 2014 les autorités londoniennes ont fermé 10 casernes, ce qui a modifié la répartition des secteurs dont chaque caserne est responsable.</li>"
+        "<li>n'apparaissant que dans une des deux bases de données.</li>"
+        "<li><br>avec des incohérences sur les données temporelles</b> (heure d'arrivée sur les lieux < heure de départ de la caserne) </li>"
+        "<li>dont les informations communes aux deux bases n'étaient pas identiques (par exemple, écart sur le nombre de camions déployés).</li>"
+        "</li></ul>"
+        )
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
-        "Après nettoyage, le dataframe joint contient des données sur 1 037 713 incidents gérés par la Brigade"
-        " des Pompiers de Londres sur une période de plus de 10 ans (10 Janvier 2014 au 30 Septembre 2024).")
+        "Enfin, si plusieurs camions étaient déployés, nous avons conservé uniquement les informations relatives au premier camion arrivé sur place."
+        )
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
