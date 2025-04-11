@@ -83,7 +83,7 @@ def presentation():
           "Les coordonnées géographiques approximées utilisant le système national britannique (British National Grid ou BNG) sont toujours renseignées. "
           "Nous les avons utilisées si les données géographiques exactes sont manquantes afin de calculer une latitude et longitude approximées.</li>"
           "<li><b>la variable <code>SpecialServiceType</code> </b> est renseignée uniquement si la variable "
-          "<code>StopCodeDescription</code> a pour valeur \"_Special_ _Service_\".</li> "
+          "<code>StopCodeDescription</code> a pour valeur \"Special Service\".</li> "
           "<li><b>les informations sur le premier et second camion arrivé sur site</b>. "
           " Il peut n’y avoir qu’un voire aucun camion déployé. Ces lignes sont supprimées lors de la jointure.</li></ul>")
         , unsafe_allow_html=True)
@@ -227,6 +227,6 @@ def presentation():
         st.markdown(texte_justifie(
           "<ul><li><b>Variables géographiques</b>  </li></ul>")
         , unsafe_allow_html=True)
-        st.image("Donnees/Images/Variables_geographiques_crea.png",use_container_width=True) 
+        st.image("Donnees/Images/Variables_geographiques_crea2.png",use_container_width=True) 
         st.markdown("<br>", unsafe_allow_html=True)
         

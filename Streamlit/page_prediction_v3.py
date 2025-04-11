@@ -249,7 +249,7 @@ def afficher_explication_shap(df):
 def predictionv3():
 
 
-    st.subheader("Prédiction avec les données de l'incident")
+    st.subheader("Prédiction à l'aide du modèle final (Gradient Boosting)")
     # Initialiser un DataFrame avec une première ligne vide
     if 'data' not in st.session_state:
         st.session_state.data = pd.DataFrame({
@@ -346,7 +346,7 @@ def predictionv3():
 
     with tab2:
         if not (st.session_state.data.iloc[0] != '').all():
-            st.write("Choisissez d'abord les paramètre de l'incident (onglet 1)")
+            st.write("Choisissez d'abord les paramètres de l'incident (onglet 1)")
         else:
             df_bilan = prepa_incident(station_df)
 
@@ -363,8 +363,9 @@ def predictionv3():
 
                 X_input = df_bilan.iloc[[idx]]  # Toujours en DataFrame
 
-                st.markdown("#### Échantillon sélectionné")
+                st.markdown("#### Observation sélectionnée")
                 st.write(X_input)
+                st.markdown("<br>", unsafe_allow_html=True)
 
                 # Calcul des prédictions à chaque arbre
                 probas = list(gb_model2.staged_predict_proba(X_input))
@@ -378,14 +379,14 @@ def predictionv3():
 
                 # Probabilité classe 0
                 ax0.plot(range(1, len(proba_classe_0)+1), proba_classe_0, marker="o", color='blue')
-                ax0.set_title("Classe 0 (probabilité)")
+                ax0.set_title("Classe 0 (tps réponse < 6 minutes)")
                 ax0.set_xlabel("Nombre d'arbres")
                 ax0.set_ylabel("Probabilité")
                 ax0.grid(True)
 
                 # Probabilité classe 1
                 ax1.plot(range(1, len(proba_classe_1)+1), proba_classe_1, marker="o", color='green')
-                ax1.set_title("Classe 1 (probabilité)")
+                ax1.set_title("Classe 1 (tps réponse >= 6 minutes)")
                 ax1.set_xlabel("Nombre d'arbres")
                 ax1.set_ylabel("Probabilité")
                 ax1.grid(True)
@@ -394,10 +395,11 @@ def predictionv3():
 
                 final_pred = gb_model2.predict(X_input)[0]
                 final_proba = gb_model2.predict_proba(X_input)[0][final_pred]
-                st.write(f" **Classe prédite finale :** {final_pred}, **Probabilité finale :** {final_proba:.4f}")
+                st.write(f" **Classe prédite finale :** {final_pred} et **Probabilité finale :** {final_proba:.4f}")
+                st.markdown("<br>", unsafe_allow_html=True)
 
             # Interprétation
-            st.markdown("#### Interprétation de la prédiction de l'incident")
+            st.markdown("#### Explicabilité de la prédiction de l'incident")
 
 
             afficher_explication_shap_version_horizontal(df_bilan)

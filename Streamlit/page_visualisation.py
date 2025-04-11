@@ -25,13 +25,12 @@ def visualisation():
     st.title("Visualisation")
 
     st.markdown(texte_justifie(
-        "A ce stade notre dataframe représentant l'ensemble des incidents est composé de plus d'un millions de"
-        " lignes représentant chacune un incident et plus de 50 variables représentant soit une information sur la "
-        "description de l'incident soit la variable cible (temps). L'objectif de cette partie est l'étude de ces variables"
-        " pour choisir celles qui seront conservées dans le modèle.<br>"
-        "A vue du grand nombre de données et après une étude préalable, pour cette partie nous n'utiliserons que les données"
-        " de 2023.<br>"
-        "Remarque : Le tableau ne contient plus de valeurs manquantes, mais les valeurs extrème ou abérantes peuvent encore être présente.")
+        "Nous avons analysé le jeu de données (ou dataframe) obtenu précédemment avant de commencer la modélisation. "
+        "L'objectif est de mieux connaître notre variable cible et de sélectionner les variables explicatives "
+        "pertinentes à inclure dans les modèles testés.<br><br>"
+        "Compte tenu du grand nombre d'observations (plus d'un million d'incidents sur 10 ans) et après une étude préalable, "
+        "nous avons limité l'analyse qui suit aux incidents de 2023. "
+        "A noter, il n'y a pas de valeur manquante dans le dataframe mais il peut y avoir des valeurs extrêmes ou aberrantes.")
     , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -39,25 +38,42 @@ def visualisation():
     df2023 = pd.read_csv("Donnees/Doc csv/df2023_v2.csv")
 
     # Création des onglets
-    tab1, tab2 ,tab3, tab4 = st.tabs(["Statistique descriptive"," Transformation du temps total", "Data Visualisation","Visualisation géographique"])
+    tab1, tab2 ,tab3, tab4 = st.tabs(["Statistiques descriptives","Variable cible", "Variables explicatives","Visualisation géographique"])
 
     with tab1:
-      st.subheader("Statistique descriptive")
+      st.subheader("Statistiques descriptives")
       st.markdown(texte_justifie(
-        " Notre jeu de données contient un grand nombre de variables qualitative et seulement cinq variables quantitatives"
-        " (<code>Time...</code>, <code>Distance</code> et <code>RatioSc</code>)."
-        "Une rapide étude statistique nous donne les informations suivantes :")
+        " Notre jeu de données contient un grand nombre de variables qualitatives et seulement cinq variables quantitatives dont le temps de réponse"
+        " (décomposé en temps de réaction et de trajet), la distance et le ratio de la superficie de l'arrondissement par son nombre de casernes.<br>"        
+        "Le tableau ci-dessous présente leurs statistiques descriptives :")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
       tab = tab_stat(df2023)
       st.table(tab)
+      
+      with st.expander(f"📌 Interprétation"):
+
+        st.markdown(texte_justifie(
+          "En 2023, le temps total de réponse moyen est de 319 secondes (5 min 19 sec) avec un écart type de 130 secondes (2 min 10 sec). La distribution est asymétrique puisque 75% "
+          "des temps est inférieur à 381 secondes (6 min 21 sec) et que le temps maximum est de presque 20 minutes. <br>"
+          "Pour information, les données où le temps est supérieur à 20 minutes sont considérées (par la Brigade des Pompiers de Londres) comme des données aberrantes "
+          "et sont donc supprimées en amont de la publication de la base de données. ")
+        , unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(texte_justifie(
+          "En 2023, La distance moyenne parcourue par le camion (entre la caserne de départ et le lieu d'incident) "
+          "est de 1,79 kilomètres avec un écart-type de 1,78 km. A nouveau, la distribution est asymétrique. "
+          "A noter, cette donnée est approximée pour la moitié des incidents (imputation nécessaire pour les données manquantes de latitude et longitude).")
+        , unsafe_allow_html=True)
 
     with tab2:
-      st.write("Transformation du temps total")
+      st.subheader("Transformation du temps total de réponse")
       st.markdown(texte_justifie(
         "La variable cible est le temps total de réponse (<code>TotalResponseTime</code>) qui est la somme des temps"
-        " de réaction (<code>ResponseTime</code>) et de trajet (<code>TravelTime</code>).<br>"), unsafe_allow_html=True)
+        " de réaction (<code>TurnoutTime</code>) et de trajet (<code>TravelTime</code>). "
+        " Les graphiques ci-dessous montrent la distribution de cette variable, elle est asymétrique."
+        "<br>"), unsafe_allow_html=True)
 
       # Charger l'image avec PIL
       image = Image.open("Donnees/Images/temps-original.png")
@@ -72,12 +88,13 @@ def visualisation():
       st.markdown("</div>", unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
-         "Comme la distribution de cette variable est asymétrique à droite, nous avons décidé de faire une transformation pour"
-         "la rendre plus proche d'une distribution normale."
-        "Nous avons essayé quatre transformations : logarithmique, racine carrée, Box-Cox et Yeo Jonhson ."
+         "De nombreux modèles supposent que la distribution de la variable cible soit normale. Ce n'est pas le cas du temps de réponse. "
+         "Nous avons donc décidé de tranformer notre variable cible pour approcher une distribution normale. "
+        "Nous avons testé quatre transformations : logarithmique, racine carrée, Box-Cox et Yeo Jonhson.<br>"
+        "<b>Nous avons sélectionné la transformation Box-Cox.</b>"
         )
         , unsafe_allow_html=True)
-
+      st.markdown("<br>", unsafe_allow_html=True)
       # Choix de la transformation à afficher
       var_liste = ['Logarithmique','Racine carrée','Box-Cox','Yeo-Johnson']
       # Menu déroulant pour un choix unique
@@ -127,14 +144,23 @@ def visualisation():
         st.image(image)
         st.markdown("</div>", unsafe_allow_html=True)
 
-
+      with st.expander(f"📌 Interprétation"):
+        st.markdown(texte_justifie(
+         "La valeur de lambda estimée pour la transformation Yeo-Johnson est inférieur à 1. Il est donc attendu "
+         "que les résultats soient similaires à la transformation Box-Cox. L'amélioration de la symétrie de la distribution est visible "
+         "avec les transformations racine carré, Box-Cox et Yeo-Johnson. La transformation logarithmique modifie mais n'améliore pas les résultats du QQ-plot. "
+         "Pour les autres transformations, les résultats sont meilleurs que ceux des données sur l’échelle d'origine pour les valeurs extrêmes. "
+         "Pour les quantiles théoriques négatifs, les résultats sont meilleurs pour Box-Cox et Yeo-Johnson comparés à la transformation racine carrée."
+        )
+      , unsafe_allow_html=True) 
+              
     with tab3:
-      st.subheader("Data Visualisation")
+      st.subheader("Graphiques sur les variables explicatives")
 
       st.markdown(texte_justifie(
-        "Au vue de la distribution de la variable cible (temps total), nous avons dans un premier temps effectué"
-        " une transformation Box-Cox pour tenter de rendre la variable le plus similaire possible à une distribution "
-        "normale. De plus plus seuls certains graphiques sont présentés ici.")
+        "Dans cette section, nous présentons notre analyse graphique de certaines des variables du jeu de données. "
+        "L'objectif de cette étude était de sélectionner les variables explicatives à inclure dans notre modélisation."
+        )
         , unsafe_allow_html=True)
 
       st.markdown("<br>", unsafe_allow_html=True)
@@ -158,31 +184,30 @@ def visualisation():
 
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
-            "Au vue de la distribution de la variable cible (temps total), on peut observer que les variables <code>"
-            "DayOfWeek</code> et <code>Month</code> on peu d'influence sur la variables <code>boxcox_TotalResponseTime</code>.<br>"
-            "En effet pour la variable <code>DayOfWeek</code> l'écart entre le temps total moyen le plus long (le vendredi) et le plus "
-            "court (le jeudi) est de l'ordre de 2% et pour la variable <code>Month</code> l'écart entre le temps total moyen le"
-            " plus long (en novembre) et le plus court (en avril) est de l'ordre de 3%.<br>"
-            " Cette variation est inférieur à 5% pour ces deux variables elles ne seront pas conservées dans la suite de la modélisation.<br>"
-            " Pour la variable <code>HourOfCall</code> on peut constater un impact sur le temps moyen de trajet. "
-            "Le temps de trajet moyen augmente le jour, spécialement sur la tranche 10-18h, plage horaire où"
-            " le trafic est plus dense car l'activité humaine plus intense. Il y a deux pics correspondant aux plages "
-            "horaires 2-6h et 11-18h. Sur le temps total moyen, l'écart entre la valeur la plus forte (pour Hour=6h) "
-            "et la plus faible (pour Hour=22h) est de l'ordre de 6%"
+            "<ul><li><code>HourOfCall</code> : "
+            "il y a un impact sur le temps moyen de réponse des pompiers de Londres. "
+            "Le temps moyen de réponse est plus important sur les plages horaires 2-6h et 11-18h. "
+            "De jour, le temps de trajet moyen augmente, spécialement sur la tranche 11-17h, plage horaire où "
+            "le trafic est plus dense car l'activité humaine est plus intense. "
+            "De nuit, le temps de réaction augmente car il y a moins de pompiers dans les casernes. "
+            "Sur le temps total moyen, l'écart entre la valeur la plus forte (pour Hour=6h) "
+            "et la plus faible (pour Hour=22h) est de l'ordre de 6%.</li>"
+            
+            "<li><code>DayOfWeek</code> : l'écart entre le temps total moyen le plus long (le vendredi) et le plus "
+            "court (le jeudi) est de l'ordre de 2%.</li>"
+            "<li><code>Month</code> l'écart entre le temps total moyen le"
+            " plus long (en novembre) et le plus court (en avril) est de l'ordre de 3%.</li>"
+            "Seule la variable <code>HourOfCall</code> montre cet écart de plus de 5% et le test ANOVA est significatif (p-value<5%)."
+            "</ul>"
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
         fonctionsgraph.test_anova(df2023, 'HourOfCall')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown("#### Informations géographiques")
       # Choix de l'arbre affiché
-      var_nom = ['Arrondissement', "Quartier", "Station déployée", "Bonne localisation", "Londres de centre"]
+      var_nom = ['Arrondissement', "Quartier", "Caserne de départ", "Bonne localisation", "Inner London"]
 
       # Menu déroulant pour un choix unique
       var_fr = st.selectbox("Choisissez une variable d'intérêt :", var_nom)
@@ -210,78 +235,48 @@ def visualisation():
 
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
-            "<ul>"
-                "<li> Variable L'arrondissement et le quartier<br>"
-                "Pour l'arrondissement la moyenne de TotalResponseTime varie entre 25,7 à 30,1 soit une différence de 15% environ."
-                " On peut donc supposer que l'arrondissement où a lieu l'incident a un impact sur les temps.<br>"
-                "Le dataFrame contient plus de 600 quartiers différents ; nous n'avons représenté qu'un partie"
-                " d'entre eux, correspondant aux 50 premiers/derniers pour lesquels la moyenne de TotalResponseTime"
-                " est la plus forte/faible.<br>"
-                "Pour TotalResponseTime, il y a une différence de l'ordre de 40% entre Darwin (temps moyen=36,1) et"
-                " Norbury & Pollards Hill (21,3).<br>"
-                "Les temps moyens varient aussi en fonction de la caserne de départ. La différence entre la moyenne "
-                "la plus forte et la plus faible est de l'ordre de 20% pour le temps total.<br>"
-                "Les deux variables sont rédondantes, car Quartier est un detail d'Arrondissement. Pour simplifier l'étude future"
-                "nous ne conserverons que Arrondissement qui contient moins de modalités.</li>"
-            "</ul>"
+            "<ul><li>Arrondissement (Borough): "
+            "le temps de réponse moyen varie entre 25,7 à 30,1, soit une différence de 15% environ.</li>"
+            "<li> Quartier (Ward) : il y a plus de 600 quartiers différents ; nous n'avons représenté qu'un partie "
+            "correspondant aux 50 premiers/derniers pour lesquels la moyenne du temps de réponse "
+            "est la plus forte/faible. Il y a une différence de l'ordre de 40% entre Darwin (temps moyen=36,1) et "
+            "Norbury & Pollards Hill (21,3).</li>"
+            "<li> Caserne de départ (du camion allant à l'incident) : il y a 102 casernes différentes. L'écart entre le temps moyen de la catégorie "
+            "la plus forte et la plus faible est de l'ordre de 20%. </li>"
+            "Le test ANOVA est significatif (p-value<5%) pour les 3 variables (résultats montrés pour l'arrondissement). "
+            "Le quartier et la caserne sont des variables qualitatives avec beaucoup de catégories. L'information entre arrondissement et quartier est partiellement redondante."
+            "</ul>"          
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
+
         fonctionsgraph.test_anova(df2023, 'IncGeo_BoroughName')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
+
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown(texte_justifie(
             "<ul>"
-                "<li> Variable station déployée<br>"
-                "Le temps moyen varient en fonction de la caserne de départ. La différence entre la moyenne la plus"
-                " forte et la plus faible est de l'ordre de 20% pour le temps de réaction, le temps de trajet et le"
-                " temps total.</li>"
+                "<li> Bonne localisation : l'écart entre le temps de réponse moyen des deux catégories est de l'ordre de 1%. "
+                "De plus, cette variable est connue a posteriori.</li>"
             "</ul>"
             )
             , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-        fonctionsgraph.test_anova(df2023, 'DeployedFromStation_Name')
-        st.markdown(texte_justifie(
-            "Pour le quartier le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown(texte_justifie(
             "<ul>"
-                "<li> Variable bonne localisation<br>"
-                "Si les figures suivantes indiquent des distributions de temps différentes"
-                " en fonction de la valeur de <code>FromHomeStation</code>, l'écart sur la moyenne est de l'ordre de 1%.<br>"
-                "La variable n'est pas conservée.</li>"
-            "</ul>"
-            )
-            , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        st.markdown(texte_justifie(
-            "<ul>"
-                "<li> Variable Londres centre<br>"
-                "Si les figures suivantes indiquent des distributions de temps différentes"
-                " en fonction de la valeur de <code>inner</code>, l'écart sur la moyenne est de l'ordre de 6%.</li>"
+                "<li> Inner London : les arrondissements de Londres peuvent se situer au centre (inner London) ou non (outer London). "
+                "L'écart entre le temps de réponse moyen des deux catégories est de l'ordre de 6% et le test ANOVA est significatif.</li>"
             "</ul>"
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         fonctionsgraph.test_anova(df2023, 'inner')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
 
-      st.markdown("#### Variables explicatives du type d'incident")
+      st.markdown("#### Information sur le type d'incident")
       st.markdown(texte_justifie(
-        "Le type d'incident est décrit par deux variables : <code>IncidentGroup</code> et <code>DetailedIncidentGroup</code> "
+        "Le type d'incident est décrit par trois variables : <code>Fire</code>, <code>IncidentGroup</code> et <code>DetailedIncidentGroup</code> "
         "qui donnent une information plus ou moins détaillée sur le type d'incident.")
         , unsafe_allow_html=True)
 
@@ -309,31 +304,30 @@ def visualisation():
             fonctionsgraph.graphQuali_pointplot(df2023, var_type)
 
       with st.expander(f"📌 Interprétation"):
+        st.markdown(texte_justifie(
+           "Le tableau ci-dessous la répartition des incidents en fonction de la variable <code>IncidentGroup</code>. "
+           "Plus de la moitié des incidents sont des fausses alarmes (déclenchement automatique d'alarme incendie ou appel)"
+        ), unsafe_allow_html=True)
         st.write(df2023['IncidentGroup'].value_counts(normalize=True))
         st.markdown(texte_justifie(
-            "Que ce soit sur les variables <code>Fire</code> ou <code>IncidentGroup</code> la distribution des temps est"
-            " similaire selon le type d'incident. Il y a moins de 3% d'écart entre le temps le plus long"
-            " et le plus cours.<br>"
+            "Que ce soit sur les variables <code>Fire</code> ou <code>IncidentGroup</code>, la distribution des temps est"
+            " similaire selon le type d'incident. Il y a moins de 3% d'écart entre le temps moyen le plus long"
+            " et le plus court.<br><br>"
             "La troisième variable indiquant le type d'incident (<code>DetailedIncidentGroup</code>) est plus détaillée que"
-            " <code>IncidentGroup</code> avec 27 catégories différentes (chacune n'appartenant qu'à une seule catégorie "
-            "de <code>IncidentGroup</code>). La répartition dans cette variable est hétérogène.Un peu plus de 40% des incidents"
-            " sont une fausse alarme du type AFA (automatic fire alarm). La différence entre la moyenne la plus forte et la plus"
-            " faible est de l'ordre de 40% pour le temps de réaction, le temps de trajet et le temps total."
-            )
-            , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-        fonctionsgraph.test_anova(df2023, 'IncidentGroup')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
+            " <code>IncidentGroup</code>, avec 27 catégories différentes (chacune n'appartenant qu'à une seule catégorie "
+            "de <code>IncidentGroup</code>). La répartition dans cette variable est hétérogène. Un peu plus de 40% des incidents"
+            " correspond à une fausse alarme du type AFA (automatic fire alarm). La différence entre la moyenne du temps de réponse la plus forte et la plus"
+            " faible est de l'ordre de 40%. Cependant, nous avons découvert que la plupart des catégories de cette variable ne peut être définie qu'a posteriori. "
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-      st.markdown("#### Variables explicatives de propriété")
+      st.markdown("#### Information sur le type de propriété impacté")
       st.markdown(texte_justifie(
-        "Comme pour le type d'incident il existe deux variables descriptives : <code>'PropertyCategory'</code>, "
-        "<code>PropertyType</code> et <code>'HighPropertyType'</code> qui donnent une information plus ou moins détaillée "
-        "sur le type de propriété (respectivement 3 modalités, 47 modalités et 293 modalités).")
+        "Comme pour le type d'incident, il existe trois variables catégorielles "
+        "qui donnent une information plus ou moins détaillée sur le type de propriété : "
+        "<code>'PropertyCategory'</code>, <code>PropertyType</code> et <code>'HighPropertyType'</code> "
+        " avec respectivement 3 , 47 et 293 modalités.")
         , unsafe_allow_html=True)
 
       # Choix de l'arbre affiché
@@ -354,28 +348,20 @@ def visualisation():
 
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
-            "La distribution des temps est similaire selon le type de propriété. "
-            "La différence entre la moyenne la plus forte et la plus faible est de l'ordre de 10% "
-            "pour le total.<br>"
-            "Pour la variable qui détaille moyennement le type de propriété impacté par l'incident (<code>PropertyType</code>).<br>"
-            "La différence entre la moyenne la plus forte et la plus faible est supérieur à 15% pour le temps total.<br>"
-            "Pour valider l'influence de la variable on effectue un test ANOVA."
+            "Les temps de réponse moyens varient en fonction du type de propriété impacté (<code>'PropertyCategory'</code>). Le temps de réponse moyen "
+            "pour un incident affectant un bateau est plus long de 10% que celui pour un incident sur un bâtiment résidentiel. De plus, le test ANOVA est "
+            "significatif (p-value inférieure à 5%). Les résultats sont similaires pour les deux autres variables."
             )
             , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        fonctionsgraph.test_anova(df2023, 'HighPropertyType')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+        fonctionsgraph.test_anova(df2023, 'PropertyCategory')
 
 
-      st.markdown("#### Distance")
+
+      st.markdown("#### Distance entre la caserne de départ et le lieu d'incident")
       st.markdown(texte_justifie(
-        "La distance est la seule variable explicative quantitative de notre jeu de données."
-        " Elle varie de 0,6 mètre à 18,8 kilomètres. Sa distribution est asymétrique à droite, 50%"
-        " des valeurs étant comprise entre 0.87 et 2,2 kilomètres.")
+        "La distance varie de 0,6 mètre à 18,8 kilomètres. Sa distribution est asymétrique à droite, 50%"
+        " des valeurs étant comprise entre 0.87 et 2,2 kilomètres (pour les incidents 2023).")
         , unsafe_allow_html=True)
 
       # Création des colonnes
@@ -390,10 +376,10 @@ def visualisation():
 
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
-            "La distance influence le temps de trajet ce qui est logique.<br>"
-            " Nous avons calculé les corrélations linéaires (Pearson) , monotones (Spearman) et de rang (Pearson)."
-            " Les plus fortes sont obtenues avec la méthode de Spearman. Pour le temps de réponse total, cette corrélation"
-            " est de 0,66.<br>"
+            "On observe que le temps de réponse total augmente avec la distance. Sans surprise, "
+            "c’est le temps de trajet qui est affecté par la distance et non le temps de réaction (résultats non montrés).<br>"
+            " Nous avons calculé la corrélation linéaire (Pearson) , monotone (Spearman) et de rang (Pearson). Le tableau ci-dessous présente les résultats. "
+            "La plus forte est obtenue avec la méthode de Spearman ; elle est de 0,66.<br>"
             "Remarque : la methode de Spearman est non paramétrique; elle ne fait pas d'hypothèse de normalité sur les"
             " variables. Compte tenu de la distribution de la distance (voir figure ci-dessus), cette méthode est plus "
             "adaptée que Pearson (hypothèse de normalité)"
@@ -403,7 +389,15 @@ def visualisation():
 
         fonctionsgraph.afficher_correlations(df2023,'distance')
 
-      st.markdown("#### RatioSC")
+      st.markdown("#### Ratio superficie de l'arrondissement / nombre de casernes")
+      st.markdown(texte_justifie(
+            "Bien que le nombre de valeurs possibles soit fini, la densité de casernes par arrondissement (<code>'ratioSC'</code>) est une variable continue "
+            "(plutôt que catégorielle). En effet, si une caserne venait à être ajoutée dans un arrondissement, <code>'ratioSC'</code> pourrait prendre une "
+            "nouvelle valeur. Le modèle pourrait rester valide si <code>'ratioSC'</code> est continue ; ce ne serait pas le cas si <code>'ratioSC'</code> est "
+             "catégorielle. "
+            )
+            , unsafe_allow_html=True)
+
 
       # Création des colonnes
       col1, col2 = st.columns(2)  # Crée deux colonnes de largeur égale
@@ -417,23 +411,18 @@ def visualisation():
 
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
-                "Le temps total de réponse moyen semble augmenter quand le ratio "
+                "Le temps total de réponse moyen augmente quand le ratio "
                 "superficie/nombre de casernes augmente. C'est cohérent car plus ce ratio"
-                " est faible, plus il y a de casernes au mètre carré."
+                " est fort, moins il y a de casernes au mètre carré (et donc elles ont en moyenne plus de distance à parcourir)."
+                " Nous avons calculé la corrélation linéaire (Pearson) , monotone (Spearman) et de rang (Pearson). Le tableau ci-dessous présente les résultats. "
+                "La plus forte est obtenue avec la méthode de Spearman ; elle est de 0,19.<br>"
                 )
                 , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         fonctionsgraph.afficher_correlations(df2023,'ratioSC')
-        st.markdown(texte_justifie(
-                "Nous avons calculé les corrélations linéaires (Pearson) , monotones (Spearman) et de rang (Pearson)."
-                " La plus fortes est obtenue avec la méthode de Spearman. Pour le temps de réponse total,"
-                " cette corrélation est de 0,19."
-                )
-                , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
 
 
-      st.markdown("#### Sur les variables booléennes")
+      st.markdown("#### Indicatrices sur arrondissement et casernes")
 
       # Choix de l'arbre affiché
       var_nom = ['Stat_resp_rep', "Bor_resp_rep", "Bor_inc_rep", "Bor_inc_resp"]
@@ -458,60 +447,46 @@ def visualisation():
       with st.expander(f"📌 Interprétation"):
         st.markdown(texte_justifie(
             "<ul>"
-                "<li> Variable <code>Stat_resp_rep</code><br>"
-                "le temps total moyen, il y environ 15% d'écart entre le temps le plus long"
+                "<li> <code>Stat_resp_rep</code> : il y environ 15% d'écart entre le temps moyen de réponse le plus long"
                 " (<code>Stat_resp_rep = 0</code>) et le plus cours (<code>Stat_resp_rep = 1</code>)."
-                " Il est d'ailleurs cohérent que le temps de réponse soit allongé lors le camion"
-                " ne provient pas de la caserne du secteur.</li>"
+                " Il est d'ailleurs cohérent que le temps de réponse soit écourté lorsque le camion"
+                " provient de la caserne responsable du secteur.</li>"
+            "Le test ANOVA est significatif (p-value<5%)"
             "</ul>"
             )
             , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
         fonctionsgraph.test_anova(df2023, 'Stat_resp_rep')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
+
 
         st.markdown(texte_justifie(
             "<ul>"
-                "<li> Variable <code>Bor_resp_rep</code><br>"
-                "le temps total moyen, il y environ 14% d'écart entre le temps le plus long (<code>Bor_resp_rep = 0"
-                "</code>) et le plus cours (<code>Bor_resp_rep = 1</code>)</li>"
+                "<li> <code>Bor_resp_rep</code> : il y environ 14% d'écart entre le temps moyen de réponse le plus long "
+                "le temps total moyen,  (<code>Bor_resp_rep = 0</code>) et le plus cours (<code>Bor_resp_rep = 1</code>).</li>"
+                "Le test ANOVA est significatif (p-value<5%)"
             "</ul>"
             )
             , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+        
         fonctionsgraph.test_anova(df2023, 'Bor_resp_rep')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown(texte_justifie(
             "<ul>"
-                "<li> Variable <code>Bor_inc_rep</code><br>"
-                "le temps total moyen, il y environ 10% d'écart entre le temps le plus long (<code>Bor_inc_rep = 0</code>)"
-                " et le plus cours (<code>Bor_inc_rep = 1</code>).</li>"
+                "<li> <code>Bor_inc_rep</code> : il y a environ 10% d'écart entre le temps moyen de réponse le plus long "
+                "(<code>Bor_inc_rep = 0</code>) et le plus cours (<code>Bor_inc_rep = 1</code>).</li>"
+                "Le test ANOVA est significatif (p-value<5%)"
             "</ul>"
             )
             , unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+        
         fonctionsgraph.test_anova(df2023, 'Bor_inc_rep')
-        st.markdown(texte_justifie(
-            "Le test ANOVA est significatif (inférieur à 5%) dont on valide l'hypothèse d'influence."
-            )
-            , unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown(texte_justifie(
             "<ul>"
-                "<li> Variable <code>Bor_inc_resp</code><br>"
-                "Le temps total moyen, il y environ 4% d'écart entre le temps le plus long (<code>Bor_inc_resp = 0</code>) "
-                "et le plus cours (<code>Bor_inc_resp = 1</code>).<br>"
-                "La variable ne sera pas utilisée dans la prédiction du modèle</li>"
+                "<li> <code>Bor_inc_resp</code> : il y a moins de 5% d'écart entre le temps moyen de réponse le plus long (<code>Bor_inc_resp = 0</code>)"
+                "et le plus cours (<code>Bor_inc_resp = 1</code>).</li>"
             "</ul>"
             )
             , unsafe_allow_html=True)
@@ -524,7 +499,14 @@ def visualisation():
         caserne = [c.lower() for c in caserne]
         caserne = sorted(caserne)
 
-        st.title("Affichage de Cartes HTML")
+        st.subheader("Localisation des incidents sur cartes HTML")
+
+        st.markdown(texte_justifie(
+            "Dans cet onglet, vous pouvez visualiser les incidents 2023 sur une carte HTML. Les droites lient chaque lieu d'incident "
+            "à la caserne de départ du camion de secours. Les lieux d'incident sont colorés en vert si le temps de réponse des pompiers est strictement inférieur "
+            "à 6 minutes. Sinon, ils sont colorés en rouge.<br><br>"
+            )
+        , unsafe_allow_html=True)
 
         # Case à cocher pour le choix des incidents
         choix_incidents = st.radio(
@@ -533,7 +515,7 @@ def visualisation():
         )
 
         # Sélection de la carte à afficher
-        carte_choisie = st.selectbox("Choisissez une carte :", caserne)
+        carte_choisie = st.selectbox("Choisissez un quartier :", caserne)
 
         if choix_incidents == "Tous les incidents":
           chemin_fichier = f"Donnees/Cartes/{carte_choisie}.html"

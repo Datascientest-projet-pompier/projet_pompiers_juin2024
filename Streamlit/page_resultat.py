@@ -35,94 +35,118 @@ def resultat():
     st.title("Quelques résultats")
 
     st.markdown(texte_justifie(
-        "Dans cette partie nous ne montrerons que les résultats associés à la variable cible binaire <code>TotalResponseTime_Binary</code>."
-        " L'ensemble des notebooks de travail sont accessibles sur le depot Github "
-        "<a href=\"https://github.com/Datascientest-projet-pompier/projet_pompiers_juin2024/tree/main\">ICI</a>.")
-    , unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    st.markdown(texte_justifie(
-        "L'entrainement des modèles c'est effectué en plusieurs étapes.")
-    , unsafe_allow_html=True)
-
-    st.markdown(texte_justifie(
-        "Dans un premier temps les modèles sont lancés sur deux jeux de données réduits. "
-        "Le premier contenant 140 000 incidents(#1) et le second contenant 250 000 incidents(#2). Avec les "
-        "hyperparamètres trouvés le modèle est entrainé sur le jeu de données complet. Puis sur le jeu de données de validation. Puis"
-        "sur le jeu de données de temps. ")
-    , unsafe_allow_html=True)
-
-    st.markdown(texte_justifie(
-        "Dans un second temps les jeux de données d'entrainement et de validation sont fusionné. Le modèle est"
-        " ensuite entrainer (sur le jeu fusionné) puis testé sur le jeu de données de test.")
+        "Dans cette partie, nous montrons uniquement les résultats de l'étape 2 de modélisation. "
+        "Il concerne uniquement la variable cible binaire, <code>TotalResponseTime_Binary</code>. "
+        "L'ensemble des notebooks de travail sont accessibles sur le dépôt Github "
+        "<a href=\"https://github.com/Datascientest-projet-pompier/projet_pompiers_juin2024/tree/main\">ICI</a>. "
+        "Les résultats de l'étape 1 pour chacune des quatre variables cibles sont commentés dans ces notebooks."
+        )
     , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     with st.expander(f"📌 Métriques Utilisées"):
-        st.markdown(r"""
-            Cinq métriques sont utilisées :
 
-            - **L'accuracy :** mesure la proportion de prédictions correctes par rapport au nombre total de prédictions. C'est une mesure globale de la performance du modèle,
-
-            - **La précision :** mesure la précision pour chacune des classes(0 ou 1). Précision 0 renvoie la proportion de valeur prédite à 0 étant réellement à 0 par rapport au total des valeur 0.
-
-            $$R_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Positifs} $$
-
-            idem pour Précision 1,
-
-            - **Le Recall :** mesure la proportion de toutes les instances positives réelles qui ont été correctement identifiées par le modèle.
-
-            $$F1_0=\frac{Vrais Positifs}{Vrais Positifs + Faux Négatifs}$$
-
-            - **F1-score :** mesure la moyenne harmonique de la précision et du rappel. Mathématiquement
-
-            - **AUC ROC :** mesure l'air sous la courbe ROC(Nombre de vrais positifs (rappel) en fonction du taux de faux positifs), elle mesure de la capacité du modèle à distinguer les classes.
-            """
+        st.markdown(texte_justifie(
+          "<ul><li><b>L'accuracy</b> mesure la proportion de prédictions correctes par rapport au nombre total d'observations. C'est une mesure globale de la performance du modèle."
+          "</li></ul>")
         , unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.write(' ')
+        with col2:
+            st.image("Donnees/Images/Formule_accuracy.png",use_container_width=True, width=400) 
+        with col3:
+            st.write(' ')
+        
+        st.markdown(texte_justifie(
+          "<ul><li><b>La précision</b>, pour chaque classe, mesure la proportion de valeurs correctement prédites (dans cette classe) par rapport au nombre total de ses prédictions."
+          "</li></ul>")
+        , unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.write(' ')
+        with col2:
+            st.image("Donnees/Images/Formule_precision.png",use_container_width=True, width=400) 
+        with col3:
+            st.write(' ')
+
+        st.markdown(texte_justifie(
+          "<ul><li><b>Le rappel</b>, pour chaque classe, mesure la proportion de valeurs correctement prédites (dans cette classe) par rapport au nombre total de ses observations."
+          "</li></ul>")
+        , unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.write(' ')
+        with col2:
+            st.image("Donnees/Images/Formule_recall.png",use_container_width=True, width=400) 
+        with col3:
+            st.write(' ')
 
 
+        st.markdown(texte_justifie(
+          "<ul><li><b>Le F1-score</b>, pour chaque classe, mesure la moyenne harmonique de la précision et du rappel."
+          "</li></ul>")
+        , unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.write(' ')
+        with col2:
+            st.image("Donnees/Images/Formule_f1score.png",use_container_width=True, width=400) 
+        with col3:
+            st.write(' ')
+
+        st.markdown(texte_justifie(
+          "<ul><li><b>L'AUC</b> mesure l'air sous la courbe ROC. Cette courbe indique le taux vrais positifs (ou rappel) en fonction du taux de faux positifs (ou spécificité). "
+          "Elle mesure de la capacité du modèle à distinguer les classes."
+          "</li></ul>")
+        , unsafe_allow_html=True)            
+
+    
+    st.markdown("##### Résultats sur le jeu d'entraînement")
     st.markdown(texte_justifie(
-        "Résultats sur le jeu d'entrainement (fusionné).")
+        "Le tableau ci-dessous résume les mesures obtenues pour les différents modèles sur le jeu de données d'entraînement, <code>train2</code> (fusion de "
+        "<code>train</code> et <code>validation</code>). <br><br>")
     , unsafe_allow_html=True)
 
     st.table(df_train.set_index('Modèle'))
     st.markdown("<br>", unsafe_allow_html=True)
 
 
+    st.markdown("##### Résultats sur le jeu test")
+
+
     st.markdown(texte_justifie(
-        "Résultats sur le jeu de test.")
+        "Le tableau ci-dessous résume les mesures obtenues pour les différents modèles sur le jeu de données test, <code>test</code>. <br><br>")
     , unsafe_allow_html=True)
     st.table(df_test.set_index('Modèle'))
-
-
     st.markdown("<br>", unsafe_allow_html=True)
 
 
     st.markdown(texte_justifie(
-        "Le choix du modèle c'est effectué à l'aide des résultats sur le jeu de données test. Au vue des résultats"
-        "le modèle convservé est celui de <b>Gradient Boosting#2</b>")
+        "En se basant sur les mesures obtenues sur le jeu de données test, nous avons sélectionné comme modèle final celui de Gradient "
+        "Boosting avec les hyper-paramètres obtenus à la suite de la seconde optimisation (<b>Gradient Boosting#2</b>). "
+        )
     , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    with st.expander(f"📌 Hyperparamètres Utilisés"):
-        st.markdown("""
-            ##### Les hyperparamètres utilisés
-            Les hyperparamètres ont été déterminé à l'aide d'un jeu de données réduit. Voici les valeurs trouvées et leurs
-            explications.
-            """, unsafe_allow_html=True)
+    with st.expander(f"📌 Hyper-paramètres du modèle"):
 
         st.code("""
                 # Nombre d'arbres dans l'ensemble (forêt aléatoire)
                 n_estimators = 400
                 # Taux d'apprentissage, contrôle la contribution de chaque arbre
                 learning_rate = 0.0464
-                # Fraction des données utilisées pour chaque arbre (87.5% dans ce cas)
+                # Fraction des données utilisées pour chaque arbre : 87.5%
                 subsample = 0.875
-                # Fraction minimale d'échantillons requise pour diviser un nœud interne
+                # Fraction minimale d'échantillons requise pour diviser un nœud interne : 0,05%  (518 incidents dans train2)
                 min_samples_split = 0.0005
-                # Profondeur maximale de chaque arbre (9 niveaux dans ce cas)
+                # Profondeur maximale de chaque arbre : 9 niveaux
                 max_depth = 9
-                # Nombre maximal de caractéristiques considérées pour chaque division
+                # Nombre maximal de caractéristiques considérées pour chaque division : 25 (sur 50)
                 max_features = 25
                 """, language="python")
