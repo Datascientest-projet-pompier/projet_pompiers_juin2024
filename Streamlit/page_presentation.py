@@ -215,7 +215,7 @@ def presentation():
         st.markdown(texte_justifie(
           "<ul><li><b>Variables temporelles</b>  </li></ul>")
         , unsafe_allow_html=True)
-        st.image("Donnees/Images/Variables_temporelle_crea.png",use_container_width=True)
+        st.image("Donnees/Images/Variables_temporelles_crea.png",use_container_width=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
         st.markdown(texte_justifie(
