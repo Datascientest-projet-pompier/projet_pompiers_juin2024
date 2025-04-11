@@ -12,7 +12,7 @@ def page_intro():
     st.markdown(texte_justifie("Nous sommes trois auteurs de ce projet Anne Dubois, Christelle Tessier et Hao La."
                                " Nous effectuons une formation chez Datascientest pour valider un module de Data Sciences.")
                                , unsafe_allow_html=True)
-
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(texte_justifie("Pour ce faire nous avons travaillé pendant 6 mois sur un projet dont l’objectif était "
                                "d’estimer le temps de réponse de la Brigade des Pompiers de Londres."
                                " Cette brigade est le service d'incendie et de sauvetage le plus actif du Royaume-Uni. "
@@ -23,8 +23,8 @@ def page_intro():
                                  , unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(texte_justifie("Pour  présenter ce projet nous avons créé une application streamlit qui présente les différentes"
-                               " étapes de notre travail."
-                               "Comme les données sont de taille trop importante pour être stockées nous avons pris le parti "
+                               " étapes de notre travail. "
+                               "Comme les données sont de taille trop importante pour être stockées, nous avons pris le parti "
                                "d'exécuter les traitements et la gestion des graphiques sur nos ordinateurs personnels, pour ensuite les enregistrer et les réutiliser "
                                "sur notre dépôt Git et enfin les exploiter ici."
                                )

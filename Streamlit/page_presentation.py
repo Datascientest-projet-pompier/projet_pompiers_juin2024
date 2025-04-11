@@ -5,10 +5,10 @@ def presentation():
     st.title("Présentation des données")
     st.markdown(texte_justifie(
     "Les jeux de données sur les <b>incidents</b> et les <b>mobilisations</b> sont mis à jour tous les mois "
-    "sur le site de la Brigade des Pompiers de Londres."
+    "sur le site de la Brigade des Pompiers de Londres. "
     "La base de données sur les incidents est "
     "disponible <a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-incident-records\">ICI</a>. "
-    "Celle sur la mobilisation des casernes (et l'envoi de camions de secours) est disponible "
+    "Celle sur la mobilisation des camions de secours est disponible "
     "<a href=\"https://data.london.gov.uk/dataset/london-fire-brigade-mobilisation-records\">ICI</a>. "
   ), unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
@@ -21,19 +21,25 @@ def presentation():
       st.subheader("Etude des données initiales")
 
       st.markdown(texte_justifie(
-        "Que ce soit pour les données <b>Incident</b> ou les données <b>Mobilisation</b> les jeux de données possèdent une"
-        " variable <b>IncidentNumber</b> qui permettra de faire la jointure entre les deux tableaux")
+        "Nous avons chargé les données depuis la base publique pour la dernière fois le 12/11/2024 "
+        "(2 fichiers incidents et 3 mobilisations). "
+        "Pour analyser ces données, nous avons utilisé python, comme pour tout l’ensemble du projet. "
+        "Après chargement de chaque fichier dans un dataframe, nous avons concaténé les données incidents d'une part "
+        " et mobilisations d'autre part."
+        "<br>"
+        " La variable <b>IncidentNumber</b> a ensuite permis de faire la jointure entre les deux dataframes."
+        )
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown(texte_justifie(
-        "L'ensemble des données de tous types et de tous ordres, on peut les regrouper en quatre catégories :"
-        "<ul><li><b>données temporelles :</b> qui permettent de situer dans le temps l'incident (année, date et heure).</li>"
-        "<li><b>données géographique :</b> qui permettent de situer l'incident géographiquement (latitude, longitude, "
-        "code postal ...)</li>"
-        "<li><b>données relatives à l'incident :</b> qui permettent de caractériser l'incident (caserne responsable/déployée,"
-        " type d'incident, nombre de camion, coût ...)</li>"
-        "<li><b>données cibes :</b> qui représentent les temps de réaction, de trajet et total</li></ul>")
+        "L'ensemble des variables des deux bases peut être regroupé en quatre catégories :"
+        "<ul><li><b>variables temporelles :</b> elles situent l'incident dans le temps (année, date et heure).</li>"
+        "<li><b>variables géographiques :</b> elles situent l'incident dans l'espace (latitude, longitude, "
+        "Borough, Ward, code postal ...)</li>"
+        "<li><b>variables caractérisant l'incident :</b> elles définissent les circonstances et les moyens liés à  l'incident (type d'incident,"
+        " caserne responsable et déployée, nombre de camions mobilisés, type de bâtiment impacté, coût, ...)</li>"
+        "<li><b>variables cibles :</b> il s'agit du temps total de réaction des pompiers qui est la somme de leur temps de réaction et de trajet </li></ul>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
@@ -42,26 +48,28 @@ def presentation():
 
       st.markdown("#### Sur les fichiers incidents")
 
-      st.markdown(texte_justifie(
-        "Les données manquantes apparaissent sur :"
+            st.markdown(texte_justifie(
+        "Les valeurs manquantes concernent principalement :"
         "<ul>"
-          "<li><b>les données géographiques exactes :</b> principalement pour garantir l'anonymat. "
-          "Les données géographiques approchées sont toujours présentes (données BNG) </li>"
-          "<li><b>la variable <code>SpecialServiceType</code> :</b> qui n'est renseignée que si la variable "
-          "<code>StopCodeDescription</code> a pour valeur \"Spécial Service\"</li>"
-          "<li><b>les informations</b> (temps de présence et nom) <b>sur le premier (ou deuxième) camion arrivé sur site</b>"
-          " ses informations sont pour nous connues a postério donc sans importance.</li></ul>")
+          "<li><b>les données géographiques exactes.</b> Pour garantir l'anonymat, "
+         "elles sont supprimées avant publication de la base de données. "         
+          "Les coordonnées géographiques approximées utilisant le système national britannique (British National Grid ou BNG) sont toujours renseignées. "
+          "Nous les avons utilisées si les données géographiques exactes sont manquantes afin de calculer une latitude et longitude approximées.</li>"
+          "<li><b>la variable <code>SpecialServiceType</code> </b> est renseignée uniquement si la variable "
+          "<code>StopCodeDescription</code> a pour valeur \"Spécial Service\".</li> "
+          "<li><b>les informations sur le premier et second camion arrivé sur site</b>. "
+          " Il peut n’y avoir qu’un voire aucun camion déployé. Ces lignes sont supprimées lors de la jointure.</li></ul>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
 
       st.markdown("#### Sur les fichiers mobilisations")
 
       st.markdown(texte_justifie(
-        "Les données manquantes apparaissent sur :"
-        "<ul><li><b>Heures de retour :</b> qui ne sont plus renseignées.</li>"
-        "<li><b>Raison du retard :</b> qui n'est renseignée que dans 25% des cas.</li>"
-        "<li> <b>Date et heure de départ sur certains incidents :</b> cette information est crucial "
-        "pour notre modèle, nous avons donc supprimé les lignes correspondantes (supression de moins de 1.5% des lignes)"
+        "Les valeurs manquantes concernent :"
+        "<ul><li><b>l’heure de retour du camion à la caserne.</b> Elle n'est plus renseignée depuis une dizaine d'années.</li>"
+        "<li><b>la raison d'un retard de trajet </b>(comme le trafic routier). Elle est renseignée dans 25% des cas.</li>"
+        "<li> <b>la date et heure de départ du camion.</b> Cette information est indispensable "
+        "pour le calcul de la variable cible. Nous avons donc supprimé les lignes correspondantes (moins de 1.5% des lignes avant jointure)."
         "</li></ul>")
         , unsafe_allow_html=True)
       st.markdown("<br>", unsafe_allow_html=True)
