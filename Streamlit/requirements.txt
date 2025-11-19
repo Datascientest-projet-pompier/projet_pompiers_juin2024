@@ -29,5 +29,7 @@ seaborn==0.13.2
 
 # Bibliothèques de statistiques
 # Correction: Ajout de scipy et contrainte de version (<1.16.0) pour la compatibilité avec statsmodels 0.14.4
-scipy<1.16.0 
-statsmodels >= 0.15.0
+#scipy<1.16.0 
+#statsmodels >= 0.15.0
+scipy==1.15.4 
+statsmodels==0.14.4
