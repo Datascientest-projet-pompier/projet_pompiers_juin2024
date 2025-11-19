@@ -201,7 +201,7 @@ def prepa_incident(station_df):
 
     return df_bilan
 
-def afficher_explication_shap_version_horizontal(df):
+def afficher_explication_shap_version_horizontal_v2(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
 
     try:
@@ -223,6 +223,32 @@ def afficher_explication_shap_version_horizontal(df):
     except Exception as e:
         st.error(f"Erreur avec SHAP : {e}")
         st.text(traceback.format_exc())
+
+def afficher_explication_shap_version_horizontal(df, gb_model2):
+
+    try:
+        with st.spinner("Création de l'explicateur SHAP..."):
+            explainer_shap = shap.TreeExplainer(gb_model2)
+
+        with st.spinner("Calcul des valeurs SHAP..."):
+            shap_values = explainer_shap(df)
+
+        with st.spinner("Création du graphique SHAP..."):
+            shap.initjs()
+            plt.figure(figsize=(10, 6))
+            shap.force_plot(
+                explainer_shap.expected_value,
+                shap_values.values[0],
+                df.iloc[0],
+                matplotlib=True,
+                show=False
+            )
+            st.pyplot(plt.gcf())
+
+    except Exception as e:
+        st.error(f"Erreur avec SHAP : {e}")
+        st.text(traceback.format_exc())
+
 
 def afficher_explication_shap(df):
     filename = 'Donnees/Modeles/explainer_shap.pkl'
@@ -402,4 +428,4 @@ def predictionv3():
             st.markdown("#### Explicabilité de la prédiction de l'incident")
 
 
-            afficher_explication_shap_version_horizontal(df_bilan)
+            afficher_explication_shap_version_horizontal(df_bilan, gb_model2)
